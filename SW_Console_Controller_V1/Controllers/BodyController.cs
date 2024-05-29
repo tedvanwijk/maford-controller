@@ -12,23 +12,21 @@ namespace SW_Console_Controller_V1.Controllers
     internal class BodyController : ModelController
     {
         ModelController _toolController;
-        public BodyController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model) : base(properties, generatedProperties, model)
+        public BodyController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
             UpdateModel();
         }
 
         private void UpdateModel()
         {
-            (HelixFeatureData helixData, Action<object> helixApply) = ((HelixFeatureData, Action<object>))ModelControllerTools.GetFeature("FLUTE_HELIX", "REFCURVE");
-            helixData.Height = decimal.ToDouble((Properties.LOC).ConvertToMeters());
             GeneratedProperties.HelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(Properties.HelixAngle * Math.PI / 180);
-            helixData.Pitch = GeneratedProperties.HelixPitch.ConvertToMeters();
-            helixApply(helixData);
+            EquationManager.Equation[14] = $"FluteHelixPitch= {GeneratedProperties.HelixPitch}in";
+            EquationManager.Equation[15] = $"FluteCount= {Properties.FluteCount}in";
 
             switch (Properties.ToolType)
             {
                 case "End Mill":
-                    _toolController = new EMController(Properties, GeneratedProperties, SwModel);
+                    _toolController = new EMController(Properties, GeneratedProperties, SwModel, EquationManager);
                     break;
             }
         }

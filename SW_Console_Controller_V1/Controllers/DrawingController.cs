@@ -19,7 +19,7 @@ namespace SW_Console_Controller_V1.Controllers
         public ToleranceSheetProcessor ToleranceProcessor;
         public DataTable ToleranceData;
         public string SheetName = "NORMAL";
-        public DrawingController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, DrawingDoc drawing) : base(properties, generatedProperties, model)
+        public DrawingController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, DrawingDoc drawing, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
             Drawing = drawing;
             ToleranceProcessor = new ToleranceSheetProcessor(properties);
@@ -67,11 +67,13 @@ namespace SW_Console_Controller_V1.Controllers
                 Annotation annotation = viewDimensions[i].GetAnnotation();
                 string annotationName = annotation.GetName();
                 if (annotationName.EndsWith("_REF")) annotationName = annotationName.Replace("_REF", "");
-                // TODO: error checking in case it is not able to find the datarow
-                DataRow dimensionData = DimensionPositions.Select($"TOTAL_NAME = '{annotationName}@{totalViewName}'")[0];
 
-                // Move dimension
-                DrawingControllerTools.MoveDimension(annotation, viewOutline, (string)dimensionData["REL_SIDE"], (double.Parse((string)dimensionData["REL_X"], CultureInfo.InvariantCulture), double.Parse((string)dimensionData["REL_Y"], CultureInfo.InvariantCulture)));
+                DataRow[] dimensionData = DimensionPositions.Select($"TOTAL_NAME = '{annotationName}@{totalViewName}'");
+                if (dimensionData.Length != 0)
+                {
+                    // Move dimension
+                    DrawingControllerTools.MoveDimension(annotation, viewOutline, (string)dimensionData[0]["REL_SIDE"], (double.Parse((string)dimensionData[0]["REL_X"], CultureInfo.InvariantCulture), double.Parse((string)dimensionData[0]["REL_Y"], CultureInfo.InvariantCulture)));
+                }
 
                 // Tolerance dimension
                 //Dimension dim = viewDimensions[i].GetDimension2(0);
@@ -90,19 +92,6 @@ namespace SW_Console_Controller_V1.Controllers
         {
             // for display dimensions, the position is the xyz coordinate of the top left corner
             double[] annotationPosition = annotation.GetPosition();
-            TextFormat textFormat = annotation.GetTextFormat(0);
-            //decimal lineHeight = textFormat.CharHeight;
-
-            DisplayData temp = annotation.GetDisplayData();
-            //Console.WriteLine(annotation.GetName());
-            //Console.WriteLine(textFormat.CharHeight);
-
-            // TODO: figure out dimension location and size to calculate possible overlap and space out dimensions
-            // get annotation position
-            //DisplayData displayData = annotation.GetDisplayData();
-            //TextFormat textFormat = annotation.GetTextFormat(0);
-            // get annotation height (text height is constant in drawings)
-            //Console.WriteLine(displayData.GetTextHeightAtIndex(0));
         }
 
         private void SetNormalSheetDimensions()

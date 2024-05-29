@@ -99,24 +99,10 @@ namespace SW_Console_Controller_V1.Lib
             {
                 for (int row = 0; row < rowCount; row++)
                 {
-                    object value;
-                    if (Properties.ToolSeriesInputs[row].StartsWith("cst_"))
-                    {
-                        value = Properties.ToolSeriesInputs[row].Split('_')[1];
-                    }
-                    else if (Properties.GetType().GetProperty(Properties.ToolSeriesInputs[row]) != null)
-                    {
-                        value = Properties.GetType().GetProperty(Properties.ToolSeriesInputs[row]).GetValue(Properties);
-                    }
-                    else
-                    {
-                        value = 0;
-                    }
-
                     input.SetCellValue(
                         row,
                         col,
-                        value
+                        Properties.ToolSeriesInputs[row]
                         );
                 }
             }

@@ -13,11 +13,13 @@ namespace SW_Console_Controller_V1
         public Properties Properties { get; }
         public GeneratedProperties GeneratedProperties { get; set; }
         public ModelDoc2 SwModel { get; }
-        public ModelController(Properties properties, GeneratedProperties generatedPropertes, ModelDoc2 model)
+        public EquationMgr EquationManager { get; }
+        public ModelController(Properties properties, GeneratedProperties generatedPropertes, ModelDoc2 model, EquationMgr equationManager)
         {
             Properties = properties;
             GeneratedProperties = generatedPropertes;
             SwModel = model;
+            EquationManager = equationManager;
         }
     }
 }

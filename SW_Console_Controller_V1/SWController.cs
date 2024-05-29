@@ -9,6 +9,7 @@ using SW_Console_Controller_V1.Controllers;
 using SW_Console_Controller_V1.Lib;
 using System.IO;
 using System.Dynamic;
+using System.Globalization;
 
 namespace SW_Console_Controller_V1
 {
@@ -23,6 +24,7 @@ namespace SW_Console_Controller_V1
         private Properties _properties;
         private GeneratedProperties _generatedProperties = new GeneratedProperties();
         private CustomPropertyManager _propertyManager;
+        private EquationMgr _equationManager;
         private int _fileError;
         private int _fileWarning;
         private int _saveError;
@@ -39,6 +41,8 @@ namespace SW_Console_Controller_V1
 
         public SWController(Properties properties)
         {
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
+
             // set properties and determine path to master files
             _properties = properties;
             string masterPath = _properties.MasterPath;
@@ -64,6 +68,7 @@ namespace SW_Console_Controller_V1
                 1);
             _swModel = _swApp.OpenDoc6(newDocumentPath, 1, 1, "", ref _fileError, ref _fileWarning);
             _swModelExtension = _swModel.Extension;
+            _equationManager = _swModel.GetEquationMgr();
 
             // Set prpsheet data
             _propertyManager = _swModelExtension.CustomPropertyManager[""];
@@ -76,8 +81,8 @@ namespace SW_Console_Controller_V1
             ModelControllerTools.SelectionManager = _selectionMgr;
 
             SetReferences();
-            _shankController = new ShankController(properties, _generatedProperties, _swModel);
-            _bodyController = new BodyController(properties, _generatedProperties, _swModel);
+            _shankController = new ShankController(properties, _generatedProperties, _swModel, _equationManager);
+            _bodyController = new BodyController(properties, _generatedProperties, _swModel, _equationManager);
 
             _swModel.ForceRebuild3(false);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);
@@ -90,7 +95,7 @@ namespace SW_Console_Controller_V1
             DrawingControllerTools.SelectionManager = _swDrawingModel.SelectionManager;
             DrawingControllerTools.Drawing = _swDrawing;
             DrawingControllerTools.Properties = _properties;
-            _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing);
+            _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
         }
 
@@ -120,32 +125,18 @@ namespace SW_Console_Controller_V1
 
         private void SetReferences()
         {
-            ModelControllerTools.SetSketchDimension("LENGTH_REF",
-                new[] { "LOA", "LOC", "LOF", "BodyLength" },
-                new[] { _properties.LOA, _properties.LOC, _properties.LOF, _properties.BodyLength }
-                );
+            _equationManager.Equation[0] = $"LOA= {_properties.LOA}in";
+            _equationManager.Equation[1] = $"LOC= {_properties.LOC}in";
+            _equationManager.Equation[2] = $"LOF= {_properties.LOF}in";
+            _equationManager.Equation[3] = $"BodyLength= {_properties.BodyLength}in";
 
             decimal maxDiameter = Math.Max(_properties.ShankDiameter, _properties.ToolDiameter);
             decimal maxDiameterOffset = maxDiameter + 0.5m;
-            Dictionary<string, decimal> refDimensions = new Dictionary<string, decimal>
-            {
-                { "MaxDiameter", maxDiameter },
-                { "MaxDiameterOffset", maxDiameterOffset },
-                { "MaxBodyDiameter", _properties.ToolDiameter }
-            };
-            if (_properties.ShankType == "Reduced")
-            {
-                refDimensions.Add("MaxShankDiameter", _properties.ShankDiameter + 2 * _properties.ShankToHeadRadius);
-            } else
-            {
-                refDimensions.Add("MaxShankDiameter", _properties.ShankDiameter);
-            }
-            ModelControllerTools.SetSketchDimension("DIAMETER_REF", refDimensions);
 
-            if (maxDiameter > _properties.ToolDiameter)
-            {
-                ModelControllerTools.UnsuppressFeature("BODY_PROFILE_CUT");
-            }
+            _equationManager.Equation[4] = $"ToolDiameter= {_properties.ToolDiameter}in";
+            _equationManager.Equation[5] = $"ShankDiameter= {_properties.ShankDiameter}in";
+            _equationManager.Equation[6] = $"MaxDiameter= {maxDiameter}in";
+            _equationManager.Equation[7] = $"MaxDiameterOffset= {maxDiameterOffset}in";
         }
     }
 }

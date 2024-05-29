@@ -73,7 +73,6 @@ namespace SW_Console_Controller_V1
         public decimal CornerRadius { get; set; }
         public decimal CornerChamferAngle { get; set; }
         public decimal CornerChamferWidth { get; set; }
-        public bool BallNose { get; set; }
 
         // Drill
         public decimal PointAngle { get; set; }

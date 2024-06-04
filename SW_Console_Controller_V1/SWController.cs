@@ -53,11 +53,13 @@ namespace SW_Console_Controller_V1
             string newDrawingPath = Path.Combine(masterPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.SLDDRW");
 
             _swApp = new SldWorks();
-            // TODO: unsafe! Deletes unsaved documents for work in dev, remove before use!!!
+            
+#if DEBUG
+            // closes all open docs and removes the old files if present. Only in debug config for easy testing
             _swApp.CloseAllDocuments(true);
-            // TODO: dev lines, remove the generated files prior to generating new ones. Remove for production
             File.Delete(newDocumentPath);
             File.Delete(newDrawingPath);
+#endif
 
             // copy the drawing along with the model
             _swApp.CopyDocument(
@@ -69,6 +71,8 @@ namespace SW_Console_Controller_V1
             _swModel = _swApp.OpenDoc6(newDocumentPath, 1, 1, "", ref _fileError, ref _fileWarning);
             _swModelExtension = _swModel.Extension;
             _equationManager = _swModel.GetEquationMgr();
+            EquationController.Manager = _equationManager;
+            EquationController.Initialize();
 
             // Set prpsheet data
             _propertyManager = _swModelExtension.CustomPropertyManager[""];
@@ -83,10 +87,8 @@ namespace SW_Console_Controller_V1
             SetReferences();
             _shankController = new ShankController(properties, _generatedProperties, _swModel, _equationManager);
             _bodyController = new BodyController(properties, _generatedProperties, _swModel, _equationManager);
-
             _swModel.ForceRebuild3(false);
-            _swModel.Save3(1, ref _saveError, ref _saveWarning);
-            //_swApp.CloseDoc(newDocumentPath);
+            
 
             _swDrawingModel = _swApp.OpenDoc6(newDrawingPath, 3, 1, "", ref _drawingError, ref _drawingWarning);
             _swDrawing = (DrawingDoc)_swDrawingModel;
@@ -96,7 +98,12 @@ namespace SW_Console_Controller_V1
             DrawingControllerTools.Drawing = _swDrawing;
             DrawingControllerTools.Properties = _properties;
             _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
+            _swModel.Save3(1, ref _saveError, ref _saveWarning);
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
+#if !DEBUG
+            //closes both files if not in debug config
+            _swApp.CloseAllDocuments(false);
+#endif
         }
 
         private void SetPrpData()
@@ -125,18 +132,18 @@ namespace SW_Console_Controller_V1
 
         private void SetReferences()
         {
-            _equationManager.Equation[0] = $"LOA= {_properties.LOA}in";
-            _equationManager.Equation[1] = $"LOC= {_properties.LOC}in";
-            _equationManager.Equation[2] = $"LOF= {_properties.LOF}in";
-            _equationManager.Equation[3] = $"BodyLength= {_properties.BodyLength}in";
+            EquationController.SetEquation("LOA", $"{_properties.LOA}in");
+            EquationController.SetEquation("LOC", $"{_properties.LOC}in");
+            EquationController.SetEquation("LOF", $"{_properties.LOF}in");
+            EquationController.SetEquation("BodyLength", $"{_properties.BodyLength}in");
 
             decimal maxDiameter = Math.Max(_properties.ShankDiameter, _properties.ToolDiameter);
             decimal maxDiameterOffset = maxDiameter + 0.5m;
 
-            _equationManager.Equation[4] = $"ToolDiameter= {_properties.ToolDiameter}in";
-            _equationManager.Equation[5] = $"ShankDiameter= {_properties.ShankDiameter}in";
-            _equationManager.Equation[6] = $"MaxDiameter= {maxDiameter}in";
-            _equationManager.Equation[7] = $"MaxDiameterOffset= {maxDiameterOffset}in";
+            EquationController.SetEquation("ToolDiameter", $"{_properties.ToolDiameter}in");
+            EquationController.SetEquation("ShankDiameter", $"{_properties.ShankDiameter}in");
+            EquationController.SetEquation("MaxDiameter", $"{maxDiameter}in");
+            EquationController.SetEquation("MaxDiameterOffset", $"{maxDiameterOffset}in");
         }
     }
 }

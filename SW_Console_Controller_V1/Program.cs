@@ -25,7 +25,7 @@ namespace SW_Console_Controller_V1
                 Properties properties = JsonConvert.DeserializeObject<Properties>(input);
                 SWController controller = new SWController(properties);
                 Console.WriteLine("Done!");
-
+                Console.ReadLine();
             }
             else
             {
@@ -33,8 +33,8 @@ namespace SW_Console_Controller_V1
                 try
                 {
                     string input = Encoding.UTF8.GetString(Convert.FromBase64String(args[0]));
-                    System.IO.File.WriteAllText("C:\\Users\\tedva\\Documents\\1_MA-Ford\\V2\\lastData.json", input);
                     Properties properties = JsonConvert.DeserializeObject<Properties>(input);
+                    System.IO.File.WriteAllText(Path.Combine(Path.GetDirectoryName(properties.ExecutablePath), "lastData.json"), input);
                     SWController controller = new SWController(properties);
                     Console.WriteLine("Done!");
                 }

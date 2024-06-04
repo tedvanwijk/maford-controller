@@ -20,19 +20,19 @@ namespace SW_Console_Controller_V1.Controllers
             // Set profile dimensions
             double angle = 360 / decimal.ToDouble(Properties.FluteCount) * 0.844;
             double loftSketchAngle = ((decimal.ToDouble(Properties.LOC) / GeneratedProperties.HelixPitch) * 360 - (2 * angle / 3)) % 360;
-            EquationManager.Equation[23] = $"EMLoftPlaneAngle= {loftSketchAngle}deg";
+            EquationController.SetEquation("EMLoftPlaneAngle", $"{loftSketchAngle}deg");
 
             // Set and enable pattern
             ModelControllerTools.UnsuppressFeature("EM_FLUTE_PATTERN");
 
             // Set corner style options
-            EquationManager.Equation[24] = $"EMCornerRadius= {Properties.CornerRadius}in";
-            EquationManager.Equation[25] = $"EMCornerChamferAngle= {Properties.CornerChamferAngle}deg";
-            EquationManager.Equation[26] = $"EMCornerChamferWidth= {Properties.CornerChamferWidth}in";
+            EquationController.SetEquation("EMCornerRadius", $"{Properties.CornerRadius}in");
+            EquationController.SetEquation("EMCornerChamferAngle", $"{Properties.CornerChamferAngle}deg");
+            EquationController.SetEquation("EMCornerChamferWidth", $"{Properties.CornerChamferWidth}in");
 
             // Set loc rotation and helix angle
-            EquationManager.Equation[27] = $"EMFluteLOCRotation= {(decimal.ToDouble(Properties.LOC) % GeneratedProperties.HelixPitch) * 360}";
-            EquationManager.Equation[32] = $"EMHelixAngle= {Properties.HelixAngle}deg";
+            EquationController.SetEquation("EMFluteLOCRotation", $"{(decimal.ToDouble(Properties.LOC) / GeneratedProperties.HelixPitch * 360) % 360}");
+            EquationController.SetEquation("EMHelixAngle", $"{Properties.HelixAngle}deg");
 
             switch (Properties.CornerStyle)
             {

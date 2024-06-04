@@ -85,7 +85,9 @@ namespace SW_Console_Controller_V1.Controllers
                 StoreAnnotationData(annotation);
             }
 
-            DrawingControllerTools.HideDimensions(SheetName, "SIDE_VIEW", new string[] { "LOF@LENGTH_REF", "BODY_LENGTH@LENGTH_REF" });
+            DrawingControllerTools.HideDimensions(SheetName, "SIDE_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
+            SwModel.Extension.SelectAll();
+            SwModel.Extension.AlignDimensions(0, -0.1);
         }
 
         private void StoreAnnotationData(Annotation annotation)

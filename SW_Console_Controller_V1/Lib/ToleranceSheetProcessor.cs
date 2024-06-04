@@ -80,7 +80,8 @@ namespace SW_Console_Controller_V1.Lib
                     {
                         string[] numberParts = cellValue.Split('.');
                         int digits = numberParts.Length == 1 ? 0 : numberParts[1].Length;
-                        newRow["VAL_DIGITS"] = digits;
+                        // TODO: check with nate if this is correct. It currently chooses the largest precision digit for the tolerance, but not sure if this is the correct way
+                        if (digits > (int)newRow["VAL_DIGITS"]) newRow["VAL_DIGITS"] = digits;
                     }
                 }
                 table.Rows.Add(newRow);

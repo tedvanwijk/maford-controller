@@ -26,6 +26,7 @@ namespace SW_Console_Controller_V1.Controllers
             ToleranceData = ToleranceProcessor.GetToleranceData();
             LoadTables();
             UpdateDrawing();
+            CreateTable();
         }
 
         private void LoadTables()
@@ -66,6 +67,7 @@ namespace SW_Console_Controller_V1.Controllers
                 // Find dimension in sheet
                 Annotation annotation = viewDimensions[i].GetAnnotation();
                 string annotationName = annotation.GetName();
+                // for diameter reference dimensions: remove the ref in the name so it can be looked up
                 if (annotationName.EndsWith("_REF")) annotationName = annotationName.Replace("_REF", "");
 
                 DataRow[] dimensionData = DimensionPositions.Select($"TOTAL_NAME = '{annotationName}@{totalViewName}'");
@@ -76,24 +78,51 @@ namespace SW_Console_Controller_V1.Controllers
                 }
 
                 // Tolerance dimension
-                //Dimension dim = viewDimensions[i].GetDimension2(0);
-
                 DataRow[] toleranceData = ToleranceData.Select($"SOFTWARE_NAME = '{annotationName}'");
                 // if the tolerance name is present in the tolerance sheet, set the tolerance
                 if (toleranceData.Length != 0) DrawingControllerTools.SetDimensionTolerance(viewDimensions[i], toleranceData[0]);
-
-                StoreAnnotationData(annotation);
             }
 
             DrawingControllerTools.HideDimensions(SheetName, "SIDE_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
             SwModel.Extension.SelectAll();
+            // auto align dimensions
             SwModel.Extension.AlignDimensions(0, -0.1);
         }
 
-        private void StoreAnnotationData(Annotation annotation)
+        private void CreateTable()
         {
-            // for display dimensions, the position is the xyz coordinate of the top left corner
-            double[] annotationPosition = annotation.GetPosition();
+            int maxRows = 20;
+            DataRow[] toleranceData = ToleranceData.Select("TOL_TYPE = 'TABLE_VAL' OR TOL_TYPE = 'TABLE_TEXT'");
+            int count = toleranceData.Length;
+            int cols = (int)Math.Ceiling((float)count / maxRows);
+            double colWidth = (16.5 - 0.5) / cols;
+            int rows = cols > 1 ? maxRows : count;
+            // x = 0.5in, y = 10.5 in
+            TableAnnotation table = Drawing.InsertTableAnnotation2(false, 0.5.ConvertToMeters(), 10.5.ConvertToMeters(), 1, "", rows, cols);
+            // remove table borders
+            table.BorderLineWeight = -1;
+            table.GridLineWeight = -1;
+            // left-align text
+            table.TextHorizontalJustification = 1;
+            // set text color
+            table.GetAnnotation().Color = 255;
+            // set column widths
+            table.SetColumnWidth(-2, colWidth.ConvertToMeters(), 0);
+
+            for (int i = 0; i < count; i++)
+            {
+                DataRow data = toleranceData[i];
+                string cellText;
+                if ((string)data["TOL_TYPE"] == "TABLE_TEXT")
+                    cellText = (string)data["TABLE_TEXT"];
+                else
+                    cellText = $"{(string)data["NAME"]}: {(string)data["MIN_VAL"]} - {(string)data["MAX_VAL"]}";
+
+                int rowIndex = i % rows;
+                int colIndex = (int)Math.Floor((float)i / rows);
+
+                table.Text[rowIndex, colIndex] = cellText;
+            }
         }
 
         private void SetNormalSheetDimensions()

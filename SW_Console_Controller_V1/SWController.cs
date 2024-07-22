@@ -15,7 +15,6 @@ namespace SW_Console_Controller_V1
 {
     internal class SWController
     {
-        private SldWorks _swApp;
         private ModelDoc2 _swModel;
         private ModelDocExtension _swModelExtension;
         private SelectionMgr _selectionMgr;
@@ -39,40 +38,39 @@ namespace SW_Console_Controller_V1
         private BodyController _bodyController;
         private DrawingController _drawingController;
 
-        public SWController(Properties properties)
+        public SWController(Properties properties, SldWorks swApp)
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
             // set properties and determine path to master files
             _properties = properties;
             string masterPath = _properties.MasterPath;
-            Directory.CreateDirectory(Path.Combine(masterPath, _properties.SpecificationNumber.ToString()));
+            string outputPath = _properties.OutputPath;
+            Directory.CreateDirectory(Path.Combine(outputPath, _properties.SpecificationNumber.ToString()));
             string oldDocumentPath = Path.Combine(masterPath, "TOOL_V2.SLDPRT");
-            string newDocumentPath = Path.Combine(masterPath, $"{_properties.SpecificationNumber}/{_properties.PartFileName}.SLDPRT");
+            string newDocumentPath = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/{_properties.PartFileName}.SLDPRT");
             string oldDrawingPath = Path.Combine(masterPath, "DRAWING_V2.SLDDRW");
-            string newDrawingPath = Path.Combine(masterPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.SLDDRW");
-
-            _swApp = new SldWorks();
+            string newDrawingPath = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.SLDDRW");
             
 #if DEBUG
             // closes all open docs and removes the old files if present. Only in debug config for easy testing
-            _swApp.CloseAllDocuments(true);
+            swApp.CloseAllDocuments(true);
             File.Delete(newDocumentPath);
             File.Delete(newDrawingPath);
 #endif
 
             // copy the drawing along with the model
-            _swApp.CopyDocument(
+            swApp.CopyDocument(
                 oldDrawingPath,
                 newDrawingPath,
                 new string[] { oldDocumentPath },
                 new string[] { newDocumentPath },
                 1);
-            _swModel = _swApp.OpenDoc6(newDocumentPath, 1, 1, "", ref _fileError, ref _fileWarning);
+            _swModel = swApp.OpenDoc6(newDocumentPath, 1, 1, "", ref _fileError, ref _fileWarning);
             _swModelExtension = _swModel.Extension;
             _equationManager = _swModel.GetEquationMgr();
-            EquationController.Manager = _equationManager;
-            EquationController.Initialize();
+            //EquationController.Manager = _equationManager;
+            EquationController.Initialize(_equationManager);
 
             // Set prpsheet data
             _propertyManager = _swModelExtension.CustomPropertyManager[""];
@@ -90,7 +88,7 @@ namespace SW_Console_Controller_V1
             _swModel.ForceRebuild3(false);
             
 
-            _swDrawingModel = _swApp.OpenDoc6(newDrawingPath, 3, 1, "", ref _drawingError, ref _drawingWarning);
+            _swDrawingModel = swApp.OpenDoc6(newDrawingPath, 3, 1, "", ref _drawingError, ref _drawingWarning);
             _swDrawing = (DrawingDoc)_swDrawingModel;
             DrawingControllerTools.Model = _swDrawingModel;
             DrawingControllerTools.ModelExtension = _swDrawingModel.Extension;
@@ -102,7 +100,7 @@ namespace SW_Console_Controller_V1
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
 #if !DEBUG
             //closes both files if not in debug config
-            _swApp.CloseAllDocuments(false);
+            swApp.CloseAllDocuments(false);
 #endif
         }
 

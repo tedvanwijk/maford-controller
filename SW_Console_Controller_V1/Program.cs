@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using SolidWorks.Interop.sldworks;
 
 namespace SW_Console_Controller_V1
 {
@@ -23,7 +24,8 @@ namespace SW_Console_Controller_V1
 
 
                 Properties properties = JsonConvert.DeserializeObject<Properties>(input);
-                SWController controller = new SWController(properties);
+                SldWorks swApp = new SldWorks();
+                SWController controller = new SWController(properties, swApp);
                 Console.WriteLine("Done!");
                 Console.ReadLine();
             }
@@ -35,7 +37,8 @@ namespace SW_Console_Controller_V1
                     string input = Encoding.UTF8.GetString(Convert.FromBase64String(args[0]));
                     Properties properties = JsonConvert.DeserializeObject<Properties>(input);
                     System.IO.File.WriteAllText(Path.Combine(Path.GetDirectoryName(properties.ExecutablePath), "lastData.json"), input);
-                    SWController controller = new SWController(properties);
+                    SldWorks swApp = new SldWorks();
+                    SWController controller = new SWController(properties, swApp);
                     Console.WriteLine("Done!");
                 }
                 catch (Exception ex)

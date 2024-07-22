@@ -96,15 +96,31 @@ namespace SW_Console_Controller_V1.Lib
             ExcelRange input = Worksheet.Cells[inputRange];
             int columnCount = input.Columns;
             int rowCount = input.Rows;
+
             for (int col = 0; col < columnCount; col++)
             {
                 for (int row = 0; row < rowCount; row++)
                 {
-                    input.SetCellValue(
-                        row,
-                        col,
-                        Properties.ToolSeriesInputs[row]
-                        );
+                    string val = Properties.ToolSeriesInputs[row];
+                    float valNumeric;
+                    bool isNumber = float.TryParse(val, out valNumeric);
+                    if (isNumber)
+                    {
+                        input.SetCellValue(
+                            row,
+                            col,
+                            valNumeric
+                            );
+                    }
+                    else
+                    {
+                        input.SetCellValue(
+                            row,
+                            col,
+                            val
+                            );
+                    }
+
                 }
             }
         }

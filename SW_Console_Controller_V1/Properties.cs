@@ -23,6 +23,7 @@ namespace SW_Console_Controller_V1
         public string DrawingType { get; set; }
         public string MasterPath { get; set; }
         public string ExecutablePath { get; set; }
+        public string OutputPath { get; set; } 
         public string[] ToolSeriesInputs { get; set; }
 
         // PRP sheet

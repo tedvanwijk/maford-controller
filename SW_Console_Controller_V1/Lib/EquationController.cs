@@ -9,11 +9,12 @@ namespace SW_Console_Controller_V1.Lib
 {
     internal static class EquationController
     {
-        public static EquationMgr Manager;
+        private static EquationMgr Manager;
         public static Dictionary<string, int> OldEquations;
 
-        static public void Initialize()
+        static public void Initialize(EquationMgr manager)
         {
+            Manager = manager;
             // the equationmanager stores both equations and global variables in one weird list, so index all variables so they can be looked up
             int equationLength = Manager.GetCount();
             OldEquations = new Dictionary<string, int>();

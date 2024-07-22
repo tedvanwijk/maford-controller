@@ -207,8 +207,11 @@ namespace SW_Console_Controller_V1.Lib
             tolerance.Type = toleranceTypeIndex;
             // figure out if the tolerance is absolute or relative (most will be absolute)
             string valueType = (string)toleranceData["VAL_TYPE"];
-            decimal minVal = decimal.Parse((string)toleranceData["MIN_VAL"], CultureInfo.InvariantCulture);
-            decimal maxVal = decimal.Parse((string)toleranceData["MAX_VAL"], CultureInfo.InvariantCulture);
+            string minValTemp = (string)toleranceData["MIN_VAL"];
+            string maxValTemp = (string)toleranceData["MAX_VAL"];
+            // some tolerances are omitted in the sheet (like cornerradius if cornerradius = 0), but C# still tries to parse them. Check if it is a value, otherwise set to 0
+            decimal minVal = decimal.Parse(decimal.TryParse(minValTemp, out _) ? minValTemp : "0", CultureInfo.InvariantCulture);
+            decimal maxVal = decimal.Parse(decimal.TryParse(maxValTemp, out _) ? maxValTemp : "0", CultureInfo.InvariantCulture);
             if (valueType == "ABS")
             {
                 decimal dimensionValue = (decimal)dimension.GetValue3(1, "")[0];

@@ -48,6 +48,8 @@ namespace SW_Console_Controller_V1.Controllers
                     ModelControllerTools.UnsuppressFeature("EM_BALL_NOSE_CUT");
                     break;
             }
+
+            if (Properties.Chipbreaker) SetChipbreakerDimensions();
         }
 
         private void UpdateBlankConfiguration()
@@ -57,6 +59,35 @@ namespace SW_Console_Controller_V1.Controllers
             SwModel.ClearSelection2(true);
             SwModel.Extension.SelectByID2("EM", "FTRFOLDER", 0, 0, 0, false, 0, null, 0);
             SwModel.EditSuppress2();
+        }
+
+        private void SetChipbreakerDimensions()
+        {
+            GeneratedProperties.ChipbreakerHelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(chipbreakerHelixAngle * Math.PI / 180);
+            EquationController.SetEquation("EMChipbreakerHelixPitch", $"{GeneratedProperties.ChipbreakerHelixPitch}in");
+
+            double chipbreakerSpacing;
+            float chipbreakerHelixAngle;
+            if (Properties.ChipbreakerAlongCuttingHelix)
+            {
+                chipbreakerHelixAngle = 80.0f;
+                (HelixFeatureData, Action<object>) featureData = ((HelixFeatureData, Action<object>))ModelControllerTools.GetFeature("EM_CHIPBREAKER_HELIX", "REFERENCECURVES");
+                var (data, apply) = featureData;
+                data.Clockwise = false;
+                apply(data);
+                chipbreakerSpacing = ((Math.PI * decimal.ToDouble(Properties.ToolDiameter)) / Properties.FluteCount) * Math.Sin((0.5f + (Properties.HelixAngle / 180.0f)) * Math.PI);
+                chipbreakerSpacing /= Math.Sin(((chipbreakerHelixAngle - Properties.HelixAngle) * Math.PI) / 180);
+
+
+            } else
+            {
+                chipbreakerHelixAngle = 70.0f;
+                chipbreakerSpacing = ((Math.PI * decimal.ToDouble(Properties.ToolDiameter)) / Properties.FluteCount) * Math.Sin((0.5f - (Properties.HelixAngle / 180.0f)) * Math.PI);
+                chipbreakerSpacing /= Math.Sin(((Properties.HelixAngle + chipbreakerHelixAngle) * Math.PI) / 180);
+            }
+
+            EquationController.SetEquation("EMChipbreakerPatternSpacing", $"{chipbreakerSpacing}in");
+            ModelControllerTools.UnsuppressFeature("EM_CHIPBREAKER_PATTERN");
         }
     }
 }

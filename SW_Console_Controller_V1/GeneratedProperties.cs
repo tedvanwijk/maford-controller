@@ -13,6 +13,7 @@ namespace SW_Console_Controller_V1
         public decimal ShankChamferAngle { get; set; }
         public decimal ShankToHeadRadius { get; set; }
         public double HelixPitch { get; set; }
+        public double ChipbreakerHelixPitch { get; set; }
 
     }
 }

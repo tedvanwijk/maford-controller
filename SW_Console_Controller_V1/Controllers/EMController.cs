@@ -1,4 +1,5 @@
 ﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using SW_Console_Controller_V1.Lib;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ namespace SW_Console_Controller_V1.Controllers
         public EMController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
             UpdateModel();
+            UpdateBlankConfiguration();
         }
 
         private void UpdateModel()
@@ -46,6 +48,15 @@ namespace SW_Console_Controller_V1.Controllers
                     ModelControllerTools.UnsuppressFeature("EM_BALL_NOSE_CUT");
                     break;
             }
-        } 
+        }
+
+        private void UpdateBlankConfiguration()
+        {
+            // select blank config, then suppress entire EM folder
+            SwModel.ShowConfiguration2("Blank");
+            SwModel.ClearSelection2(true);
+            SwModel.Extension.SelectByID2("EM", "FTRFOLDER", 0, 0, 0, false, 0, null, 0);
+            SwModel.EditSuppress2();
+        }
     }
 }

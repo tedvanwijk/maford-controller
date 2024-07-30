@@ -47,6 +47,7 @@ namespace SW_Console_Controller_V1
         public string Finish { get; set; }
         public string CompanyName { get; set; }
         public string Revision { get; set; }
+        public bool FormingViewOnDrawing { get; set; }
 
         // Reference Dimensions
         public decimal LOA { get; set; }

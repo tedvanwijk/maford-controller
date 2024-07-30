@@ -45,48 +45,45 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void UpdateDrawing()
         {
-            switch (SheetName)
-            {
-                case "NORMAL":
-                    SetNormalSheetDimensions();
-                    break;
-            }
+            Sheet mainSheet = Drawing.Sheet[SheetName];
+            mainSheet.SetTemplateName(Path.Combine(Properties.MasterPath, "drawing formats", $"{Properties.DrawingType}.slddrt"));
+            mainSheet.ReloadTemplate(true);
+            // for some reason casting this to View[] is not possible, despite the elements being Views
+            object[] viewsTemp = mainSheet.GetViews();
+            View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
+            SetTolerances(views);
+
+            // TODO: improve this: currently removes lof and bodylength dims since they are not implemented/do not apply for em
+            DrawingControllerTools.HideDimensions(SheetName, "SIDE_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
+
+            // auto align dimensions. TODO: make better spacing algorithm
+            SwModel.Extension.SelectAll();
+            SwModel.Extension.AlignDimensions(0, -0.1);
         }
 
-        private void SetViewDimensions(View[] views, string viewName)
+        private void SetTolerances(View[] views)
         {
-            // find view based on sheet type (class property) and input view name
-            string totalViewName = $"{SheetName}:{viewName}";
-            View view = views.Where(e => e.GetName2() == totalViewName).ToArray()[0];
-            double[] viewOutline = view.GetOutline();
-            object[] dimensionsTemp = view.GetDisplayDimensions();
-            //same thing as with the views array, cannot cast the array directly
-            DisplayDimension[] viewDimensions = Array.ConvertAll(dimensionsTemp, d => (DisplayDimension)d);
-            for (int i = 0; i < viewDimensions.Length; i++)
+            for (int i = 0; i < views.Length; i++)
             {
-                // Find dimension in sheet
-                Annotation annotation = viewDimensions[i].GetAnnotation();
-                string annotationName = annotation.GetName();
-                // for diameter reference dimensions: remove the ref in the name so it can be looked up
-                if (annotationName.EndsWith("_REF")) annotationName = annotationName.Replace("_REF", "");
+                View view = views[i];
+                object[] dimensionsTemp = view.GetDisplayDimensions();
+                if (dimensionsTemp == null || dimensionsTemp.Length == 0) continue;
+                // Same thing as with the views array, cannot cast the array directly
+                DisplayDimension[] viewDimensions = Array.ConvertAll(dimensionsTemp, d => (DisplayDimension)d);
 
-                DataRow[] dimensionData = DimensionPositions.Select($"TOTAL_NAME = '{annotationName}@{totalViewName}'");
-                if (dimensionData.Length != 0)
+                for (int dim = 0; dim < viewDimensions.Length; dim++)
                 {
-                    // Move dimension
-                    DrawingControllerTools.MoveDimension(annotation, viewOutline, (string)dimensionData[0]["REL_SIDE"], (double.Parse((string)dimensionData[0]["REL_X"], CultureInfo.InvariantCulture), double.Parse((string)dimensionData[0]["REL_Y"], CultureInfo.InvariantCulture)));
+                    // Find dimension in sheet
+                    Annotation annotation = viewDimensions[dim].GetAnnotation();
+                    string annotationName = annotation.GetName();
+                    // for diameter reference dimensions: remove the ref in the name so it can be looked up
+                    if (annotationName.EndsWith("_REF")) annotationName = annotationName.Replace("_REF", "");
+
+                    // Tolerance dimension
+                    DataRow[] toleranceData = ToleranceData.Select($"SOFTWARE_NAME = '{annotationName}'");
+                    if (toleranceData.Length != 0) DrawingControllerTools.SetDimensionTolerance(viewDimensions[dim], toleranceData[0]);
                 }
-
-                // Tolerance dimension
-                DataRow[] toleranceData = ToleranceData.Select($"SOFTWARE_NAME = '{annotationName}'");
-                // if the tolerance name is present in the tolerance sheet, set the tolerance
-                if (toleranceData.Length != 0) DrawingControllerTools.SetDimensionTolerance(viewDimensions[i], toleranceData[0]);
             }
-
-            DrawingControllerTools.HideDimensions(SheetName, "SIDE_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
-            SwModel.Extension.SelectAll();
-            // auto align dimensions
-            SwModel.Extension.AlignDimensions(0, -0.1);
         }
 
         private void CreateTable()
@@ -123,17 +120,6 @@ namespace SW_Console_Controller_V1.Controllers
 
                 table.Text[rowIndex, colIndex] = cellText;
             }
-        }
-
-        private void SetNormalSheetDimensions()
-        {
-            Sheet mainSheet = Drawing.Sheet[SheetName];
-            mainSheet.SetTemplateName(Path.Combine(Properties.MasterPath, "drawing formats", $"{Properties.DrawingType}.slddrt"));
-            mainSheet.ReloadTemplate(true);
-            // for some reason casting this to View[] is not possible, despite the elements being Views
-            object[] viewsTemp = mainSheet.GetViews();
-            View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
-            SetViewDimensions(views, "SIDE_VIEW");
         }
     }
 }

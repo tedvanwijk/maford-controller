@@ -63,9 +63,6 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void SetChipbreakerDimensions()
         {
-            GeneratedProperties.ChipbreakerHelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(chipbreakerHelixAngle * Math.PI / 180);
-            EquationController.SetEquation("EMChipbreakerHelixPitch", $"{GeneratedProperties.ChipbreakerHelixPitch}in");
-
             double chipbreakerSpacing;
             float chipbreakerHelixAngle;
             if (Properties.ChipbreakerAlongCuttingHelix)
@@ -85,6 +82,9 @@ namespace SW_Console_Controller_V1.Controllers
                 chipbreakerSpacing = ((Math.PI * decimal.ToDouble(Properties.ToolDiameter)) / Properties.FluteCount) * Math.Sin((0.5f - (Properties.HelixAngle / 180.0f)) * Math.PI);
                 chipbreakerSpacing /= Math.Sin(((Properties.HelixAngle + chipbreakerHelixAngle) * Math.PI) / 180);
             }
+
+            GeneratedProperties.ChipbreakerHelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(chipbreakerHelixAngle * Math.PI / 180);
+            EquationController.SetEquation("EMChipbreakerHelixPitch", $"{GeneratedProperties.ChipbreakerHelixPitch}in");
 
             EquationController.SetEquation("EMChipbreakerPatternSpacing", $"{chipbreakerSpacing}in");
             ModelControllerTools.UnsuppressFeature("EM_CHIPBREAKER_PATTERN");

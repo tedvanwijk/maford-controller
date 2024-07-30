@@ -56,6 +56,17 @@ namespace SW_Console_Controller_V1.Controllers
             // TODO: improve this: currently removes lof and bodylength dims since they are not implemented/do not apply for em
             DrawingControllerTools.HideDimensions(SheetName, "SIDE_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
 
+            if (Properties.FormingViewOnDrawing)
+            {
+                views.Where(v => v.GetName2() == "NORMAL:SIDE_VIEW").ToArray()[0].SetVisible(false, false);
+                // TODO: improve this: currently removes lof and bodylength dims since they are not implemented/do not apply for em
+                DrawingControllerTools.HideDimensions("FORMING", "FORMING_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
+            } else
+            {
+                views.Where(v => v.GetName2() == "FORMING:SIDE_VIEW").ToArray()[0].SetVisible(false, false);
+                views.Where(v => v.GetName2() == "FORMING:FORMING_VIEW").ToArray()[0].SetVisible(false, false);
+            }
+
             // auto align dimensions. TODO: make better spacing algorithm
             SwModel.Extension.SelectAll();
             SwModel.Extension.AlignDimensions(0, -0.1);

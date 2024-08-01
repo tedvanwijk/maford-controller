@@ -65,14 +65,14 @@ namespace SW_Console_Controller_V1.Controllers
             // hide LOF dimension if end mill
             if (Properties.ToolType == "End Mill")
             {
-                DrawingControllerTools.HideDimension("NORMAL", "FORMING_VIEW", "LOF@LENGTH_REF");
-                DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", "LOF@LENGTH_REF");
+                DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOF@LENGTH_REF");
+                DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOF@LENGTH_REF");
             }
 
             // hide BodyLength dimension if bodylength is equal to lof
             if (Properties.BodyLengthSameAsLOF)
             {
-                DrawingControllerTools.HideDimension("NORMAL", "FORMING_VIEW", "BodyLength@LENGTH_REF");
+                DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "BodyLength@LENGTH_REF");
                 DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", "BodyLength@LENGTH_REF");
             }
 

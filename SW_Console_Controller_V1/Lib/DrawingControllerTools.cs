@@ -18,6 +18,7 @@ namespace SW_Console_Controller_V1.Lib
         public static SelectionMgr SelectionManager;
         public static DrawingDoc Drawing;
         public static Properties Properties;
+        public static GeneratedProperties GeneratedProperties;
 
         static public void HideDimension(string sheetName, string viewName, string dimensionName, bool deleteDimension = false)
         {
@@ -129,11 +130,11 @@ namespace SW_Console_Controller_V1.Lib
                     relPos[1] = (viewOutline[1] + viewOutline[3]) / 2;
                     break;
                 case "TBODY":
-                    relPos[0] = decimal.ToDouble(Properties.LOA - Properties.BodyLength).ConvertToMeters() + viewSideSpacing + viewOutline[0];
+                    relPos[0] = decimal.ToDouble(Properties.LOA - GeneratedProperties.BodyLength).ConvertToMeters() + viewSideSpacing + viewOutline[0];
                     relPos[1] = viewOutline[3];
                     break;
                 case "BBODY":
-                    relPos[0] = decimal.ToDouble(Properties.LOA - Properties.BodyLength).ConvertToMeters() + viewSideSpacing + viewOutline[0];
+                    relPos[0] = decimal.ToDouble(Properties.LOA - GeneratedProperties.BodyLength).ConvertToMeters() + viewSideSpacing + viewOutline[0];
                     relPos[1] = viewOutline[1];
                     break;
                 case "TTOOL":

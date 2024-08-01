@@ -53,18 +53,27 @@ namespace SW_Console_Controller_V1.Controllers
             View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
             SetTolerances(views);
 
-            // TODO: improve this: currently removes lof and bodylength dims since they are not implemented/do not apply for em
-            DrawingControllerTools.HideDimensions(SheetName, "SIDE_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
-
             if (Properties.FormingViewOnDrawing)
             {
                 views.Where(v => v.GetName2() == "NORMAL:SIDE_VIEW").ToArray()[0].SetVisible(false, false);
-                // TODO: improve this: currently removes lof and bodylength dims since they are not implemented/do not apply for em
-                DrawingControllerTools.HideDimensions("FORMING", "FORMING_VIEW", new string[] { "LOF@LENGTH_REF", "BodyLength@LENGTH_REF" });
             } else
             {
                 views.Where(v => v.GetName2() == "FORMING:SIDE_VIEW").ToArray()[0].SetVisible(false, false);
                 views.Where(v => v.GetName2() == "FORMING:FORMING_VIEW").ToArray()[0].SetVisible(false, false);
+            }
+
+            // hide LOF dimension if end mill
+            if (Properties.ToolType == "End Mill")
+            {
+                DrawingControllerTools.HideDimension("NORMAL", "FORMING_VIEW", "LOF@LENGTH_REF");
+                DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", "LOF@LENGTH_REF");
+            }
+
+            // hide BodyLength dimension if bodylength is equal to lof
+            if (Properties.BodyLengthSameAsLOF)
+            {
+                DrawingControllerTools.HideDimension("NORMAL", "FORMING_VIEW", "BodyLength@LENGTH_REF");
+                DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", "BodyLength@LENGTH_REF");
             }
 
             // auto align dimensions. TODO: make better spacing algorithm

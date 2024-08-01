@@ -95,6 +95,7 @@ namespace SW_Console_Controller_V1
             DrawingControllerTools.SelectionManager = _swDrawingModel.SelectionManager;
             DrawingControllerTools.Drawing = _swDrawing;
             DrawingControllerTools.Properties = _properties;
+            DrawingControllerTools.GeneratedProperties = _generatedProperties;
             _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
@@ -133,7 +134,9 @@ namespace SW_Console_Controller_V1
             EquationController.SetEquation("LOA", $"{_properties.LOA}in");
             EquationController.SetEquation("LOC", $"{_properties.LOC}in");
             EquationController.SetEquation("LOF", $"{_properties.LOF}in");
-            EquationController.SetEquation("BodyLength", $"{_properties.BodyLength}in");
+            // note: BodyLengthSameAsLOF will be used for all tool types, regardless of if that tool type uses LOC or LOF as its unit for flute length
+            _generatedProperties.BodyLength = _properties.BodyLengthSameAsLOF ? _properties.LOF : _properties.BodyLength;
+            EquationController.SetEquation("BodyLength", $"{_generatedProperties.BodyLength}in");
 
             decimal maxDiameter = Math.Max(_properties.ShankDiameter, _properties.ToolDiameter);
             decimal maxDiameterOffset = maxDiameter + 0.5m;

@@ -23,7 +23,7 @@ namespace SW_Console_Controller_V1
         public string DrawingType { get; set; }
         public string MasterPath { get; set; }
         public string ExecutablePath { get; set; }
-        public string OutputPath { get; set; } 
+        public string OutputPath { get; set; }
         public string[] ToolSeriesInputs { get; set; }
 
         // PRP sheet
@@ -54,6 +54,7 @@ namespace SW_Console_Controller_V1
         public decimal LOF { get; set; }
         public decimal LOC { get; set; }
         public decimal BodyLength { get; set; }
+        public bool BodyLengthSameAsLOF { get; set; }
         public decimal ToolDiameter { get; set; }
 
         // General Shank

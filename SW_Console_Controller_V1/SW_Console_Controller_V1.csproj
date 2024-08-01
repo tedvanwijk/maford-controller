@@ -178,7 +178,7 @@
     <Compile Include="Controllers\ShankController.cs" />
     <Compile Include="GeneratedProperties.cs" />
     <Compile Include="Lib\DrawingControllerTools.cs" />
-    <Compile Include="Lib\EquationController.cs" />
+    <Compile Include="Controllers\EquationController.cs" />
     <Compile Include="Lib\ModelControllerTools.cs" />
     <Compile Include="Lib\ToleranceSheetProcessor.cs" />
     <Compile Include="ModelController.cs" />

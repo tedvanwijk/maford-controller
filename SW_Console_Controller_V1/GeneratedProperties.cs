@@ -14,6 +14,7 @@ namespace SW_Console_Controller_V1
         public decimal ShankToHeadRadius { get; set; }
         public double HelixPitch { get; set; }
         public double ChipbreakerHelixPitch { get; set; }
+        public decimal BodyLength { get; set; }
 
     }
 }

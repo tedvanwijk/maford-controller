@@ -145,6 +145,8 @@ namespace SW_Console_Controller_V1
             EquationController.SetEquation("ShankDiameter", $"{_properties.ShankDiameter}in");
             EquationController.SetEquation("MaxDiameter", $"{maxDiameter}in");
             EquationController.SetEquation("MaxDiameterOffset", $"{maxDiameterOffset}in");
+
+            if (maxDiameter > _properties.ToolDiameter) ModelControllerTools.UnsuppressFeature("BODY_PROFILE_CUT");
         }
     }
 }

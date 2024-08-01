@@ -92,6 +92,7 @@ namespace SW_Console_Controller_V1.Lib
 
         private void EnterInputs()
         {
+            if (Properties.ToolSeriesInputs.Length == 0) return;
             string inputRange = Properties.ToolSeriesInputRange;
             ExcelRange input = Worksheet.Cells[inputRange];
             int columnCount = input.Columns;

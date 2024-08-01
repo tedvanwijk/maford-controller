@@ -28,6 +28,9 @@ namespace SW_Console_Controller_V1.Controllers
                 case "End Mill":
                     _toolController = new EMController(Properties, GeneratedProperties, SwModel, EquationManager);
                     break;
+                case "Drill":
+                    _toolController = new DrillController(Properties, GeneratedProperties, SwModel, EquationManager);
+                    break;
             }
         }
     }

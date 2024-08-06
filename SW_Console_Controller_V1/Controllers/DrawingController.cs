@@ -111,6 +111,7 @@ namespace SW_Console_Controller_V1.Controllers
             int maxRows = 20;
             DataRow[] toleranceData = ToleranceData.Select("TOL_TYPE = 'TABLE_VAL' OR TOL_TYPE = 'TABLE_TEXT'");
             int count = toleranceData.Length;
+            if (count == 0) return;
             int cols = (int)Math.Ceiling((float)count / maxRows);
             double colWidth = (16.5 - 0.5) / cols;
             int rows = cols > 1 ? maxRows : count;

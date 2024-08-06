@@ -97,8 +97,8 @@ namespace SW_Console_Controller_V1
             DrawingControllerTools.Properties = _properties;
             DrawingControllerTools.GeneratedProperties = _generatedProperties;
             _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
-            _swModel.Save3(1, ref _saveError, ref _saveWarning);
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
+            _swModel.Save3(1, ref _saveError, ref _saveWarning);
 #if !DEBUG
             //closes both files if not in debug config
             swApp.CloseAllDocuments(false);

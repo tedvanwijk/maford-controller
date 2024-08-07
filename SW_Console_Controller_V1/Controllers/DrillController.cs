@@ -38,7 +38,7 @@ namespace SW_Console_Controller_V1.Controllers
             // TODO: implement the profile cut depth as a function of TD instead of a constant 0.01"
             double R1 = d - 0.01;
 
-            double maxFluteDepthAngle = 30;
+            double maxFluteDepthAngle = 45;
             maxFluteDepthAngle = maxFluteDepthAngle / 180 * Math.PI;
             double fluteDepth = R0 * (1 - 1 / Math.Tan(fluteAngleRad)); // x
             double maxFluteDepthDifference = fluteDepth / 2 * (1 - Math.Cos(maxFluteDepthAngle)); // Delta
@@ -53,30 +53,6 @@ namespace SW_Console_Controller_V1.Controllers
             // redefine LOC. Drills are defined with LOF and the LOC is calculated based on the flute depth and washout angle
             Properties.LOC = Properties.LOF - washoutHeight;
             EquationController.SetEquation("LOC", $"{Properties.LOC}in");
-
-            // Set the end parameter for the washout curve so the washout doesn't cut into the shank (parameters don't support SW equations)
-            SwModel.Extension.SelectByID2("DRILL_FLUTE_HELIX_WASHOUT_SKETCH", "SKETCH", 0, 0, 0, false, 0, null, 0);
-            Feature feature = SwModel.SelectionManager.GetSelectedObject6(1, -1);
-            Sketch sketch = (Sketch)feature.GetSpecificFeature2();
-            var segments = sketch.GetSketchSegments();
-            SketchSpline fluteWashoutCurve = (SketchSpline)segments[0];
-            string xeq;
-            string yeq;
-            string zeq;
-            fluteWashoutCurve.GetEquationParameters2(out xeq, out yeq, out zeq, out _, out _, out _, out _, out _, out _, out _, out _);
-            fluteWashoutCurve.SetEquationParameters2(
-                xeq,
-                yeq,
-                zeq,
-                0,
-                washoutAngle,
-                false,
-                0,
-                0,
-                0,
-                true,
-                true);
-            SwModel.ClearSelection2(true);
 
             EquationController.SetEquation("DrillPointAngle", $"{Properties.PointAngle}in");
 

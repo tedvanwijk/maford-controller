@@ -97,6 +97,13 @@ namespace SW_Console_Controller_V1.Lib
             Model.ClearSelection2(true);
         }
 
+        static public void Unsuppress(string name, string type)
+        {
+            Model.Extension.SelectByID2(name, type, 0, 0, 0, false, 0, null, 0);
+            Model.EditUnsuppress2();
+            Model.ClearSelection2(true);
+        }
+
         public static void Apply(this Feature feature, object featureData, bool activateFeature)
         {
             feature.ModifyDefinition(featureData, Model, null);

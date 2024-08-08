@@ -36,19 +36,24 @@ namespace SW_Console_Controller_V1.Controllers
             double d = decimal.ToDouble(Properties.ToolDiameter / 2);
             double R0 = d;
             // TODO: implement the profile cut depth as a function of TD instead of a constant 0.01"
-            double R1 = d - 0.01;
+            //double R1 = d - 0.01;
+            double R1 = d;
 
             double maxFluteDepthAngle = 45;
             maxFluteDepthAngle = maxFluteDepthAngle / 180 * Math.PI;
             double fluteDepth = R0 * (1 - 1 / Math.Tan(fluteAngleRad)); // x
             double maxFluteDepthDifference = fluteDepth / 2 * (1 - Math.Cos(maxFluteDepthAngle)); // Delta
-            double maxFluteDepthAngleR2 = Math.Atan2(fluteDepth / 2 * Math.Sin(maxFluteDepthAngle), 2 * R0 - fluteDepth + maxFluteDepthDifference); // alpha
-            double R2 = Math.Sqrt(Math.Pow(fluteDepth / 2 * (1 - Math.Cos(maxFluteDepthAngle)) + (1 + 1 / Math.Tan(fluteAngleRad)) * R0, 2) + Math.Pow(fluteDepth / 2 * Math.Sin(maxFluteDepthAngle), 2));
+            double maxFluteDepthAngleY = fluteDepth / 2 * Math.Sin(maxFluteDepthAngle);
+            double maxFluteDepthAngleX = 2 * R0 - fluteDepth + maxFluteDepthDifference;
+            double maxFluteDepthAngleR2 = Math.Atan2(maxFluteDepthAngleY, maxFluteDepthAngleX); // alpha
+            double maxFluteDepthAngleR2Degrees = maxFluteDepthAngleR2 * 180 / Math.PI + 270;
+            //double R2 = Math.Sqrt(Math.Pow(fluteDepth / 2 * (1 - Math.Cos(maxFluteDepthAngle)) + (1 + 1 / Math.Tan(fluteAngleRad)) * R0, 2) + Math.Pow(fluteDepth / 2 * Math.Sin(maxFluteDepthAngle), 2));
+            double R2 = Math.Sqrt(Math.Pow(maxFluteDepthAngleY, 2) + Math.Pow(maxFluteDepthAngleX, 2));
 
             double washoutHeightFactor = (Math.Pow(d, 2) + Math.Pow(R1, 2) - Math.Pow(R2, 2)) / (2 * d);
             double washoutHeightNumerator = Math.Sqrt(Math.Pow(R1, 2) - Math.Pow(washoutHeightFactor, 2));
             double washoutAngle = Math.Atan(washoutHeightNumerator / washoutHeightFactor);
-            washoutAngle = Math.Asin(R0 * Math.Sin(washoutAngle) / R2) + maxFluteDepthAngleR2;
+            washoutAngle = Math.Asin(R1 * Math.Sin(washoutAngle) / R2) + maxFluteDepthAngleR2;
             decimal washoutHeight = (decimal)(2 * GeneratedProperties.HelixPitch * washoutAngle / (2 * Math.PI));
             // redefine LOC. Drills are defined with LOF and the LOC is calculated based on the flute depth and washout angle
             Properties.LOC = Properties.LOF - washoutHeight;
@@ -56,7 +61,11 @@ namespace SW_Console_Controller_V1.Controllers
 
             EquationController.SetEquation("DrillPointAngle", $"{Properties.PointAngle}in");
 
+            EquationController.SetEquation("DrillWashoutHelixGuideDiameter", $"{R2 * 2}in");
+            EquationController.SetEquation("DrillWashoutHelixGuideStartingAngle", $"{(int)Math.Round(maxFluteDepthAngleR2Degrees)}deg");
+
             ModelControllerTools.UnsuppressFeature("DRILL_POINT_ANGLE_CUT");
+            ModelControllerTools.UnsuppressFeature("DRILL_WASHOUT_PATTERN");
             ModelControllerTools.UnsuppressFeature("DRILL_FLUTE_PATTERN");
         }
 

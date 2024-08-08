@@ -18,9 +18,9 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void UpdateModel()
         {
+            decimal pointHeight = (decimal)((Properties.ToolDiameter / 2m) / (decimal)Math.Tan((decimal.ToDouble(Properties.PointAngle) / 2) / 180 * Math.PI));
             if (!Properties.LOFFromPoint)
             {
-                decimal pointHeight = (decimal)((Properties.ToolDiameter / 2m) / (decimal)Math.Tan((decimal.ToDouble(Properties.PointAngle) / 2) / 180 * Math.PI));
                 Properties.LOF = Properties.LOF + pointHeight;
                 if (Properties.BodyLengthSameAsLOF)
                 {
@@ -54,7 +54,7 @@ namespace SW_Console_Controller_V1.Controllers
             double washoutHeightNumerator = Math.Sqrt(Math.Pow(R1, 2) - Math.Pow(washoutHeightFactor, 2));
             double washoutAngle = Math.Atan(washoutHeightNumerator / washoutHeightFactor);
             washoutAngle = Math.Asin(R1 * Math.Sin(washoutAngle) / R2) + maxFluteDepthAngleR2;
-            decimal washoutHeight = (decimal)(2 * GeneratedProperties.HelixPitch * washoutAngle / (2 * Math.PI));
+            decimal washoutHeight = (decimal)(GeneratedProperties.HelixPitch * washoutAngle / (2 * Math.PI));
             // redefine LOC. Drills are defined with LOF and the LOC is calculated based on the flute depth and washout angle
             Properties.LOC = Properties.LOF - washoutHeight;
             EquationController.SetEquation("LOC", $"{Properties.LOC}in");
@@ -63,6 +63,10 @@ namespace SW_Console_Controller_V1.Controllers
 
             EquationController.SetEquation("DrillWashoutHelixGuideDiameter", $"{R2 * 2}in");
             EquationController.SetEquation("DrillWashoutHelixGuideStartingAngle", $"{(int)Math.Round(maxFluteDepthAngleR2Degrees)}deg");
+
+            double pointToLOCRotation = ((decimal.ToDouble(Properties.LOC) - decimal.ToDouble(pointHeight)) / GeneratedProperties.HelixPitch * 360) % 360;
+            EquationController.SetEquation("DrillLOCToPointRotation", $"{pointToLOCRotation}");
+            EquationController.SetEquation("DrillPointHeight", $"{pointHeight}in");
 
             ModelControllerTools.UnsuppressFeature("DRILL_POINT_ANGLE_CUT");
             ModelControllerTools.UnsuppressFeature("DRILL_WASHOUT_PATTERN");

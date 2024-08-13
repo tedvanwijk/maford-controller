@@ -76,6 +76,21 @@ namespace SW_Console_Controller_V1.Controllers
                 DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", "BodyLength@LENGTH_REF");
             }
 
+            if (Properties.ToolType == "Drill")
+            {
+                DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOC@LENGTH_REF");
+                DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOC@LENGTH_REF");
+                if (Properties.LOFFromPoint)
+                {
+                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOFToPointEnd@LENGTH_REF");
+                    DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOFToPointEnd@LENGTH_REF");
+                } else
+                {
+                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOF@LENGTH_REF");
+                    DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOF@LENGTH_REF");
+                }
+            }
+
             // auto align dimensions. TODO: make better spacing algorithm
             SwModel.Extension.SelectAll();
             SwModel.Extension.AlignDimensions(0, -0.1);

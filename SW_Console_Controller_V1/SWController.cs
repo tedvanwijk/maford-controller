@@ -86,7 +86,9 @@ namespace SW_Console_Controller_V1
             _shankController = new ShankController(properties, _generatedProperties, _swModel, _equationManager);
             _bodyController = new BodyController(properties, _generatedProperties, _swModel, _equationManager);
             _swModel.ForceRebuild3(false);
-            
+            // Switch to default config so fluting is shown if user opens part file
+            _swModel.ShowConfiguration2("Default");
+
 
             _swDrawingModel = swApp.OpenDoc6(newDrawingPath, 3, 1, "", ref _drawingError, ref _drawingWarning);
             _swDrawing = (DrawingDoc)_swDrawingModel;

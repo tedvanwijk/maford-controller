@@ -75,6 +75,11 @@ namespace SW_Console_Controller_V1.Controllers
             if (Properties.CoolantThrough)
             {
                 ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_PATTERN");
+                double coolantAngle = 22.5;
+                EquationController.SetEquation("DrillCoolantAngle", coolantAngle.ToString());
+                double coolantRotation = (decimal.ToDouble(Properties.LOA - Properties.LOC - 2 * 0.08m * Properties.ToolDiameter) / GeneratedProperties.HelixPitch * 360 + coolantAngle) % 360;
+                EquationController.SetEquation("DrillCoolantExitAngle", coolantRotation.ToString());
+                ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_SLOT_CUT");
             }
         }
 

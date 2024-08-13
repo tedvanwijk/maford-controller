@@ -71,6 +71,11 @@ namespace SW_Console_Controller_V1.Controllers
             ModelControllerTools.UnsuppressFeature("DRILL_POINT_ANGLE_CUT");
             ModelControllerTools.UnsuppressFeature("DRILL_WASHOUT_PATTERN");
             ModelControllerTools.UnsuppressFeature("DRILL_FLUTE_PATTERN");
+
+            if (Properties.CoolantThrough)
+            {
+                ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_PATTERN");
+            }
         }
 
         private void UpdateBlankConfiguration()

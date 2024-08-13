@@ -69,7 +69,6 @@ namespace SW_Console_Controller_V1
         // General Tool
         public int HelixAngle { get; set; }
         public int FluteCount { get; set; }
-        public bool CoolantThrough { get; set; }
 
         // EM
         public string CornerStyle { get; set; }
@@ -82,5 +81,6 @@ namespace SW_Console_Controller_V1
         // Drill
         public decimal PointAngle { get; set; }
         public bool LOFFromPoint { get; set; }
+        public bool CoolantThrough { get; set; }
     }
 }

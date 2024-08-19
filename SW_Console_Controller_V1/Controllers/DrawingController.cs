@@ -82,8 +82,8 @@ namespace SW_Console_Controller_V1.Controllers
                 DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOC@LENGTH_REF");
                 if (Properties.LOFFromPoint)
                 {
-                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOFToPointEnd@LENGTH_REF");
-                    DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOFToPointEnd@LENGTH_REF");
+                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOFToPointEnd@DRILL_POINT_ANGLE_SKETCH");
+                    DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOFToPointEnd@DRILL_POINT_ANGLE_SKETCH");
                 } else
                 {
                     DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOF@LENGTH_REF");

@@ -17,9 +17,9 @@ namespace SW_Console_Controller_V1.Lib
         // TODO: index all features first, then deselect them all. That way, we don't need to change the selection all the time
         // Doesn't seem like there is a way to do this, but still something to look into
 
-        static public void SelectFeature(string name, string type)
+        static public void SelectFeature(string name, string type, bool append = false, int mark = 0)
         {
-            Model.Extension.SelectByID2(name, type, 0, 0, 0, false, 0, null, 0);
+            Model.Extension.SelectByID2(name, type, 0, 0, 0, append, mark, null, 0);
         }
         
         static public void SetSketchDimension(string sketchName, string dimensionName, decimal dimension)

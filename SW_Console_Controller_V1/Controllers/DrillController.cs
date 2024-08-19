@@ -81,6 +81,12 @@ namespace SW_Console_Controller_V1.Controllers
                 EquationController.SetEquation("DrillCoolantExitAngle", coolantRotation.ToString());
                 ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_SLOT_CUT");
             }
+
+            if (Properties.StepTool)
+            {
+                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
+                stepController.CreateSteps();
+            }
         }
 
         private void UpdateBlankConfiguration()

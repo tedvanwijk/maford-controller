@@ -177,7 +177,9 @@
     <Compile Include="Controllers\DrillController.cs" />
     <Compile Include="Controllers\EMController.cs" />
     <Compile Include="Controllers\ShankController.cs" />
+    <Compile Include="Controllers\StepController.cs" />
     <Compile Include="GeneratedProperties.cs" />
+    <Compile Include="Models\Step.cs" />
     <Compile Include="Lib\DrawingControllerTools.cs" />
     <Compile Include="Controllers\EquationController.cs" />
     <Compile Include="Lib\ModelControllerTools.cs" />
@@ -193,8 +195,6 @@
     <None Include="packages.config" />
     <None Include="SampleData.json" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

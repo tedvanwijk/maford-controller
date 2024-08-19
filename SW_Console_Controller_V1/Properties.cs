@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SW_Console_Controller_V1.Models;
 
 namespace SW_Console_Controller_V1
 {
@@ -82,5 +83,9 @@ namespace SW_Console_Controller_V1
         public decimal PointAngle { get; set; }
         public bool LOFFromPoint { get; set; }
         public bool CoolantThrough { get; set; }
+
+        // Steps
+        public bool StepTool { get; set; }
+        public Step[] Steps { get; set; }
     }
 }

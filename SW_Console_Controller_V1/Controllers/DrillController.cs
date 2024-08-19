@@ -90,6 +90,8 @@ namespace SW_Console_Controller_V1.Controllers
             SwModel.ClearSelection2(true);
             SwModel.Extension.SelectByID2("DRILL", "FTRFOLDER", 0, 0, 0, false, 0, null, 0);
             SwModel.EditSuppress2();
+            // point angle cut is part of the forming drawing but also in drill folder
+            ModelControllerTools.UnsuppressFeature("DRILL_POINT_ANGLE_CUT");
         }
     }
 }

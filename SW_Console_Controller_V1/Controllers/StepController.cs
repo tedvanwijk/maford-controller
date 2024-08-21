@@ -25,7 +25,7 @@ namespace SW_Console_Controller_V1.Controllers
             // If later on there is some stuff after this happens that modifies/rebuilds the model maybe look into a different approach. Prefer not to 
             // set the relations in the new sketch again, because I suspect that that will be significantly slower. Maybe something with sketch blocks?
             // E.g. make 1 sketch block containing all steps with external relations in a higher sketch and make 1 step cut feature.
-            SwModel.ForceRebuild3(false);
+            //SwModel.ForceRebuild3(false);
 
             for (int i = 0; i < Properties.Steps.Length; i++)
             {
@@ -51,6 +51,32 @@ namespace SW_Console_Controller_V1.Controllers
                 string sketchName = $"STEP_{i}_SKETCH";
                 sketchFeature.Name = sketchName;
                 sketchFeature.Select2(false, 0);
+
+                // Reset sketch relations
+                SwModel.EditSketch();
+
+                ModelControllerTools.SelectFeature("LOA_REF_PLANE", "PLANE");
+                ModelControllerTools.SelectFeature($"Line45@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                ModelControllerTools.SelectFeature("MAX_D_OFFSET_REF_PLANE", "PLANE");
+                ModelControllerTools.SelectFeature($"Line44@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                ModelControllerTools.SelectFeature("LOF_REF_PLANE", "PLANE");
+                ModelControllerTools.SelectFeature($"Line43@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "EXTSKETCHSEGMENT");
+                ModelControllerTools.SelectFeature($"Line46@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                SwModel.SketchManager.InsertSketch(false);
+
+                // Select revolving axis and sketch and add feature
+                ModelControllerTools.SelectFeature(sketchName, "SKETCH", false, 0);
+                ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "SKETCHSEGMENT", true, 4);
+
                 ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "SKETCHSEGMENT", true, 4);
                 Feature cut = SwModel.FeatureManager.FeatureRevolveCut2(
                     2 * Math.PI,

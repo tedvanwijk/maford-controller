@@ -31,11 +31,19 @@ namespace SW_Console_Controller_V1.Controllers
             {
                 Step currentStep = Properties.Steps[i];
                 decimal outerDiameter;
+
+                // if last step, outerdiameter is equal to the tool diameter
                 if (i == Properties.Steps.Length - 1) outerDiameter = Properties.ToolDiameter;
                 else outerDiameter = Properties.Steps[i + 1].Diameter;
+
+                // if lof from point is disabled, adjust length of step
+                decimal length;
+                if (Properties.LOFFromPoint) length = currentStep.Length;
+                else length = currentStep.Length + GeneratedProperties.PointHeight;
+
                 decimal[] dimensions = new decimal[]
                 {
-                    currentStep.Length,
+                    length,
                     currentStep.Angle,
                     currentStep.Diameter,
                     outerDiameter
@@ -61,10 +69,6 @@ namespace SW_Console_Controller_V1.Controllers
 
                 ModelControllerTools.SelectFeature("MAX_D_OFFSET_REF_PLANE", "PLANE");
                 ModelControllerTools.SelectFeature($"Line44@{sketchName}", "SKETCHSEGMENT", true);
-                SwModel.SketchAddConstraints("sgCOLINEAR");
-
-                ModelControllerTools.SelectFeature("LOF_REF_PLANE", "PLANE");
-                ModelControllerTools.SelectFeature($"Line43@{sketchName}", "SKETCHSEGMENT", true);
                 SwModel.SketchAddConstraints("sgCOLINEAR");
 
                 ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "EXTSKETCHSEGMENT");

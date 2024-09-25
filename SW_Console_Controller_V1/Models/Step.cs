@@ -11,5 +11,8 @@ namespace SW_Console_Controller_V1.Models
         public decimal Length;
         public decimal Diameter;
         public decimal Angle;
+        public string Type;
+        public decimal RTop;
+        public decimal RBottom;
     }
 }

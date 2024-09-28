@@ -17,6 +17,8 @@ namespace SW_Console_Controller_V1.Controllers
         public void CreateSteps()
         {
             EquationController.SetEquation("TopStepDiameter", $"{Properties.Steps[0].Diameter}in");
+            ModelControllerTools.Unsuppress("STEP_SKETCH_ANGLE", "SKETCH");
+            ModelControllerTools.Unsuppress("STEP_SKETCH_RADIUS", "SKETCH");
 
             // rebuild before copying step sketch. When copying the sketch, it loses its external relations, but it is positioned the same as the copied sketch.
             // So, we have to make sure that the model does not change after creating the sketch cuts, which is why we rebuild in advance.

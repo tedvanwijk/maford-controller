@@ -38,7 +38,7 @@ namespace SW_Console_Controller_V1
         private BodyController _bodyController;
         private DrawingController _drawingController;
 
-        public SWController(Properties properties, SldWorks swApp)
+        public SWController(Properties properties, SldWorks swApp, string input)
         {
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
@@ -47,6 +47,10 @@ namespace SW_Console_Controller_V1
             string masterPath = _properties.MasterPath;
             string outputPath = _properties.OutputPath;
             Directory.CreateDirectory(Path.Combine(outputPath, _properties.SpecificationNumber.ToString()));
+
+            // Write data to json file in dir, for debug and/or issue solving purposes
+            System.IO.File.WriteAllText(Path.Combine(outputPath, _properties.SpecificationNumber.ToString(), "data.json"), input);
+
             string oldDocumentPath = Path.Combine(masterPath, "TOOL_V2.SLDPRT");
             string newDocumentPath = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/{_properties.PartFileName}.SLDPRT");
             string oldDrawingPath = Path.Combine(masterPath, "DRAWING_V2.SLDDRW");

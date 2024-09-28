@@ -25,7 +25,7 @@ namespace SW_Console_Controller_V1
 
                 Properties properties = JsonConvert.DeserializeObject<Properties>(input);
                 SldWorks swApp = new SldWorks();
-                SWController controller = new SWController(properties, swApp);
+                SWController controller = new SWController(properties, swApp, input);
                 Console.WriteLine("Done!");
                 Console.ReadLine();
             }
@@ -36,9 +36,8 @@ namespace SW_Console_Controller_V1
                 {
                     string input = Encoding.UTF8.GetString(Convert.FromBase64String(args[0]));
                     Properties properties = JsonConvert.DeserializeObject<Properties>(input);
-                    System.IO.File.WriteAllText(Path.Combine(Path.GetDirectoryName(properties.ExecutablePath), "lastData.json"), input);
                     SldWorks swApp = new SldWorks();
-                    SWController controller = new SWController(properties, swApp);
+                    SWController controller = new SWController(properties, swApp, input);
                     Console.WriteLine("Done!");
                 }
                 catch (Exception ex)

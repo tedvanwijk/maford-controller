@@ -16,8 +16,7 @@ namespace SW_Console_Controller_V1.Controllers
         }
         public void CreateSteps()
         {
-            EquationController.SetEquation("DrillCoolantOffset", $"0.3125 * {Properties.Steps[0].Diameter}");
-            EquationController.SetEquation("DrillCoolantDiameter", $"0.08 * {Properties.Steps[0].Diameter}");
+            EquationController.SetEquation("TopStepDiameter", $"{Properties.Steps[0].Diameter}in");
 
             // rebuild before copying step sketch. When copying the sketch, it loses its external relations, but it is positioned the same as the copied sketch.
             // So, we have to make sure that the model does not change after creating the sketch cuts, which is why we rebuild in advance.

@@ -99,7 +99,7 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void CreateStraightFluting()
         {
-            decimal washoutHeight = 0.6m * Properties.LOF;
+            decimal washoutHeight = 0.4m * Properties.LOF;
             Properties.LOC = Properties.LOF - washoutHeight;
             EquationController.SetEquation("LOC", $"{Properties.LOC}in");
 

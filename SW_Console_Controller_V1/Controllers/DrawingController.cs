@@ -23,10 +23,11 @@ namespace SW_Console_Controller_V1.Controllers
         {
             Drawing = drawing;
             ToleranceProcessor = new ToleranceSheetProcessor(properties);
-            ToleranceData = ToleranceProcessor.GetToleranceData();
+            if (Properties.ToolSeriesFileName != "" && Properties.ToolSeriesInputRange != "" && Properties.ToolSeriesOutputRange != "") ToleranceData = ToleranceProcessor.GetToleranceData();
+            
             LoadTables();
             UpdateDrawing();
-            CreateTable();
+            if (ToleranceData != null) CreateTable();
         }
 
         private void LoadTables()
@@ -51,7 +52,7 @@ namespace SW_Console_Controller_V1.Controllers
             // for some reason casting this to View[] is not possible, despite the elements being Views
             object[] viewsTemp = mainSheet.GetViews();
             View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
-            SetTolerances(views);
+            if (ToleranceData != null) SetTolerances(views);
 
             if (Properties.FormingViewOnDrawing)
             {

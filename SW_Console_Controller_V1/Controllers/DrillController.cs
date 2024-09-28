@@ -34,7 +34,7 @@ namespace SW_Console_Controller_V1.Controllers
             }
 
             if (!Properties.StraightFlute) CreateFluting(pointHeight);
-            else CreateStraightFluting();
+            else CreateStraightFluting(pointHeight);
 
             if (Properties.StepTool)
             {
@@ -97,11 +97,13 @@ namespace SW_Console_Controller_V1.Controllers
             }
         }
 
-        private void CreateStraightFluting()
+        private void CreateStraightFluting(decimal pointHeight)
         {
             decimal washoutHeight = 0.4m * Properties.LOF;
             Properties.LOC = Properties.LOF - washoutHeight;
             EquationController.SetEquation("LOC", $"{Properties.LOC}in");
+            EquationController.SetEquation("DrillPointAngle", $"{Properties.PointAngle}in");
+            EquationController.SetEquation("DrillPointHeight", $"{pointHeight}in");
 
             // Profile depth calculation
             double smallestStepDiameter;

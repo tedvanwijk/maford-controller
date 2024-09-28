@@ -134,5 +134,10 @@ namespace SW_Console_Controller_V1.Lib
         {
             return input / 39.3701;
         }
+
+        public static double ConvertToRad(this double input)
+        {
+            return input * Math.PI / 180;
+        }
     }
 }

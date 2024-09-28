@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace SW_Console_Controller_V1.Controllers
 {
@@ -32,6 +33,18 @@ namespace SW_Console_Controller_V1.Controllers
                 EquationController.SetEquation("LOF", $"{Properties.LOF}in");
             }
 
+            if (!Properties.StraightFlute) CreateFluting(pointHeight);
+            else CreateStraightFluting();
+
+            if (Properties.StepTool)
+            {
+                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
+                stepController.CreateSteps();
+            }
+        }
+
+        private void CreateFluting(decimal pointHeight)
+        {
             double fluteAngle = 85;
             double fluteAngleRad = fluteAngle / 180 * Math.PI;
             double d = decimal.ToDouble(Properties.ToolDiameter / 2);
@@ -82,12 +95,32 @@ namespace SW_Console_Controller_V1.Controllers
                 EquationController.SetEquation("DrillCoolantExitAngle", coolantRotation.ToString());
                 ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_SLOT_CUT");
             }
+        }
 
-            if (Properties.StepTool)
-            {
-                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
-                stepController.CreateSteps();
-            }
+        private void CreateStraightFluting()
+        {
+            decimal washoutHeight = 0.6m * Properties.LOF;
+            Properties.LOC = Properties.LOF - washoutHeight;
+            EquationController.SetEquation("LOC", $"{Properties.LOC}in");
+
+            // Profile depth calculation
+            double smallestStepDiameter;
+            if (Properties.StepTool) smallestStepDiameter = decimal.ToDouble(Properties.Steps[0].Diameter);
+            else smallestStepDiameter = decimal.ToDouble(Properties.ToolDiameter);
+
+            double offset = 0.07 * smallestStepDiameter;
+            double insideRadius = 0.1742160 * smallestStepDiameter;
+            double insideAngle = 100;
+            insideAngle = insideAngle.ConvertToRad();
+            double radius = decimal.ToDouble(Properties.ToolDiameter / 2);
+
+            double delta = offset + insideRadius * (1 - Math.Cos(Math.PI - insideAngle));
+            double depth = radius * Math.Sin(Math.Acos(-1 / radius * delta)) - offset / Math.Cos(Math.Abs(Math.PI / 2 - insideAngle)) + Math.Tan(Math.Abs(90 - insideAngle)) * delta;
+
+            EquationController.SetEquation("DrillStraightFluteProfileDepth", $"{depth}in");
+
+            ModelControllerTools.UnsuppressFeature("DRILL_POINT_ANGLE_CUT");
+            ModelControllerTools.UnsuppressFeature("DRILL_STRAIGHT_FLUTE_PATTERN");
         }
 
         private void UpdateBlankConfiguration()

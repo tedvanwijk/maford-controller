@@ -173,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\BodyController.cs" />
+    <Compile Include="Controllers\CenterController.cs" />
     <Compile Include="Controllers\DrawingController.cs" />
     <Compile Include="Controllers\DrillController.cs" />
     <Compile Include="Controllers\EMController.cs" />

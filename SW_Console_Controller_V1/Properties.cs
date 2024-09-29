@@ -88,5 +88,22 @@ namespace SW_Console_Controller_V1
         // Steps
         public bool StepTool { get; set; }
         public Step[] Steps { get; set; }
+
+        // Center holes
+        public bool UpperHole { get; set; }
+        public bool LowerHole { get; set; }
+        public bool UpperBoss { get; set; }
+        public decimal A1Upper { get; set; }
+        public decimal A1Lower { get; set; }
+        public decimal A2Upper { get; set; }
+        public decimal A2Lower { get; set; }
+        public decimal D1Upper { get; set; }
+        public decimal D2Upper { get; set; }
+        public decimal D1Lower { get; set; }
+        public decimal D2Lower { get; set; }
+        public decimal LLower { get; set; }
+        public decimal LUpper { get; set; }
+        public decimal BossDiameter { get; set; }
+        public decimal BossLength { get; set; }
     }
 }

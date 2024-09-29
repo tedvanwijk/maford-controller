@@ -32,6 +32,10 @@ namespace SW_Console_Controller_V1.Controllers
                     _toolController = new DrillController(Properties, GeneratedProperties, SwModel, EquationManager);
                     break;
             }
+
+            // TODO: check if this should happen for all tool types
+            CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);
+            centerController.CreateCenterHoles();
         }
     }
 }

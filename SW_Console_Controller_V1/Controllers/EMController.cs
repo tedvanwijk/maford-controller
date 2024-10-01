@@ -14,6 +14,12 @@ namespace SW_Console_Controller_V1.Controllers
         public EMController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
             UpdateModel();
+            if (Properties.CoolantHole)
+            {
+                // TODO: enable CoolantPatternAlongFluting here as it is always going to be the case for end mills
+                CoolantController coolantController = new CoolantController(Properties, GeneratedProperties, SwModel, EquationManager);
+                coolantController.CreateCoolantHoles();
+            }
             UpdateBlankConfiguration();
         }
 

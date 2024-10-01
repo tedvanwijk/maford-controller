@@ -105,5 +105,18 @@ namespace SW_Console_Controller_V1
         public decimal LUpper { get; set; }
         public decimal BossDiameter { get; set; }
         public decimal BossLength { get; set; }
+
+        // Coolant
+        public bool CoolantHole { get; set; }
+        public decimal CoolantHoleAngle { get; set; }
+        public decimal CoolantHoleLength { get; set; }
+        public decimal CoolantHoleDiameter { get; set; }
+        public int CoolantHoleCount { get; set; }
+        public decimal CoolantHoleRotation { get; set; }
+        public decimal CoolantFeedDiameter { get; set; }
+        public int CoolantPatternCount { get; set; }
+        public decimal CoolantPatternAngle { get; set; }
+        public bool CoolantPatternAlongFluting { get; set; }
+        public decimal CoolantPatternLength { get; set; }
     }
 }

@@ -113,26 +113,26 @@ namespace SW_Console_Controller_V1
 
         private void SetPrpData()
         {
-            _propertyManager.Add3("PartNo", 30, _properties.PartNumber, 2);
-            _propertyManager.Add3("DESCRIPTION", 30, _properties.Description, 2);
-            _propertyManager.Add3("DrawnBy", 30, _properties.DrawnBy, 2);
-            _propertyManager.Add3("M.A.Ford NUMBER", 30, _properties.MAFordNumber, 2);
-            _propertyManager.Add3("QUOTE", 30, _properties.Quote, 2);
-            _propertyManager.Add3("CUSTOMER", 30, _properties.Customer, 2);
-            _propertyManager.Add3("END USER", 30, _properties.EndUser, 2);
-            _propertyManager.Add3("COATER", 30, _properties.Coater, 2);
-            _propertyManager.Add3("COATING", 30, _properties.Coating, 2);
-            _propertyManager.Add3("LABEL LINE 1", 30, _properties.LabelLine1, 2);
-            _propertyManager.Add3("LABEL LINE 2", 30, _properties.LabelLine2, 2);
-            _propertyManager.Add3("MARKING LINE 1", 30, _properties.MarkingLine1, 2);
-            _propertyManager.Add3("MARKING LINE 2", 30, _properties.MarkingLine2, 2);
-            _propertyManager.Add3("PRE TREATMENT", 30, _properties.PreTreatment, 2);
-            _propertyManager.Add3("PRE TREATMENT MACHINE", 30, _properties.PreTreatmentMachine, 2);
-            _propertyManager.Add3("POST TREATMENT", 30, _properties.PostTreatment, 2);
-            _propertyManager.Add3("POST TREATMENT MACHINE", 30, _properties.PostTreatmentMachine, 2);
-            _propertyManager.Add3("Finish", 30, _properties.Finish, 2);
-            _propertyManager.Add3("COMPANYNAME", 30, _properties.CompanyName, 2);
-            _propertyManager.Add3("Revision", 30, _properties.Revision, 2);
+            _propertyManager.Add3("PartNo", 30, _properties.Prp.PartNumber, 2);
+            _propertyManager.Add3("DESCRIPTION", 30, _properties.Prp.Description, 2);
+            _propertyManager.Add3("DrawnBy", 30, _properties.Prp.DrawnBy, 2);
+            _propertyManager.Add3("M.A.Ford NUMBER", 30, _properties.Prp.MAFordNumber, 2);
+            _propertyManager.Add3("QUOTE", 30, _properties.Prp.Quote, 2);
+            _propertyManager.Add3("CUSTOMER", 30, _properties.Prp.Customer, 2);
+            _propertyManager.Add3("END USER", 30, _properties.Prp.EndUser, 2);
+            _propertyManager.Add3("COATER", 30, _properties.Prp.Coater, 2);
+            _propertyManager.Add3("COATING", 30, _properties.Prp.Coating, 2);
+            _propertyManager.Add3("LABEL LINE 1", 30, _properties.Prp.LabelLine1, 2);
+            _propertyManager.Add3("LABEL LINE 2", 30, _properties.Prp.LabelLine2, 2);
+            _propertyManager.Add3("MARKING LINE 1", 30, _properties.Prp.MarkingLine1, 2);
+            _propertyManager.Add3("MARKING LINE 2", 30, _properties.Prp.MarkingLine2, 2);
+            _propertyManager.Add3("PRE TREATMENT", 30, _properties.Prp.PreTreatment, 2);
+            _propertyManager.Add3("PRE TREATMENT MACHINE", 30, _properties.Prp.PreTreatmentMachine, 2);
+            _propertyManager.Add3("POST TREATMENT", 30, _properties.Prp.PostTreatment, 2);
+            _propertyManager.Add3("POST TREATMENT MACHINE", 30, _properties.Prp.PostTreatmentMachine, 2);
+            _propertyManager.Add3("Finish", 30, _properties.Prp.Finish, 2);
+            _propertyManager.Add3("COMPANYNAME", 30, _properties.Prp.CompanyName, 2);
+            _propertyManager.Add3("Revision", 30, _properties.Prp.Revision, 2);
         }
 
         private void SetReferences()

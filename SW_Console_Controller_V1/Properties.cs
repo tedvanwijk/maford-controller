@@ -28,27 +28,7 @@ namespace SW_Console_Controller_V1
         public string[] ToolSeriesInputs { get; set; }
 
         // PRP sheet
-        public string PartNumber { get; set; }
-        public string Description { get; set; }
-        public string DrawnBy { get; set; }
-        public string MAFordNumber { get; set; }
-        public string Quote { get; set; }
-        public string Customer { get; set; }
-        public string EndUser { get; set; }
-        public string Coater { get; set; }
-        public string Coating { get; set; }
-        public string LabelLine1 { get; set; }
-        public string LabelLine2 { get; set; }
-        public string MarkingLine1 { get; set; }
-        public string MarkingLine2 { get; set; }
-        public string PreTreatment { get; set; }
-        public string PreTreatmentMachine { get; set; }
-        public string PostTreatment { get; set; }
-        public string PostTreatmentMachine { get; set; }
-        public string Finish { get; set; }
-        public string CompanyName { get; set; }
-        public string Revision { get; set; }
-        public bool FormingViewOnDrawing { get; set; }
+        public Prp Prp { get; set; }
 
         // Reference Dimensions
         public decimal LOA { get; set; }

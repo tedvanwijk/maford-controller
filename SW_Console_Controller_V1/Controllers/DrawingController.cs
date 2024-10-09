@@ -54,7 +54,7 @@ namespace SW_Console_Controller_V1.Controllers
             View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
             if (ToleranceData != null) SetTolerances(views);
 
-            if (Properties.FormingViewOnDrawing)
+            if (Properties.Prp.FormingViewOnDrawing)
             {
                 views.Where(v => v.GetName2() == "NORMAL:SIDE_VIEW").ToArray()[0].SetVisible(false, false);
             } else
@@ -104,7 +104,7 @@ namespace SW_Console_Controller_V1.Controllers
             for (int i = 0; i < Properties.Steps.Length; i++)
             {
                 SwModel.ClearSelection2(true);
-                if (Properties.FormingViewOnDrawing) SwModel.Extension.SelectByID2($"STEP_{i}_CUT@{Properties.PartFileName}@FORMING:FORMING_VIEW", "BODYFEATURE", 0, 0, 0, true, 0, null, 0);
+                if (Properties.Prp.FormingViewOnDrawing) SwModel.Extension.SelectByID2($"STEP_{i}_CUT@{Properties.PartFileName}@FORMING:FORMING_VIEW", "BODYFEATURE", 0, 0, 0, true, 0, null, 0);
                 else SwModel.Extension.SelectByID2($"STEP_{i}_CUT@{Properties.PartFileName}@NORMAL:SIDE_VIEW", "BODYFEATURE", 0, 0, 0, true, 0, null, 0);
                 Drawing.InsertModelDimensions(2);
 

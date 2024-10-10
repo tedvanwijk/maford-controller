@@ -13,6 +13,7 @@ namespace SW_Console_Controller_V1.Models
         public decimal CoolantHoleLength;
         public decimal CoolantHoleDiameter;
         public int CoolantHoleCount;
+        public bool CoolantHoleEqualSpacing;
         public decimal CoolantHoleRotation;
         public decimal CoolantFeedDiameter;
         public int CoolantPatternCount;

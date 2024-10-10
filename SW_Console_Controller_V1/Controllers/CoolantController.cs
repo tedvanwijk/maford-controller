@@ -31,7 +31,10 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("CoolantHoleDiameter", $"{Properties.Coolant.CoolantHoleDiameter}in");
             EquationController.SetEquation("CoolantFeedHoleDiameter", $"{Properties.Coolant.CoolantFeedDiameter}in");
             EquationController.SetEquation("CoolantCount", $"{Properties.Coolant.CoolantHoleCount}");
-            EquationController.SetEquation("CoolantSpacing", $"{Properties.Coolant.CoolantHoleRotation}");
+            decimal spacing;
+            if (Properties.Coolant.CoolantHoleEqualSpacing) spacing = 360 / Properties.Coolant.CoolantHoleCount;
+            else spacing = Properties.Coolant.CoolantHoleRotation;
+            EquationController.SetEquation("CoolantSpacing", $"{spacing}");
 
             // the rotation angle describes the rotation of the lateral holes over the pattern height
             // E.g. a 6-fluted tool with 3 laterals spaced 120 degrees apart can be rotated

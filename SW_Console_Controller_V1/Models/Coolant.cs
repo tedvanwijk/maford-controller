@@ -8,6 +8,7 @@ namespace SW_Console_Controller_V1.Models
 {
     internal class Coolant
     {
+        public bool CoolantHole;
         public decimal CoolantHoleAngle;
         public decimal CoolantHoleLength;
         public decimal CoolantHoleDiameter;

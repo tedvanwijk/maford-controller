@@ -87,7 +87,6 @@ namespace SW_Console_Controller_V1
         public decimal BossLength { get; set; }
 
         // Coolant
-        public bool CoolantHole { get; set; }
         public Coolant Coolant { get; set; }
     }
 }

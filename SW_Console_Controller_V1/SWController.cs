@@ -87,7 +87,7 @@ namespace SW_Console_Controller_V1
             ModelControllerTools.SelectionManager = _selectionMgr;
 
             SetReferences();
-            _shankController = new ShankController(properties, _generatedProperties, _swModel, _equationManager);
+            if (properties.ToolType != "Blank") _shankController = new ShankController(properties, _generatedProperties, _swModel, _equationManager);
             _bodyController = new BodyController(properties, _generatedProperties, _swModel, _equationManager);
             _swModel.ForceRebuild3(false);
             // Switch to default config so fluting is shown if user opens part file

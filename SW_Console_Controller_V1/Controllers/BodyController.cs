@@ -31,6 +31,9 @@ namespace SW_Console_Controller_V1.Controllers
                 case "Drill":
                     _toolController = new DrillController(Properties, GeneratedProperties, SwModel, EquationManager);
                     break;
+                case "Blank":
+                    _toolController = new BlankController(Properties, GeneratedProperties, SwModel, EquationManager);
+                    break;
             }
 
             // TODO: check if this should happen for all tool types

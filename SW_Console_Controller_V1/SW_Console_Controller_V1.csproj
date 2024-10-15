@@ -172,6 +172,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\BlankController.cs" />
     <Compile Include="Controllers\BodyController.cs" />
     <Compile Include="Controllers\CenterController.cs" />
     <Compile Include="Controllers\CoolantController.cs" />

@@ -62,6 +62,7 @@ namespace SW_Console_Controller_V1.Controllers
 
             ModelControllerTools.UnsuppressFeature("COOLANT_HOLE_PATTERN");
             ModelControllerTools.UnsuppressFeature("COOLANT_FEED_HOLE_CUT");
+            ModelControllerTools.UnsuppressFeature("COOLANT_SLOT_CUT");
         }
     }
 }

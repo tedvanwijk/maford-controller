@@ -17,20 +17,20 @@ namespace SW_Console_Controller_V1.Controllers
 
         public void CreateCenterHoles()
         {
-            EquationController.SetEquation("CenterHoleTopA1", $"{Properties.A1Upper}in");
+            EquationController.SetEquation("CenterHoleTopA1", Properties.A1Upper);
 
             if (Properties.UpperHole)
             {
-                EquationController.SetEquation("CenterHoleTopA1", $"{Properties.A1Upper}");
-                EquationController.SetEquation("CenterHoleTopA2", $"{Properties.A2Upper}");
-                EquationController.SetEquation("CenterHoleTopD1", $"{Properties.D1Upper}in");
-                EquationController.SetEquation("CenterHoleTopD2", $"{Properties.D2Upper}in");
-                EquationController.SetEquation("CenterHoleTopL", $"{Properties.LUpper}in");
+                EquationController.SetEquation("CenterHoleTopA1", Properties.A1Upper);
+                EquationController.SetEquation("CenterHoleTopA2", Properties.A2Upper);
+                EquationController.SetEquation("CenterHoleTopD1", Properties.D1Upper);
+                EquationController.SetEquation("CenterHoleTopD2", Properties.D2Upper);
+                EquationController.SetEquation("CenterHoleTopL", Properties.LUpper);
 
                 if (Properties.UpperBoss)
                 {
-                    EquationController.SetEquation("CenterHoleBossLength", $"{Properties.BossLength}in");
-                    EquationController.SetEquation("CenterHoleBossDiameter", $"{Properties.BossDiameter}in");
+                    EquationController.SetEquation("CenterHoleBossLength", Properties.BossLength);
+                    EquationController.SetEquation("CenterHoleBossDiameter", Properties.BossDiameter);
                     ModelControllerTools.UnsuppressFeature("CENTER_HOLE_TOP_BOSS");
                 } else
                 {
@@ -40,11 +40,11 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (Properties.LowerHole)
             {
-                EquationController.SetEquation("CenterHoleBottomA1", $"{Properties.A1Lower}");
-                EquationController.SetEquation("CenterHoleBottomA2", $"{Properties.A2Lower}");
-                EquationController.SetEquation("CenterHoleBottomD1", $"{Properties.D1Lower}in");
-                EquationController.SetEquation("CenterHoleBottomD2", $"{Properties.D2Lower}in");
-                EquationController.SetEquation("CenterHoleBottomL", $"{Properties.LLower}in");
+                EquationController.SetEquation("CenterHoleBottomA1", Properties.A1Lower);
+                EquationController.SetEquation("CenterHoleBottomA2", Properties.A2Lower);
+                EquationController.SetEquation("CenterHoleBottomD1", Properties.D1Lower);
+                EquationController.SetEquation("CenterHoleBottomD2", Properties.D2Lower);
+                EquationController.SetEquation("CenterHoleBottomL", Properties.LLower);
                 ModelControllerTools.UnsuppressFeature("CENTER_HOLE_BOTTOM_CUT");
             }
         }

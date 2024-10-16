@@ -9,27 +9,32 @@ namespace SW_Console_Controller_V1.Lib
 {
     internal static class EquationController
     {
-        private static EquationMgr Manager;
+        private static CustomPropertyManager Manager;
         public static Dictionary<string, int> OldEquations;
 
-        static public void Initialize(EquationMgr manager)
+        static public void Initialize(CustomPropertyManager manager)
         {
             Manager = manager;
-            // the equationmanager stores both equations and global variables in one weird list, so index all variables so they can be looked up
-            int equationLength = Manager.GetCount();
-            OldEquations = new Dictionary<string, int>();
-            for (int i = 0; i < equationLength; i++)
-            {
-                OldEquations.Add(Manager.Equation[i].Split('=')[0].Replace("\"", "").Trim(), i);
-                //OldEquations[i] = Manager.Equation[i].Split('=')[0].Replace("\"", "").Trim();
-            }
         }
 
-        static public void SetEquation(string name, string equation)
+        static public void SetEquation(string name, string value)
         {
-            // find index of parameter name in the OldEquations list
-            int index = OldEquations[name.Trim()];
-            Manager.Equation[index] = $"\"{name}\"= {equation}";
+            Manager.Set2(name, value);
+        }
+
+        static public void SetEquation(string name, double value)
+        {
+            Manager.Set2(name, value.ToString());
+        }
+
+        static public void SetEquation(string name, decimal value)
+        {
+            Manager.Set2(name, value.ToString());
+        }
+
+        static public void SetEquation(string name, int value)
+        {
+            Manager.Set2(name, value.ToString());
         }
     }
 }

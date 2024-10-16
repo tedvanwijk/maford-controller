@@ -139,5 +139,10 @@ namespace SW_Console_Controller_V1.Lib
         {
             return input * Math.PI / 180;
         }
+
+        public static double ConvertToDeg(this double input)
+        {
+            return input / Math.PI * 180;
+        }
     }
 }

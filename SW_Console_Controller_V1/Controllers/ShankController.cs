@@ -20,14 +20,14 @@ namespace SW_Console_Controller_V1.Controllers
         {
             GeneratedProperties.ShankChamferWidth = Properties.ToolDiameter < 0.2501m ? 0.03m : 0.045m;
             GeneratedProperties.ShankChamferAngle = Properties.ToolDiameter < 0.2501m ? 30m : 45m;
-            GeneratedProperties.ShankToHeadRadius = Properties.ShankEndAtHead ? (Properties.ToolDiameter - (Properties.ShankType == "Neck" ? Properties.ShankNeckDiameter : Properties.ShankDiameter)) / 2 : Properties.ShankToHeadRadius;
+            GeneratedProperties.ShankToHeadRadius = Properties.ShankEndAtHead ? (Properties.ToolDiameter - (Properties.ShankType == "Neck" ? Properties.ShankNeckDiameter : Properties.ShankDiameter)) / 2m : Properties.ShankToHeadRadius;
 
-            EquationController.SetEquation("ShankChamferAngle", $"{GeneratedProperties.ShankChamferAngle}in");
-            EquationController.SetEquation("ShankChamferWidth", $"{GeneratedProperties.ShankChamferWidth}in");
-            EquationController.SetEquation("ShankBlendAngle", $"{Properties.ShankBlendAngle}deg");
-            EquationController.SetEquation("ShankToHeadRadius", $"{GeneratedProperties.ShankToHeadRadius}in");
-            EquationController.SetEquation("ShankNeckLength", $"{Properties.ShankNeckLength}in");
-            EquationController.SetEquation("ShankNeckDiameter", $"{Properties.ShankNeckDiameter}in");
+            EquationController.SetEquation("ShankChamferAngle", GeneratedProperties.ShankChamferAngle);
+            EquationController.SetEquation("ShankChamferWidth", GeneratedProperties.ShankChamferWidth);
+            EquationController.SetEquation("ShankBlendAngle", Properties.ShankBlendAngle);
+            EquationController.SetEquation("ShankToHeadRadius", GeneratedProperties.ShankToHeadRadius);
+            EquationController.SetEquation("ShankNeckLength", Properties.ShankNeckLength);
+            EquationController.SetEquation("ShankNeckDiameter", Properties.ShankNeckDiameter);
 
             switch (Properties.ShankType)
             {

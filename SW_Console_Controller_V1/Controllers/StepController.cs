@@ -16,7 +16,6 @@ namespace SW_Console_Controller_V1.Controllers
         }
         public void CreateSteps()
         {
-            EquationController.SetEquation("TopStepDiameter", $"{Properties.Steps[0].Diameter}in");
             ModelControllerTools.Unsuppress("STEP_SKETCH_ANGLE", "SKETCH");
             ModelControllerTools.Unsuppress("STEP_SKETCH_RADIUS", "SKETCH");
 

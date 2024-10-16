@@ -22,19 +22,23 @@ namespace SW_Console_Controller_V1.Controllers
             if (Properties.ToolType != "Blank")
             {
                 // TODO: this + 45 is the location of the coolant lateral exit from the vertical (z) axis for an end mill flute. Might be different for other tool types (reamer)
-                coolantExitFluteRotation = (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360 + 45;
+                coolantExitFluteRotation = (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m + 45m;
             }
-            EquationController.SetEquation("CoolantExitFluteRotation", $"{coolantExitFluteRotation}");
+            EquationController.SetEquation("CoolantExitFluteRotation", coolantExitFluteRotation);
 
-            EquationController.SetEquation("CoolantStartLength", $"{Properties.Coolant.CoolantHoleLength}in");
-            EquationController.SetEquation("CoolantExitAngle", $"{Properties.Coolant.CoolantHoleAngle}");
-            EquationController.SetEquation("CoolantHoleDiameter", $"{Properties.Coolant.CoolantHoleDiameter}in");
-            EquationController.SetEquation("CoolantFeedHoleDiameter", $"{Properties.Coolant.CoolantFeedDiameter}in");
-            EquationController.SetEquation("CoolantCount", $"{Properties.Coolant.CoolantHoleCount}");
+            EquationController.SetEquation("CoolantStartLength", Properties.Coolant.CoolantHoleLength);
+            EquationController.SetEquation("CoolantExitAngle", Properties.Coolant.CoolantHoleAngle);
+            EquationController.SetEquation("CoolantHoleDiameter", Properties.Coolant.CoolantHoleDiameter);
+            EquationController.SetEquation("CoolantFeedHoleDiameter", Properties.Coolant.CoolantFeedDiameter);
+            EquationController.SetEquation("CoolantCount", Properties.Coolant.CoolantHoleCount);
+            EquationController.SetEquation("CoolantExitWidth", Properties.ToolDiameter + 0.01m);
+            EquationController.SetEquation("CoolantHelixLength", Properties.LOF);
+            EquationController.SetEquation("CoolantSlotWidth", 1.05m * Properties.Coolant.CoolantFeedDiameter);
+            EquationController.SetEquation("CoolantExitFluteRotation", decimal.ToDouble(Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / GeneratedProperties.HelixPitch * 360f + 45f);
             decimal spacing;
-            if (Properties.Coolant.CoolantHoleEqualSpacing) spacing = 360 / Properties.Coolant.CoolantHoleCount;
+            if (Properties.Coolant.CoolantHoleEqualSpacing) spacing = 360m / Properties.Coolant.CoolantHoleCount;
             else spacing = Properties.Coolant.CoolantHoleRotation;
-            EquationController.SetEquation("CoolantSpacing", $"{spacing}");
+            EquationController.SetEquation("CoolantSpacing", spacing);
 
             // the rotation angle describes the rotation of the lateral holes over the pattern height
             // E.g. a 6-fluted tool with 3 laterals spaced 120 degrees apart can be rotated
@@ -52,13 +56,13 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (Properties.Coolant.CoolantPatternCount != 1)
             {
-                double coolantPatternSpacing = Math.Sqrt(Math.Pow(decimal.ToDouble(Properties.Coolant.CoolantPatternLength), 2) + Math.Pow(decimal.ToDouble(rotationAngle) * Math.PI * decimal.ToDouble(Properties.ToolDiameter) / 360, 2));
-                double coolantPatternPitch = 360 * decimal.ToDouble(Properties.Coolant.CoolantPatternLength) / decimal.ToDouble(rotationAngle);
+                double coolantPatternSpacing = Math.Sqrt(Math.Pow(decimal.ToDouble(Properties.Coolant.CoolantPatternLength), 2f) + Math.Pow(decimal.ToDouble(rotationAngle) * Math.PI * decimal.ToDouble(Properties.ToolDiameter) / 360f, 2f));
+                double coolantPatternPitch = 360f * decimal.ToDouble(Properties.Coolant.CoolantPatternLength) / decimal.ToDouble(rotationAngle);
 
-                EquationController.SetEquation("CoolantHelixSpacing", $"{coolantPatternSpacing}in");
-                EquationController.SetEquation("CoolantHelixPitch", $"{coolantPatternPitch}in");
+                EquationController.SetEquation("CoolantHelixSpacing", coolantPatternSpacing);
+                EquationController.SetEquation("CoolantHelixPitch", coolantPatternPitch);
             }
-            EquationController.SetEquation("CoolantHelixCount", $"{Properties.Coolant.CoolantPatternCount}");
+            EquationController.SetEquation("CoolantHelixCount", Properties.Coolant.CoolantPatternCount);
 
             ModelControllerTools.UnsuppressFeature("COOLANT_HOLE_PATTERN");
             ModelControllerTools.UnsuppressFeature("COOLANT_FEED_HOLE_CUT");

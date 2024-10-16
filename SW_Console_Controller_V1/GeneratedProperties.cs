@@ -15,5 +15,7 @@ namespace SW_Console_Controller_V1
         public double ChipbreakerHelixPitch { get; set; }
         public decimal BodyLength { get; set; }
         public decimal PointHeight { get; set; }
+        public decimal MaxDiameter { get; set; }
+        public decimal TopStepDiameter { get; set; }
     }
 }

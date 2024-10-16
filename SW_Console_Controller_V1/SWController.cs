@@ -74,10 +74,10 @@ namespace SW_Console_Controller_V1
             _swModelExtension = _swModel.Extension;
             _equationManager = _swModel.GetEquationMgr();
             //EquationController.Manager = _equationManager;
-            EquationController.Initialize(_equationManager);
 
             // Set prpsheet data
             _propertyManager = _swModelExtension.CustomPropertyManager[""];
+            EquationController.Initialize(_propertyManager);
 
             SetPrpData();
 
@@ -137,22 +137,26 @@ namespace SW_Console_Controller_V1
 
         private void SetReferences()
         {
-            EquationController.SetEquation("LOA", $"{_properties.LOA}in");
-            EquationController.SetEquation("LOC", $"{_properties.LOC}in");
-            EquationController.SetEquation("LOF", $"{_properties.LOF}in");
+            EquationController.SetEquation("LOA", _properties.LOA);
+            EquationController.SetEquation("LOC", _properties.LOC);
+            EquationController.SetEquation("LOF", _properties.LOF);
             // note: BodyLengthSameAsLOF will be used for all tool types, regardless of if that tool type uses LOC or LOF as its unit for flute length
             _generatedProperties.BodyLength = _properties.BodyLengthSameAsLOF ? _properties.LOF : _properties.BodyLength;
-            EquationController.SetEquation("BodyLength", $"{_generatedProperties.BodyLength}in");
+            EquationController.SetEquation("BodyLength", _generatedProperties.BodyLength);
 
-            decimal maxDiameter = Math.Max(_properties.ShankDiameter, _properties.ToolDiameter);
-            decimal maxDiameterOffset = maxDiameter + 0.5m;
+            _generatedProperties.MaxDiameter = Math.Max(_properties.ShankDiameter, _properties.ToolDiameter);
+            decimal maxDiameterOffset = _generatedProperties.MaxDiameter + 0.5m;
 
-            EquationController.SetEquation("ToolDiameter", $"{_properties.ToolDiameter}in");
-            EquationController.SetEquation("ShankDiameter", $"{_properties.ShankDiameter}in");
-            EquationController.SetEquation("MaxDiameter", $"{maxDiameter}in");
-            EquationController.SetEquation("MaxDiameterOffset", $"{maxDiameterOffset}in");
+            EquationController.SetEquation("ToolDiameter", _properties.ToolDiameter);
+            EquationController.SetEquation("ShankDiameter", _properties.ShankDiameter);
+            EquationController.SetEquation("MaxDiameter", _generatedProperties.MaxDiameter);
+            EquationController.SetEquation("MaxDiameterOffset", maxDiameterOffset);
 
-            if (maxDiameter > _properties.ToolDiameter) ModelControllerTools.UnsuppressFeature("BODY_PROFILE_CUT");
+            if (_properties.StepTool) _generatedProperties.TopStepDiameter = _properties.Steps[0].Diameter;
+            else _generatedProperties.TopStepDiameter = _properties.ToolDiameter;
+            EquationController.SetEquation("TopStepDiameter", _generatedProperties.TopStepDiameter);
+
+            if (_generatedProperties.MaxDiameter > _properties.ToolDiameter) ModelControllerTools.UnsuppressFeature("BODY_PROFILE_CUT");
         }
     }
 }

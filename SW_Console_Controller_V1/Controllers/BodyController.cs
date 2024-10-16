@@ -19,9 +19,9 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void UpdateModel()
         {
-            GeneratedProperties.HelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(Properties.HelixAngle * Math.PI / 180);
-            EquationController.SetEquation("FluteHelixPitch", $"{GeneratedProperties.HelixPitch}in");
-            EquationController.SetEquation("FluteCount", $"{Properties.FluteCount}in");
+            GeneratedProperties.HelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(Properties.HelixAngle * Math.PI / 180f);
+            EquationController.SetEquation("FluteHelixPitch", GeneratedProperties.HelixPitch);
+            EquationController.SetEquation("FluteCount", Properties.FluteCount);
 
             switch (Properties.ToolType)
             {

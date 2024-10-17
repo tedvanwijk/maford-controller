@@ -23,6 +23,10 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("FluteHelixPitch", GeneratedProperties.HelixPitch);
             EquationController.SetEquation("FluteCount", Properties.FluteCount);
 
+            // TODO: check if this should happen for all tool types
+            CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);
+            centerController.CreateCenterHoles();
+
             switch (Properties.ToolType)
             {
                 case "End Mill":
@@ -35,10 +39,6 @@ namespace SW_Console_Controller_V1.Controllers
                     _toolController = new BlankController(Properties, GeneratedProperties, SwModel, EquationManager);
                     break;
             }
-
-            // TODO: check if this should happen for all tool types
-            CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);
-            centerController.CreateCenterHoles();
         }
     }
 }

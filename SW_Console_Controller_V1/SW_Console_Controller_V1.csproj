@@ -214,6 +214,8 @@
     <Compile Include="Controllers\ShankController.cs" />
     <Compile Include="Controllers\StepController.cs" />
     <Compile Include="GeneratedProperties.cs" />
+    <Compile Include="Models\Center.cs" />
+    <Compile Include="Models\CenterDimensions.cs" />
     <Compile Include="Models\Coolant.cs" />
     <Compile Include="Models\Prp.cs" />
     <Compile Include="Models\Step.cs" />

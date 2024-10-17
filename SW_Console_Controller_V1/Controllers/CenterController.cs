@@ -17,20 +17,18 @@ namespace SW_Console_Controller_V1.Controllers
 
         public void CreateCenterHoles()
         {
-            EquationController.SetEquation("CenterHoleTopA1", Properties.A1Upper);
-
-            if (Properties.UpperHole)
+            if (Properties.Center.UpperCenter)
             {
-                EquationController.SetEquation("CenterHoleTopA1", Properties.A1Upper);
-                EquationController.SetEquation("CenterHoleTopA2", Properties.A2Upper);
-                EquationController.SetEquation("CenterHoleTopD1", Properties.D1Upper);
-                EquationController.SetEquation("CenterHoleTopD2", Properties.D2Upper);
-                EquationController.SetEquation("CenterHoleTopL", Properties.LUpper);
+                EquationController.SetEquation("CenterHoleTopA1", Properties.Center.UpperCenterDimensions.A1Min);
+                EquationController.SetEquation("CenterHoleTopA2", Properties.Center.UpperCenterDimensions.A2Min);
+                EquationController.SetEquation("CenterHoleTopD1", Properties.Center.UpperCenterDimensions.D1Min);
+                EquationController.SetEquation("CenterHoleTopD2", Properties.Center.UpperCenterDimensions.D2Min);
+                EquationController.SetEquation("CenterHoleTopL", Properties.Center.UpperCenterDimensions.LMin);
 
-                if (Properties.UpperBoss)
+                if (Properties.Center.UpperBoss)
                 {
-                    EquationController.SetEquation("CenterHoleBossLength", Properties.BossLength);
-                    EquationController.SetEquation("CenterHoleBossDiameter", Properties.BossDiameter);
+                    EquationController.SetEquation("CenterHoleBossLength", Properties.Center.UpperCenterDimensions.BossLength);
+                    EquationController.SetEquation("CenterHoleBossDiameter", Properties.Center.UpperCenterDimensions.BossDiameter);
                     ModelControllerTools.UnsuppressFeature("CENTER_HOLE_TOP_BOSS");
                 } else
                 {
@@ -38,13 +36,13 @@ namespace SW_Console_Controller_V1.Controllers
                 }
             }
 
-            if (Properties.LowerHole)
+            if (Properties.Center.LowerCenter)
             {
-                EquationController.SetEquation("CenterHoleBottomA1", Properties.A1Lower);
-                EquationController.SetEquation("CenterHoleBottomA2", Properties.A2Lower);
-                EquationController.SetEquation("CenterHoleBottomD1", Properties.D1Lower);
-                EquationController.SetEquation("CenterHoleBottomD2", Properties.D2Lower);
-                EquationController.SetEquation("CenterHoleBottomL", Properties.LLower);
+                EquationController.SetEquation("CenterHoleBottomA1", Properties.Center.LowerCenterDimensions.A1Min);
+                EquationController.SetEquation("CenterHoleBottomA2", Properties.Center.LowerCenterDimensions.A2Min);
+                EquationController.SetEquation("CenterHoleBottomD1", Properties.Center.LowerCenterDimensions.D1Min);
+                EquationController.SetEquation("CenterHoleBottomD2", Properties.Center.LowerCenterDimensions.D2Min);
+                EquationController.SetEquation("CenterHoleBottomL", Properties.Center.LowerCenterDimensions.LMin);
                 ModelControllerTools.UnsuppressFeature("CENTER_HOLE_BOTTOM_CUT");
             }
         }

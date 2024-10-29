@@ -18,7 +18,9 @@ namespace SW_Console_Controller_V1.Models
         public decimal D2Max { get; set; }
         public decimal LMin { get; set; }
         public decimal LMax { get; set; }
-        public decimal BossDiameter { get; set; }
-        public decimal BossLength { get; set; }
+        public decimal BossDiameterMin { get; set; }
+        public decimal BossDiameterMax { get; set; }
+        public decimal BossLengthMax { get; set; }
+        public decimal BossLengthMin { get; set; }
     }
 }

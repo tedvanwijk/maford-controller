@@ -27,8 +27,8 @@ namespace SW_Console_Controller_V1.Controllers
 
                 if (Properties.Center.UpperBoss)
                 {
-                    EquationController.SetEquation("CenterHoleBossLength", Properties.Center.UpperCenterDimensions.BossLength);
-                    EquationController.SetEquation("CenterHoleBossDiameter", Properties.Center.UpperCenterDimensions.BossDiameter);
+                    EquationController.SetEquation("CenterHoleBossLength", Properties.Center.UpperCenterDimensions.BossLengthMin);
+                    EquationController.SetEquation("CenterHoleBossDiameter", Properties.Center.UpperCenterDimensions.BossDiameterMin);
                     ModelControllerTools.UnsuppressFeature("CENTER_HOLE_TOP_BOSS");
                 } else
                 {

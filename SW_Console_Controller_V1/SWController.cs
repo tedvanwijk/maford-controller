@@ -102,6 +102,10 @@ namespace SW_Console_Controller_V1
             DrawingControllerTools.Drawing = _swDrawing;
             DrawingControllerTools.Properties = _properties;
             DrawingControllerTools.GeneratedProperties = _generatedProperties;
+            DrawingDimensionTools.Model = _swModel;
+            DrawingDimensionTools.Drawing = _swDrawing;
+            DrawingDimensionTools.DrawingModel = _swDrawingModel;
+            DrawingDimensionTools.Properties = _properties;
             _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);

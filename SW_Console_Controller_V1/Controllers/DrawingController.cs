@@ -18,35 +18,23 @@ namespace SW_Console_Controller_V1.Controllers
         public DataTable DimensionPositions;
         public ToleranceSheetProcessor ToleranceProcessor;
         public DataTable ToleranceData;
-        public string SheetName = "NORMAL";
         public DrawingController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, DrawingDoc drawing, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
             Drawing = drawing;
             ToleranceProcessor = new ToleranceSheetProcessor(properties);
             if (Properties.ToolSeriesFileName != "" && Properties.ToolSeriesInputRange != "" && Properties.ToolSeriesOutputRange != "") ToleranceData = ToleranceProcessor.GetToleranceData();
+
+            DrawingDimensionTools.LoadDimensionData();
+            DrawingDimensionTools.MarkDimensions();
+            DrawingDimensionTools.AddDimensions();
             
-            LoadTables();
             UpdateDrawing();
             if (ToleranceData != null) CreateTable();
         }
 
-        private void LoadTables()
-        {
-            DimensionPositions = new DataTable();
-            var fs = new FileStream(Path.Combine(Properties.MasterPath, $"{Properties.DimensionFileName}.csv"), FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using (var reader = new StreamReader(fs))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                using (var dr = new CsvDataReader(csv))
-                {
-                    DimensionPositions.Load(dr);
-                }
-            }
-        }
-
         private void UpdateDrawing()
         {
-            Sheet mainSheet = Drawing.Sheet[SheetName];
+            Sheet mainSheet = Drawing.Sheet["NORMAL"];
             mainSheet.SetTemplateName(Path.Combine(Properties.MasterPath, "drawing formats", $"{Properties.DrawingType}.slddrt"));
             mainSheet.ReloadTemplate(true);
             // for some reason casting this to View[] is not possible, despite the elements being Views
@@ -54,42 +42,9 @@ namespace SW_Console_Controller_V1.Controllers
             View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
             if (ToleranceData != null) SetTolerances(views);
 
-            if (Properties.Prp.FormingViewOnDrawing)
+            if (!Properties.Prp.FormingViewOnDrawing)
             {
-                views.Where(v => v.GetName2() == "NORMAL:SIDE_VIEW").ToArray()[0].SetVisible(false, false);
-            } else
-            {
-                views.Where(v => v.GetName2() == "FORMING:SIDE_VIEW").ToArray()[0].SetVisible(false, false);
-                views.Where(v => v.GetName2() == "FORMING:FORMING_VIEW").ToArray()[0].SetVisible(false, false);
-            }
-
-            // hide LOF dimension if end mill
-            if (Properties.ToolType == "End Mill")
-            {
-                DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOF@LENGTH_REF");
-                DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOF@LENGTH_REF");
-            }
-
-            // hide BodyLength dimension if bodylength is equal to lof
-            if (Properties.BodyLengthSameAsLOF)
-            {
-                DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "BodyLength@LENGTH_REF");
-                DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", "BodyLength@LENGTH_REF");
-            }
-
-            if (Properties.ToolType == "Drill")
-            {
-                DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOC@LENGTH_REF");
-                DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOC@LENGTH_REF");
-                if (Properties.LOFFromPoint)
-                {
-                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOFToPointEnd@DRILL_POINT_ANGLE_SKETCH");
-                    DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOFToPointEnd@DRILL_POINT_ANGLE_SKETCH");
-                } else
-                {
-                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", "LOF@LENGTH_REF");
-                    DrawingControllerTools.HideDimension("FORMING", "SIDE_VIEW", "LOF@LENGTH_REF");
-                }
+                views.Where(v => v.GetName2() == "FORMING").ToArray()[0].SetVisible(false, false);
             }
 
             if (Properties.StepTool) AddStepDimensions();

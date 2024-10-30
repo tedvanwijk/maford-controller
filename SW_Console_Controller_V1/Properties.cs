@@ -14,7 +14,7 @@ namespace SW_Console_Controller_V1
         public string PartFileName { get; set; }
         public string DrawingFileName { get; set; }
         public int SpecificationNumber { get; set; }
-        public string DimensionFileName { get; set; }
+        public string DimensionPath { get; set; }
         public string ToleranceFileName { get; set; }
         public string ToolSeriesFileName { get; set; }
         public string ToolSeries { get; set; }

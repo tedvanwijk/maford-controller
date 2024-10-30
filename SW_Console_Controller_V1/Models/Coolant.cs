@@ -8,17 +8,17 @@ namespace SW_Console_Controller_V1.Models
 {
     internal class Coolant
     {
-        public bool CoolantHole;
-        public decimal CoolantHoleAngle;
-        public decimal CoolantHoleLength;
-        public decimal CoolantHoleDiameter;
-        public int CoolantHoleCount;
-        public bool CoolantHoleEqualSpacing;
-        public decimal CoolantHoleRotation;
-        public decimal CoolantFeedDiameter;
-        public int CoolantPatternCount;
-        public decimal CoolantPatternAngle;
-        public bool CoolantPatternAlongFluting;
-        public decimal CoolantPatternLength;
+        public bool CoolantHole { get; set; }
+        public decimal CoolantHoleAngle { get; set; }
+        public decimal CoolantHoleLength { get; set; }
+        public decimal CoolantHoleDiameter { get; set; }
+        public int CoolantHoleCount { get; set; }
+        public bool CoolantHoleEqualSpacing { get; set; }
+        public decimal CoolantHoleRotation { get; set; }
+        public decimal CoolantFeedDiameter { get; set; }
+        public int CoolantPatternCount { get; set; }
+        public decimal CoolantPatternAngle { get; set; }
+        public bool CoolantPatternAlongFluting { get; set; }
+        public decimal CoolantPatternLength { get; set; }
     }
 }

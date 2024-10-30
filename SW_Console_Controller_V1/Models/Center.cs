@@ -8,12 +8,12 @@ namespace SW_Console_Controller_V1.Models
 {
     internal class Center
     {
-        public bool UpperCenter;
-        public bool LowerCenter;
-        public string UpperType;
-        public string LowerType;
-        public CenterDimensions UpperCenterDimensions;
-        public CenterDimensions LowerCenterDimensions;
-        public bool UpperBoss;
+        public bool UpperCenter { get; set; }
+        public bool LowerCenter { get; set; }
+        public string UpperType { get; set; }
+        public string LowerType { get; set; }
+        public CenterDimensions UpperCenterDimensions { get; set; }
+        public CenterDimensions LowerCenterDimensions { get; set; }
+        public bool UpperBoss { get; set; }
     }
 }

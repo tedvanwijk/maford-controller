@@ -8,26 +8,26 @@ namespace SW_Console_Controller_V1.Models
 {
     internal class Prp
     {
-        public string PartNumber;
-        public string Description;
-        public string DrawnBy;
-        public string MAFordNumber;
-        public string Quote;
-        public string Customer;
-        public string EndUser;
-        public string Coater;
-        public string Coating;
-        public string LabelLine1;
-        public string LabelLine2;
-        public string MarkingLine1;
-        public string MarkingLine2;
-        public string PreTreatment;
-        public string PreTreatmentMachine;
-        public string PostTreatment;
-        public string PostTreatmentMachine;
-        public string Finish;
-        public string CompanyName;
-        public string Revision;
-        public bool FormingViewOnDrawing;
+        public string PartNumber { get; set; }
+        public string Description { get; set; }
+        public string DrawnBy { get; set; }
+        public string MAFordNumber { get; set; }
+        public string Quote { get; set; }
+        public string Customer { get; set; }
+        public string EndUser { get; set; }
+        public string Coater { get; set; }
+        public string Coating { get; set; }
+        public string LabelLine1 { get; set; }
+        public string LabelLine2 { get; set; }
+        public string MarkingLine1 { get; set; }
+        public string MarkingLine2 { get; set; }
+        public string PreTreatment { get; set; }
+        public string PreTreatmentMachine { get; set; }
+        public string PostTreatment { get; set; }
+        public string PostTreatmentMachine { get; set; }
+        public string Finish { get; set; }
+        public string CompanyName { get; set; }
+        public string Revision { get; set; }
+        public bool FormingViewOnDrawing { get; set; }
     }
 }

@@ -8,11 +8,11 @@ namespace SW_Console_Controller_V1.Models
 {
     internal class Step
     {
-        public decimal Length;
-        public decimal Diameter;
-        public decimal Angle;
-        public string Type;
-        public decimal RTop;
-        public decimal RBottom;
+        public decimal Length { get; set; }
+        public decimal Diameter { get; set; }
+        public decimal Angle { get; set; }
+        public string Type { get; set; }
+        public decimal RTop { get; set; }
+        public decimal RBottom { get; set; }
     }
 }

@@ -24,6 +24,9 @@ namespace SW_Console_Controller_V1.Lib
         public static Properties Properties;
         private static DataTable MarkingData;
         private static DataTable InsertionData;
+        private static DataTable ViewData;
+        private static string[] EnabledViews;
+        private static string[] DisabledViews;
 
         static public void LoadDimensionData()
         {
@@ -39,6 +42,7 @@ namespace SW_Console_Controller_V1.Lib
             ExcelWorksheet generalMarkingSheet = package.Workbook.Worksheets["General_MARKING"];
             ExcelWorksheet insertionSheet = package.Workbook.Worksheets[$"{Properties.ToolType}_INSERTION"];
             ExcelWorksheet generalInsertionSheet = package.Workbook.Worksheets["General_INSERTION"];
+            ExcelWorksheet viewSheet = package.Workbook.Worksheets["General_VIEWS"];
 
             ToDataTableOptions generalMarkingOptions = ToDataTableOptions.Create();
             generalMarkingOptions.EmptyRowStrategy = EmptyRowsStrategy.Ignore;
@@ -59,6 +63,11 @@ namespace SW_Console_Controller_V1.Lib
             insertionOptions.EmptyRowStrategy = EmptyRowsStrategy.Ignore;
             insertionOptions.FirstRowIsColumnNames = true;
             InsertionData.Merge(insertionSheet.Cells["A:D"].ToDataTable(insertionOptions), true, MissingSchemaAction.Ignore);
+
+            ToDataTableOptions viewOptions = ToDataTableOptions.Create();
+            viewOptions.EmptyRowStrategy = EmptyRowsStrategy.Ignore;
+            viewOptions.FirstRowIsColumnNames = true;
+            ViewData = viewSheet.Cells["A:C"].ToDataTable(viewOptions);
         }
 
         static public void MarkDimensions()
@@ -96,20 +105,18 @@ namespace SW_Console_Controller_V1.Lib
 
         static public void AddDimensions()
         {
-            string[] views = new string[] { "SIDE", "TOP", "BOTTOM", "FORMING" };
-
-            for (int i = 0; i < views.Length; i++)
+            for (int i = 0; i < EnabledViews.Length; i++)
             {
-                DataRow[] entries = InsertionData.Select($"DRAWING_VIEW = '{views[i]}'");
+                DataRow[] entries = InsertionData.Select($"DRAWING_VIEW = '{EnabledViews[i]}'");
                 List<string> features = new List<string>();
                 foreach (DataRow entry in entries)
                 {
                     DrawingModel.ClearSelection2(true);
-                    DrawingSelect(views[i], "DRAWINGVIEW");
+                    DrawingSelect(EnabledViews[i], "DRAWINGVIEW");
 
                     if (!ValidateRule(entry["RULE"])) continue;
 
-                    string featureName = $"{entry["SKETCH"]}@{Properties.DrawingFileName}@{views[i]}";
+                    string featureName = $"{entry["SKETCH"]}@{Properties.DrawingFileName}@{EnabledViews[i]}";
 
                     if (features.Contains(featureName)) continue;
 
@@ -131,6 +138,26 @@ namespace SW_Console_Controller_V1.Lib
                     }
                 }
             }
+        }
+
+        static public (string[] enabledViews, string[] disabledViews) GetViews()
+        {
+            List<string> enabledViews = new List<string> ();
+            List<string> disabledViews = new List<string> ();
+
+            DataRow[] entries = ViewData.Select();
+            foreach (DataRow entry in entries)
+            {
+                bool enable = (string)entry["ENABLE/DISABLE"] == "ENABLE";
+                if (!ValidateRule(entry["RULE"])) enable = !enable;
+
+                if (enable) enabledViews.Add((string)entry["VIEW_NAME"]);
+                else disabledViews.Add((string)entry["VIEW_NAME"]);
+            }
+
+            EnabledViews = enabledViews.ToArray();
+            DisabledViews = disabledViews.ToArray();
+            return (EnabledViews, DisabledViews);
         }
 
         static private bool ValidateRule(object rule)

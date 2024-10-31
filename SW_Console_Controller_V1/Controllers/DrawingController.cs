@@ -18,6 +18,8 @@ namespace SW_Console_Controller_V1.Controllers
         public DataTable DimensionPositions;
         public ToleranceSheetProcessor ToleranceProcessor;
         public DataTable ToleranceData;
+        private string[] DisabledViews;
+        private string[] EnabledViews;
         public DrawingController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, DrawingDoc drawing, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
             Drawing = drawing;
@@ -25,6 +27,7 @@ namespace SW_Console_Controller_V1.Controllers
             if (Properties.ToolSeriesFileName != "" && Properties.ToolSeriesInputRange != "" && Properties.ToolSeriesOutputRange != "") ToleranceData = ToleranceProcessor.GetToleranceData();
 
             DrawingDimensionTools.LoadDimensionData();
+            (EnabledViews, DisabledViews) = DrawingDimensionTools.GetViews();
             DrawingDimensionTools.MarkDimensions();
             DrawingDimensionTools.AddDimensions();
             
@@ -40,12 +43,10 @@ namespace SW_Console_Controller_V1.Controllers
             // for some reason casting this to View[] is not possible, despite the elements being Views
             object[] viewsTemp = mainSheet.GetViews();
             View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
-            if (ToleranceData != null) SetTolerances(views);
 
-            if (!Properties.Prp.FormingViewOnDrawing)
-            {
-                views.Where(v => v.GetName2() == "FORMING").ToArray()[0].SetVisible(false, false);
-            }
+            foreach (string disabledView in DisabledViews) views.Where(v => v.GetName2() == disabledView).ToArray()[0].SetVisible(false, false);
+
+            if (ToleranceData != null) SetTolerances(views);
 
             if (Properties.StepTool) AddStepDimensions();
 

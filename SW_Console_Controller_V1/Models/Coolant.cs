@@ -17,6 +17,7 @@ namespace SW_Console_Controller_V1.Models
         public decimal CoolantHoleRotation { get; set; }
         public decimal CoolantFeedDiameter { get; set; }
         public int CoolantPatternCount { get; set; }
+        public bool CoolantPattern { get; set; }
         public decimal CoolantPatternAngle { get; set; }
         public bool CoolantPatternAlongFluting { get; set; }
         public decimal CoolantPatternLength { get; set; }

@@ -11,6 +11,7 @@ namespace SW_Console_Controller_V1.Controllers
     {
         public BlankController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
+            Properties.Blank = true;
             CoolantController coolantController = new CoolantController(Properties, GeneratedProperties, SwModel, EquationManager);
             coolantController.CreateCoolantHoles();
         }

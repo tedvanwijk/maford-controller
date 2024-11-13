@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -77,26 +78,17 @@ namespace SW_Console_Controller_V1.Lib
             foreach (string config in configs)
             {
                 Model.ShowConfiguration2(config);
-                Model.ClearSelection2(true);
                 DataRow[] entries = MarkingData.Select();
 
                 for (int i = 0; i < entries.Length; i++)
                 {
+                    Model.ClearSelection2(true);
                     DataRow entry = entries[i];
                     string dimensionName = $"{entry["DIMENSION"]}@{entry["SKETCH"]}@{Properties.PartFileName}";
                     Select(dimensionName, "DIMENSION");
-                }
-
-                int count = SelectionMgr.GetSelectedObjectCount2(-1);
-
-                for (int i = 0; i < count; i++)
-                {
-                    DataRow entry = entries[i];
-
                     if (!ValidateRule(entry["RULE"])) continue;
 
-                    int index = i + 1;
-                    DisplayDimension dim = SelectionMgr.GetSelectedObject6(index, -1);
+                    DisplayDimension dim = SelectionMgr.GetSelectedObject6(1, -1);
                     dim.MarkedForDrawing = (string)entry["ENABLE/DISABLE"] == "ENABLE";
                 }
             }
@@ -112,7 +104,6 @@ namespace SW_Console_Controller_V1.Lib
                 foreach (DataRow entry in entries)
                 {
                     DrawingModel.ClearSelection2(true);
-                    DrawingSelect(EnabledViews[i], "DRAWINGVIEW");
 
                     if (!ValidateRule(entry["RULE"])) continue;
 
@@ -120,7 +111,12 @@ namespace SW_Console_Controller_V1.Lib
 
                     if (features.Contains(featureName)) continue;
 
-                    DrawingSelect(featureName, "SKETCH", true);
+                    DrawingSelect(featureName, "SKETCH");
+                    DrawingModel.UnblankSketch();
+                    DrawingSelect(featureName, "SKETCH");
+
+                    DrawingSelect(EnabledViews[i], "DRAWINGVIEW", true);
+
                     features.Add(featureName);
                     object[] annotations = Drawing.InsertModelAnnotations3((int)swImportModelItemsSource_e.swImportModelItemsFromSelectedFeature, (int)swInsertAnnotation_e.swInsertDimensionsMarkedForDrawing, false, false, false, false);
 

@@ -74,5 +74,6 @@ namespace SW_Console_Controller_V1
 
         // Coolant
         public Coolant Coolant { get; set; }
+        public bool Blank { get; set; }
     }
 }

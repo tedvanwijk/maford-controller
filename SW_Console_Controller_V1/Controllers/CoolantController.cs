@@ -56,16 +56,21 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (Properties.Coolant.CoolantPatternCount != 1)
             {
+                Properties.Coolant.CoolantPattern = true;
                 double coolantPatternSpacing = Math.Sqrt(Math.Pow(decimal.ToDouble(Properties.Coolant.CoolantPatternLength), 2f) + Math.Pow(decimal.ToDouble(rotationAngle) * Math.PI * decimal.ToDouble(Properties.ToolDiameter) / 360f, 2f));
                 double coolantPatternPitch = 360f * decimal.ToDouble(Properties.Coolant.CoolantPatternLength) / decimal.ToDouble(rotationAngle);
 
                 EquationController.SetEquation("CoolantHelixSpacing", coolantPatternSpacing);
                 EquationController.SetEquation("CoolantHelixPitch", coolantPatternPitch);
+                EquationController.SetEquation("CoolantPatternLength", Properties.Coolant.CoolantPatternLength);
             }
+            else Properties.Coolant.CoolantPattern = false;
             EquationController.SetEquation("CoolantHelixCount", Properties.Coolant.CoolantPatternCount);
 
             ModelControllerTools.UnsuppressFeature("COOLANT_HOLE_PATTERN");
             ModelControllerTools.UnsuppressFeature("COOLANT_FEED_HOLE_CUT");
+            ModelControllerTools.Unsuppress("COOLANT_DRAWING_SKETCH", "SKETCH");
+            ModelControllerTools.Unsuppress("COOLANT_HOLE_DRAWING_SKETCH", "SKETCH");
             if (Properties.ToolType != "Blank") ModelControllerTools.UnsuppressFeature("COOLANT_SLOT_CUT");
         }
     }

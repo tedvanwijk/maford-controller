@@ -30,7 +30,6 @@ namespace SW_Console_Controller_V1.Lib
             Worksheet = package.Workbook.Worksheets["TOLERANCE_DATA"];
             EnterInputs();
             package.Workbook.Calculate();
-            package.Save();
             ExcelRange output = Worksheet.Cells[Properties.ToolSeriesOutputRange];
             DataTable table = ConvertToDataTable(output);
             // add a column to keep track of which tolerances have been implemented in the tolerances of the drawing, so the remaining data can be written to a table

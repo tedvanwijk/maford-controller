@@ -55,10 +55,12 @@ namespace SW_Console_Controller_V1
             string newDocumentPath = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/{_properties.PartFileName}.SLDPRT");
             string oldDrawingPath = Path.Combine(masterPath, "DRAWING_V2.SLDDRW");
             string newDrawingPath = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.SLDDRW");
-            
-#if DEBUG
-            // closes all open docs and removes the old files if present. Only in debug config for easy testing
+
+            // closes open files. Just in case a previous run left files open and unsaved
             swApp.CloseAllDocuments(true);
+
+#if DEBUG
+            // removes the old files if present. Only in debug config for easy testing
             File.Delete(newDocumentPath);
             File.Delete(newDrawingPath);
 #endif

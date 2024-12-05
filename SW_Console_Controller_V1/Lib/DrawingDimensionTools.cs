@@ -120,8 +120,7 @@ namespace SW_Console_Controller_V1.Lib
                         switch (varName)
                         {
                             case "STEP_COUNT":
-                                min = 0;
-                                max = Properties.Steps.Length;
+                                if (Properties.StepTool) max = Properties.Steps.Length;
                                 break;
                         }
 

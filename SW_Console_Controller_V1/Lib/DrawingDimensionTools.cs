@@ -107,39 +107,76 @@ namespace SW_Console_Controller_V1.Lib
 
                     if (!ValidateRule(entry["RULE"])) continue;
 
-                    string featureName = $"{entry["SKETCH"]}@{Properties.DrawingFileName}@{EnabledViews[i]}";
+                    string sketchName = (string)entry["SKETCH"];
 
-                    if (features.Contains(featureName)) continue;
-
-                    DrawingSelect(featureName, "SKETCH");
-                    DrawingModel.UnblankSketch();
-                    DrawingSelect(featureName, "SKETCH");
-
-                    DrawingSelect(EnabledViews[i], "DRAWINGVIEW", true);
-
-                    features.Add(featureName);
-                    object[] annotations = Drawing.InsertModelAnnotations3((int)swImportModelItemsSource_e.swImportModelItemsFromSelectedFeature, (int)swInsertAnnotation_e.swInsertDimensionsMarkedForDrawing, false, false, false, false);
-
-                    if (annotations == null) continue;
-
-                    object exclude = entry["EXCLUDE"];
-                    if (exclude == DBNull.Value) continue;
-
-                    string[] excludeNames = Array.ConvertAll(((string)exclude).Split(';'), e => e.Trim());
-
-                    foreach (object a in annotations)
+                    if (sketchName.Contains('[') && sketchName.Contains(']'))
                     {
-                        Annotation annotation = (Annotation)a;
-                        if (excludeNames.Contains(annotation.GetName())) annotation.Visible = (int)swAnnotationVisibilityState_e.swAnnotationHidden;
+                        int varStartIndex = sketchName.IndexOf('[');
+                        int varEndIndex = sketchName.IndexOf(']');
+                        string varName = sketchName.Substring(varStartIndex + 1, varEndIndex - varStartIndex - 1);
+
+                        int max = 0;
+                        int min = 0;
+                        switch (varName)
+                        {
+                            case "STEP_COUNT":
+                                min = 0;
+                                max = Properties.Steps.Length;
+                                break;
+                        }
+
+                        for (int ii = min; ii < max; ii++)
+                        {
+                            string sketchNameStep = $"{sketchName.Substring(0, varStartIndex)}{ii.ToString()}{sketchName.Substring(varEndIndex + 1)}";
+                            string featureName = $"{sketchNameStep}@{Properties.DrawingFileName}@{EnabledViews[i]}";
+
+                            if (features.Contains(featureName)) continue;
+                            features.Add(featureName);
+
+                            InsertDimension(featureName, entry, i);
+                        }
+                    }
+                    else
+                    {
+                        string featureName = $"{entry["SKETCH"]}@{Properties.DrawingFileName}@{EnabledViews[i]}";
+
+                        if (features.Contains(featureName)) continue;
+                        features.Add(featureName);
+
+                        InsertDimension(featureName, entry, i);
                     }
                 }
             }
         }
 
+        static private void InsertDimension(string featureName, DataRow entry, int viewIndex)
+        {
+            DrawingSelect(featureName, "SKETCH");
+            DrawingModel.UnblankSketch();
+            DrawingSelect(featureName, "SKETCH");
+
+            DrawingSelect(EnabledViews[viewIndex], "DRAWINGVIEW", true);
+
+            object[] annotations = Drawing.InsertModelAnnotations3((int)swImportModelItemsSource_e.swImportModelItemsFromSelectedFeature, (int)swInsertAnnotation_e.swInsertDimensionsMarkedForDrawing, false, false, false, false);
+
+            if (annotations == null) return;
+
+            object exclude = entry["EXCLUDE"];
+            if (exclude == DBNull.Value) return;
+
+            string[] excludeNames = Array.ConvertAll(((string)exclude).Split(';'), e => e.Trim());
+
+            foreach (object a in annotations)
+            {
+                Annotation annotation = (Annotation)a;
+                if (excludeNames.Contains(annotation.GetName())) annotation.Visible = (int)swAnnotationVisibilityState_e.swAnnotationHidden;
+            }
+        }
+
         static public (string[] enabledViews, string[] disabledViews) GetViews()
         {
-            List<string> enabledViews = new List<string> ();
-            List<string> disabledViews = new List<string> ();
+            List<string> enabledViews = new List<string>();
+            List<string> disabledViews = new List<string>();
 
             DataRow[] entries = ViewData.Select();
             foreach (DataRow entry in entries)

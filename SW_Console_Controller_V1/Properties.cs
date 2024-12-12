@@ -50,12 +50,16 @@ namespace SW_Console_Controller_V1
         // General Tool
         public int HelixAngle { get; set; }
         public int FluteCount { get; set; }
+        public bool StraightFlute { get; set; }
+        public bool LeftHandSpiral { get; set; }
 
-        // EM
+        // EM & Reamer
         public string CornerStyle { get; set; }
-        public decimal CornerRadius { get; set; }
         public decimal CornerChamferAngle { get; set; }
         public decimal CornerChamferWidth { get; set; }
+
+        // EM
+        public decimal CornerRadius { get; set; }
         public bool Chipbreaker { get; set; }
         public bool ChipbreakerAlongCuttingHelix { get; set; }
 
@@ -63,7 +67,6 @@ namespace SW_Console_Controller_V1
         public decimal PointAngle { get; set; }
         public bool LOFFromPoint { get; set; }
         public bool CoolantThrough { get; set; }
-        public bool StraightFlute { get; set; }
 
         // Steps
         public bool StepTool { get; set; }

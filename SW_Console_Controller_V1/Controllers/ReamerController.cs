@@ -51,7 +51,7 @@ namespace SW_Console_Controller_V1.Controllers
         {
             decimal bottomOffset = Properties.ToolDiameter + fluteDepth;
             EquationController.SetEquation("ReamerStraightFluteBottomOffset", bottomOffset);
-            EquationController.SetEquation("ReamerStraightFluteBottomLength", 0.1m * Properties.LOC);
+            EquationController.SetEquation("ReamerStraightFluteBottomLength", bottomOffset);
 
             ModelControllerTools.UnsuppressFeature("REAMER_STRAIGHT_FLUTE_PATTERN");
         }

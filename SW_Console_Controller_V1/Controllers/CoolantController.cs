@@ -19,13 +19,15 @@ namespace SW_Console_Controller_V1.Controllers
             // rotation of the fluting at the chosen start height of the highest lateral
             decimal coolantExitFluteRotation = 360m;
 
-            if (Properties.ToolType == "End Mill" && !Properties.StraightFlute)
+            if (Properties.ToolType == "End Mill")
             {
-                coolantExitFluteRotation = (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m + 45m;
-            } else if (Properties.ToolType == "Reamer" && !Properties.StraightFlute)
+                coolantExitFluteRotation = 45m;
+                if (!Properties.StraightFlute) coolantExitFluteRotation += (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m;
+            } else if (Properties.ToolType == "Reamer")
             {
                 // TODO: change 45 offset value for reamer flute profile
-                coolantExitFluteRotation = (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m + 45m;
+                coolantExitFluteRotation = 100m;
+                if (!Properties.StraightFlute) coolantExitFluteRotation += (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m;
             }
             EquationController.SetEquation("CoolantExitFluteRotation", coolantExitFluteRotation);
 

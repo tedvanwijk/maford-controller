@@ -24,8 +24,8 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void UpdateModel()
         {
-            EquationController.SetEquation("ReamerFluteAngle", 360 / Properties.FluteCount - 15);
-            EquationController.SetEquation("ReamerFluteRadius", 0.0125m * Properties.ToolDiameter);
+            EquationController.SetEquation("ReamerFluteAngle", 360 / Properties.FluteCount - 25);
+            EquationController.SetEquation("ReamerFluteRadius", 0.05m * Properties.ToolDiameter);
 
             decimal fluteDepth = 0.25m * Properties.ToolDiameter;
             EquationController.SetEquation("ReamerFluteDepth", fluteDepth);

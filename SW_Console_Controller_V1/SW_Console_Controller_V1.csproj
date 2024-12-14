@@ -105,71 +105,71 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="SolidWorks.Interop.cosworks">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.cosworks.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.cosworks.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.dsgnchk">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.dsgnchk.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.dsgnchk.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.fworks">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.fworks.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.fworks.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.gtswutilities">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.gtswutilities.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.gtswutilities.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.sldcostingapi">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.sldcostingapi.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.sldcostingapi.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.sldtoolboxconfigureaddin">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.sldtoolboxconfigureaddin.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.sldtoolboxconfigureaddin.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.sldworks">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.sldworks.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.sldworks.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.sustainability">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.sustainability.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.sustainability.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.sw3dprinter">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.sw3dprinter.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.sw3dprinter.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swbrowser">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.swbrowser.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.swbrowser.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swcommands">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.swcommands.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.swcommands.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swconst">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.swconst.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.swconst.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdimxpert">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.swdimxpert.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.swdimxpert.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swdocumentmgr">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.swdocumentmgr.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swmotionstudy">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.swmotionstudy.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.swmotionstudy.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.swpublished">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.swpublished.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.swpublished.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="SolidWorks.Interop.SWRoutingLib">
-      <HintPath>..\..\..\SW SDK dlls\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
+      <HintPath>..\..\dlls\SolidWorks.Interop.SWRoutingLib.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />

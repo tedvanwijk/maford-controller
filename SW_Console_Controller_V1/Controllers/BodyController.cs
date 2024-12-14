@@ -23,6 +23,14 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("FluteHelixPitch", GeneratedProperties.HelixPitch);
             EquationController.SetEquation("FluteCount", Properties.FluteCount);
 
+            if (Properties.LeftHandSpiral)
+            {
+                (HelixFeatureData, Action<object>) helixData = ((HelixFeatureData, Action<object>))ModelControllerTools.GetFeature("FLUTE_HELIX", "REFERENCECURVES");
+                var (data, apply) = helixData;
+                data.Clockwise = true;
+                apply(data);
+            }
+
             // TODO: check if this should happen for all tool types
             CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);
             centerController.CreateCenterHoles();

@@ -15,7 +15,7 @@ namespace SW_Console_Controller_V1.Controllers
             UpdateModel();
             if (Properties.Coolant.CoolantHole)
             {
-                // TODO: enable CoolantPatternAlongFluting here as it is always going to be the case for end mills
+                // TODO: enable CoolantPatternAlongFluting here as it is always going to be the case for reamers if not straight flute
                 CoolantController coolantController = new CoolantController(Properties, GeneratedProperties, SwModel, EquationManager);
                 coolantController.CreateCoolantHoles();
             }

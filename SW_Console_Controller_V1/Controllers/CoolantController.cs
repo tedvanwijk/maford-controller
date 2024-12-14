@@ -19,9 +19,12 @@ namespace SW_Console_Controller_V1.Controllers
             // rotation of the fluting at the chosen start height of the highest lateral
             decimal coolantExitFluteRotation = 360m;
 
-            if (Properties.ToolType != "Blank")
+            if (Properties.ToolType == "End Mill" && !Properties.StraightFlute)
             {
-                // TODO: this + 45 is the location of the coolant lateral exit from the vertical (z) axis for an end mill flute. Might be different for other tool types (reamer)
+                coolantExitFluteRotation = (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m + 45m;
+            } else if (Properties.ToolType == "Reamer" && !Properties.StraightFlute)
+            {
+                // TODO: change 45 offset value for reamer flute profile
                 coolantExitFluteRotation = (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m + 45m;
             }
             EquationController.SetEquation("CoolantExitFluteRotation", coolantExitFluteRotation);
@@ -34,7 +37,6 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("CoolantExitWidth", Properties.ToolDiameter + 0.01m);
             EquationController.SetEquation("CoolantHelixLength", Properties.LOF);
             EquationController.SetEquation("CoolantSlotWidth", 1.05m * Properties.Coolant.CoolantFeedDiameter);
-            EquationController.SetEquation("CoolantExitFluteRotation", decimal.ToDouble(Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / GeneratedProperties.HelixPitch * 360f + 45f);
             decimal spacing;
             if (Properties.Coolant.CoolantHoleEqualSpacing) spacing = 360m / Properties.Coolant.CoolantHoleCount;
             else spacing = Properties.Coolant.CoolantHoleRotation;
@@ -45,7 +47,7 @@ namespace SW_Console_Controller_V1.Controllers
             // 60 degrees at a lower height so it effectively cools all 6 flutes
             decimal rotationAngle = Properties.Coolant.CoolantPatternAngle;
 
-            if (Properties.Coolant.CoolantPatternAlongFluting)
+            if (Properties.Coolant.CoolantPatternAlongFluting && !Properties.StraightFlute)
             {
                 // if false, the supplied rotation angle is the full angle.
                 // if true, the coolant holes are for a conventional flute, and the laterals need to be

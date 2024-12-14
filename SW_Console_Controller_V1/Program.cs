@@ -22,8 +22,11 @@ namespace SW_Console_Controller_V1
                     input = reader.ReadToEnd();
                 }
 
-
-                Properties properties = JsonConvert.DeserializeObject<Properties>(input);
+                JsonSerializerSettings settings = new JsonSerializerSettings{
+                    NullValueHandling = NullValueHandling.Ignore,
+                    MissingMemberHandling = MissingMemberHandling.Ignore
+                };
+                Properties properties = JsonConvert.DeserializeObject<Properties>(input, settings);
                 SldWorks swApp = new SldWorks();
                 SWController controller = new SWController(properties, swApp, input);
                 Console.WriteLine("Done!");
@@ -35,7 +38,13 @@ namespace SW_Console_Controller_V1
                 try
                 {
                     string input = Encoding.UTF8.GetString(Convert.FromBase64String(args[0]));
-                    Properties properties = JsonConvert.DeserializeObject<Properties>(input);
+
+                    JsonSerializerSettings settings = new JsonSerializerSettings
+                    {
+                        NullValueHandling = NullValueHandling.Ignore,
+                        MissingMemberHandling = MissingMemberHandling.Ignore
+                    };
+                    Properties properties = JsonConvert.DeserializeObject<Properties>(input, settings);
                     SldWorks swApp = new SldWorks();
                     SWController controller = new SWController(properties, swApp, input);
                     Console.WriteLine("Done!");

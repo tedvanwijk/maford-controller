@@ -139,7 +139,7 @@ namespace SW_Console_Controller_V1.Controllers
                     true
                     );
                 cut.Name = $"STEP_{i}_CUT";
-                SwModel.Extension.ReorderFeature(cut.Name, "MIRROR", (int)swMoveLocation_e.swMoveBefore);
+                SwModel.Extension.ReorderFeature(cut.Name, "STEP", (int)swMoveLocation_e.swMoveToFolder);
             }
         }
     }

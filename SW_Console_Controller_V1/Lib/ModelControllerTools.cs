@@ -111,11 +111,12 @@ namespace SW_Console_Controller_V1.Lib
             Model.ClearSelection2(true);
         }
 
-        static public (dynamic, Action<object>) GetFeature(string featureName, string featureType, bool activateFeature = true)
+        static public (dynamic, Action<object>) GetFeature(string featureName, string featureType, bool activateFeature = true, bool returnFeature = false)
         {
             // Important: the changes have to be applied before anything else is done, as the feature only gets deselected once the changes have been applied.
             Model.Extension.SelectByID2(featureName, featureType, 0, 0, 0, false, 0, null, 0);
             Feature feature = SelectionManager.GetSelectedObject6(1, -1);
+            if (returnFeature) return (feature, newFeatureData => feature.Apply(newFeatureData, activateFeature)); ;
             dynamic featureData = feature.GetDefinition();
             return (featureData, newFeatureData => feature.Apply(newFeatureData, activateFeature));
         }

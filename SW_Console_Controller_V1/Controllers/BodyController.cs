@@ -49,6 +49,31 @@ namespace SW_Console_Controller_V1.Controllers
             if (Properties.LeftHandSpiral)
             {
                 ModelControllerTools.UnsuppressFeature("MIRROR");
+
+                // Get the raw feature object for the DELETE feature
+                (Feature, Action<object>) featureData = ((Feature, Action<object>))ModelControllerTools.GetFeature("DELETE", "BODYFEATURE", true, true);
+                var (data, apply) = featureData;
+                // Get the feature definition object
+                DeleteBodyFeatureData deleteData = (DeleteBodyFeatureData)(data.GetDefinition());
+
+                // Get the bodies in the part file
+                PartDoc part = (PartDoc)SwModel;
+                var bodies = part.GetBodies2(-1, false);
+
+                // Access selections for the DELETE feature (necessary for changing feature data object)
+                deleteData.AccessSelections(SwModel, null);
+
+                // Loop through bodies in file. Skip MIRROR body and set Bodies array (there should only be 2 bodies in file)
+                foreach (Body2 body in bodies)
+                {
+                    if (body.Name == "MIRROR") continue;
+                    deleteData.Bodies = new Body2[] { body };
+                }
+
+                // Modify the feature definition with the adjusted data object
+                data.ModifyDefinition(deleteData, SwModel, null);
+
+                // Unsuppress DELETE feature
                 ModelControllerTools.UnsuppressFeature("DELETE");
             }
         }

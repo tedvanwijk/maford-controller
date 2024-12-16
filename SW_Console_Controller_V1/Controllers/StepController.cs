@@ -1,4 +1,5 @@
 ﻿using SolidWorks.Interop.sldworks;
+using SolidWorks.Interop.swconst;
 using SW_Console_Controller_V1.Lib;
 using SW_Console_Controller_V1.Models;
 using System;
@@ -138,6 +139,7 @@ namespace SW_Console_Controller_V1.Controllers
                     true
                     );
                 cut.Name = $"STEP_{i}_CUT";
+                SwModel.Extension.ReorderFeature(cut.Name, "MIRROR", (int)swMoveLocation_e.swMoveBefore);
             }
         }
     }

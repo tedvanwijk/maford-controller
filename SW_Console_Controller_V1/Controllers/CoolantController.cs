@@ -60,6 +60,7 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (Properties.Coolant.CoolantPatternCount != 1)
             {
+                if (rotationAngle == 0m) rotationAngle = 360m;
                 Properties.Coolant.CoolantPattern = true;
                 double coolantPatternSpacing = Math.Sqrt(Math.Pow(decimal.ToDouble(Properties.Coolant.CoolantPatternLength), 2f) + Math.Pow(decimal.ToDouble(rotationAngle) * Math.PI * decimal.ToDouble(Properties.ToolDiameter) / 360f, 2f));
                 double coolantPatternPitch = 360f * decimal.ToDouble(Properties.Coolant.CoolantPatternLength) / decimal.ToDouble(rotationAngle);

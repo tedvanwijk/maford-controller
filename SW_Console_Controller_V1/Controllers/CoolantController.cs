@@ -47,15 +47,19 @@ namespace SW_Console_Controller_V1.Controllers
             // the rotation angle describes the rotation of the lateral holes over the pattern height
             // E.g. a 6-fluted tool with 3 laterals spaced 120 degrees apart can be rotated
             // 60 degrees at a lower height so it effectively cools all 6 flutes
-            decimal rotationAngle = Properties.Coolant.CoolantPatternAngle;
+            decimal rotationAngle;
 
             if (Properties.Coolant.CoolantPatternAlongFluting && !Properties.StraightFlute)
             {
-                // if false, the supplied rotation angle is the full angle.
                 // if true, the coolant holes are for a conventional flute, and the laterals need to be
                 // rotated the specified amount of degrees + the rotation of the fluting along the height of the pattern
+                // and the value Properties.Coolant.CoolantPatternAngle represents the amount of flutes to move
 
-                rotationAngle += 360m * Properties.Coolant.CoolantPatternLength / (decimal)GeneratedProperties.HelixPitch;
+                rotationAngle = 360m * Properties.Coolant.CoolantPatternLength / (decimal)GeneratedProperties.HelixPitch + Properties.Coolant.CoolantPatternAngle * (360 / Properties.FluteCount);
+            } else
+            {
+                // if false, the supplied rotation angle is the full angle.
+                rotationAngle = Properties.Coolant.CoolantPatternAngle;
             }
 
             if (Properties.Coolant.CoolantPatternCount != 1)

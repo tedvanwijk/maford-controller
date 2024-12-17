@@ -25,10 +25,10 @@ namespace SW_Console_Controller_V1.Controllers
         private void UpdateModel()
         {
             EquationController.SetEquation("ReamerFluteAngle", 360 / Properties.FluteCount - 25);
-            EquationController.SetEquation("ReamerFluteRadius", 0.05m * Properties.ToolDiameter);
 
             decimal fluteDepth = 0.25m * Properties.ToolDiameter;
             EquationController.SetEquation("ReamerFluteDepth", fluteDepth);
+            EquationController.SetEquation("ReamerFluteRadius", 0.25m * fluteDepth);
 
             if (Properties.StraightFlute) CreateStraightFluting(fluteDepth);
             else CreateFluting();
@@ -59,7 +59,7 @@ namespace SW_Console_Controller_V1.Controllers
         private void CreateFluting()
         {
             // TODO: test potential multiplication factor for helixpitch or larger helix diameter in part file
-            EquationController.SetEquation("ReamerFluteWashoutHelixPitch", GeneratedProperties.HelixPitch);
+            EquationController.SetEquation("ReamerFluteWashoutHelixPitch", GeneratedProperties.HelixPitch / 2);
 
             ModelControllerTools.UnsuppressFeature("REAMER_FLUTE_PATTERN");
         }

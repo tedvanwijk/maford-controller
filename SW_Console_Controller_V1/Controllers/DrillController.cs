@@ -44,7 +44,10 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void CreateFluting(decimal pointHeight)
         {
-            double fluteAngle = 85f;
+            double fluteAngle;
+            if (Properties.FluteCount == 2) fluteAngle = 85f;
+            //else if (Properties.FluteCount == 3) fluteAngle = 55f;
+            else throw new Exception($"Flute count = {Properties.FluteCount} for drill tool type not supported");
             double fluteAngleRad = fluteAngle / 180f * Math.PI;
             double d = decimal.ToDouble(Properties.ToolDiameter / 2m);
             double R0 = d;
@@ -73,6 +76,10 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("LOC", Properties.LOC);
 
             EquationController.SetEquation("DrillPointAngle", Properties.PointAngle);
+
+            EquationController.SetEquation("DrillFluteAngle", fluteAngle);
+            EquationController.SetEquation("DrillFluteCenterOffsetAngle", 0);
+            EquationController.SetEquation("DrillFluteCenterOffset", Properties.ToolDiameter * 0.043578m);
 
             EquationController.SetEquation("DrillWashoutHelixGuideDiameter", R2 * 2f);
             EquationController.SetEquation("DrillWashoutHelixGuideStartingAngle", (int)Math.Round(maxFluteDepthAngleR2Degrees));

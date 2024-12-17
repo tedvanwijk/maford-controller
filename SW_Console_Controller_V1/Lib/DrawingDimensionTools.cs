@@ -156,7 +156,7 @@ namespace SW_Console_Controller_V1.Lib
 
             DrawingSelect(EnabledViews[viewIndex], "DRAWINGVIEW", true);
 
-            object[] annotations = Drawing.InsertModelAnnotations3((int)swImportModelItemsSource_e.swImportModelItemsFromSelectedFeature, (int)swInsertAnnotation_e.swInsertDimensionsMarkedForDrawing, false, false, false, false);
+            object[] annotations = Drawing.InsertModelAnnotations3((int)swImportModelItemsSource_e.swImportModelItemsFromSelectedFeature, (int)swInsertAnnotation_e.swInsertDimensionsMarkedForDrawing, false, false, true, false);
 
             if (annotations == null) return;
 

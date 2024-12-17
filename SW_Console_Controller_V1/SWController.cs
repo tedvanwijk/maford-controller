@@ -106,6 +106,18 @@ namespace SW_Console_Controller_V1
             DrawingDimensionTools.DrawingModel = _swDrawingModel;
             DrawingDimensionTools.Properties = _properties;
             _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
+
+            if (_properties.LeftHandSpiral)
+            {
+                int activationError = 0;
+                swApp.ActivateDoc3($"{_properties.PartFileName}.SLDPRT", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
+                if (_properties.LeftHandSpiral) MirrorModel();
+                _swModel.ForceRebuild3(false);
+#if DEBUG
+                swApp.ActivateDoc3($"{_properties.DrawingFileName}.SLDDRW", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
+#endif
+            }
+
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);
 #if !DEBUG
@@ -160,6 +172,37 @@ namespace SW_Console_Controller_V1
             EquationController.SetEquation("TopStepDiameter", _generatedProperties.TopStepDiameter);
 
             if (_generatedProperties.MaxDiameter > _properties.ToolDiameter) ModelControllerTools.UnsuppressFeature("BODY_PROFILE_CUT");
+        }
+
+        private void MirrorModel()
+        {
+            ModelControllerTools.UnsuppressFeature("MIRROR");
+
+            // Get the raw feature object for the DELETE feature
+            (Feature, Action<object>) featureData = ((Feature, Action<object>))ModelControllerTools.GetFeature("DELETE", "BODYFEATURE", true, true);
+            var (data, apply) = featureData;
+            // Get the feature definition object
+            DeleteBodyFeatureData deleteData = (DeleteBodyFeatureData)(data.GetDefinition());
+
+            // Get the bodies in the part file
+            PartDoc part = (PartDoc)_swModel;
+            var bodies = part.GetBodies2(-1, false);
+
+            // Access selections for the DELETE feature (necessary for changing feature data object)
+            deleteData.AccessSelections(_swModel, null);
+
+            // Loop through bodies in file. Skip MIRROR body and set Bodies array (there should only be 2 bodies in file)
+            foreach (Body2 body in bodies)
+            {
+                if (body.Name == "MIRROR") continue;
+                deleteData.Bodies = new Body2[] { body };
+            }
+
+            // Modify the feature definition with the adjusted data object
+            data.ModifyDefinition(deleteData, _swModel, null);
+
+            // Unsuppress DELETE feature
+            ModelControllerTools.UnsuppressFeature("DELETE");
         }
     }
 }

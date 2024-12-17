@@ -9,6 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CsvHelper;
+using SolidWorks.Interop.swconst;
+using System.Xml.Linq;
 
 namespace SW_Console_Controller_V1.Controllers
 {
@@ -32,11 +34,14 @@ namespace SW_Console_Controller_V1.Controllers
             DrawingDimensionTools.LoadDimensionData();
             (EnabledViews, DisabledViews) = DrawingDimensionTools.GetViews();
             HideUnusedViews();
+            if (Properties.LeftHandSpiral) MirrorSideViews();
             DrawingDimensionTools.MarkDimensions();
             DrawingDimensionTools.AddDimensions();
             
             UpdateDrawing();
             if (ToleranceData != null) CreateTable();
+
+            SwModel.ClearSelection2(true);
         }
 
         private void HideUnusedViews()
@@ -45,6 +50,20 @@ namespace SW_Console_Controller_V1.Controllers
             object[] viewsTemp = Sheet.GetViews();
             Views = Array.ConvertAll(viewsTemp, v => (View)v);
             foreach (string disabledView in DisabledViews) Views.Where(v => v.GetName2() == disabledView).ToArray()[0].SetVisible(false, false);
+        }
+
+        private void MirrorSideViews()
+        {
+            // If left-hand spiral tool, all side views should be mirrored
+            string[] sideViews = new string[] { "SIDE", "FORMING", "BLANK" };
+            foreach (View view in Views)
+            {
+                if (sideViews.Contains(view.Name))
+                {
+                    SwModel.Extension.SelectByID2(view.Name, "DRAWINGVIEW", 0, 0, 0, false, 0, null, 0);
+                    SwModel.ShowNamedView2(view.Name, (int)swStandardViews_e.swBackView);
+                }
+            }
         }
 
         private void UpdateDrawing()

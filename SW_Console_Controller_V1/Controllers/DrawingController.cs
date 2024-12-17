@@ -20,14 +20,18 @@ namespace SW_Console_Controller_V1.Controllers
         public DataTable ToleranceData;
         private string[] DisabledViews;
         private string[] EnabledViews;
+        private View[] Views;
+        private Sheet Sheet;
         public DrawingController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, DrawingDoc drawing, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
         {
             Drawing = drawing;
+            Sheet = Drawing.Sheet["NORMAL"];
             ToleranceProcessor = new ToleranceSheetProcessor(properties);
             if (Properties.ToolSeriesFileName != "" && Properties.ToolSeriesInputRange != "" && Properties.ToolSeriesOutputRange != "") ToleranceData = ToleranceProcessor.GetToleranceData();
 
             DrawingDimensionTools.LoadDimensionData();
             (EnabledViews, DisabledViews) = DrawingDimensionTools.GetViews();
+            HideUnusedViews();
             DrawingDimensionTools.MarkDimensions();
             DrawingDimensionTools.AddDimensions();
             
@@ -35,18 +39,20 @@ namespace SW_Console_Controller_V1.Controllers
             if (ToleranceData != null) CreateTable();
         }
 
+        private void HideUnusedViews()
+        {
+            // for some reason casting this to View[] is not possible, despite the elements being Views
+            object[] viewsTemp = Sheet.GetViews();
+            Views = Array.ConvertAll(viewsTemp, v => (View)v);
+            foreach (string disabledView in DisabledViews) Views.Where(v => v.GetName2() == disabledView).ToArray()[0].SetVisible(false, false);
+        }
+
         private void UpdateDrawing()
         {
-            Sheet mainSheet = Drawing.Sheet["NORMAL"];
-            mainSheet.SetTemplateName(Path.Combine(Properties.MasterPath, "drawing formats", $"{Properties.DrawingType}.slddrt"));
-            mainSheet.ReloadTemplate(true);
-            // for some reason casting this to View[] is not possible, despite the elements being Views
-            object[] viewsTemp = mainSheet.GetViews();
-            View[] views = Array.ConvertAll(viewsTemp, v => (View)v);
+            Sheet.SetTemplateName(Path.Combine(Properties.MasterPath, "drawing formats", $"{Properties.DrawingType}.slddrt"));
+            Sheet.ReloadTemplate(true);
 
-            foreach (string disabledView in DisabledViews) views.Where(v => v.GetName2() == disabledView).ToArray()[0].SetVisible(false, false);
-
-            if (ToleranceData != null) SetTolerances(views);
+            if (ToleranceData != null) SetTolerances(Views);
 
             if (Properties.StepTool) AddStepDimensions();
 

@@ -19,12 +19,14 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void UpdateModel()
         {
-            if (!Properties.StraightFlute)
+            if (Properties.StraightFlute)
             {
-                GeneratedProperties.HelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(Properties.HelixAngle * Math.PI / 180f);
-                EquationController.SetEquation("FluteHelixPitch", GeneratedProperties.HelixPitch);
-                EquationController.SetEquation("FluteCount", Properties.FluteCount);
+                // Add default helix angle in case HelixAngle = null for dependencies (e.g. chipbreaker helix)
+                Properties.HelixAngle = 40;
             }
+            GeneratedProperties.HelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(Properties.HelixAngle * Math.PI / 180f);
+            EquationController.SetEquation("FluteHelixPitch", GeneratedProperties.HelixPitch);
+            EquationController.SetEquation("FluteCount", Properties.FluteCount);
 
             // TODO: check if this should happen for all tool types
             CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);

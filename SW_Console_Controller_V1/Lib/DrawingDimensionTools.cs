@@ -82,14 +82,49 @@ namespace SW_Console_Controller_V1.Lib
 
                 for (int i = 0; i < entries.Length; i++)
                 {
-                    Model.ClearSelection2(true);
                     DataRow entry = entries[i];
-                    string dimensionName = $"{entry["DIMENSION"]}@{entry["SKETCH"]}@{Properties.PartFileName}";
-                    Select(dimensionName, "DIMENSION");
                     if (!ValidateRule(entry["RULE"])) continue;
 
-                    DisplayDimension dim = SelectionMgr.GetSelectedObject6(1, -1);
-                    dim.MarkedForDrawing = (string)entry["ENABLE/DISABLE"] == "ENABLE";
+                    string sketchName = (string)entry["SKETCH"];
+
+                    if (sketchName.Contains('[') && sketchName.Contains(']'))
+                    {
+                        int varStartIndex = sketchName.IndexOf('[');
+                        int varEndIndex = sketchName.IndexOf(']');
+                        string varName = sketchName.Substring(varStartIndex + 1, varEndIndex - varStartIndex - 1);
+
+                        int max = 0;
+                        int min = 0;
+                        switch (varName)
+                        {
+                            case "STEP_COUNT":
+                                if (Properties.StepTool) max = Properties.Steps.Length;
+                                break;
+                        }
+
+                        for (int ii = min; ii < max; ii++)
+                        {
+                            Model.ClearSelection2(true);
+
+                            string sketchNameStep = $"{sketchName.Substring(0, varStartIndex)}{ii.ToString()}{sketchName.Substring(varEndIndex + 1)}";
+                            string dimensionName = $"{entry["DIMENSION"]}@{sketchNameStep}@{Properties.PartFileName}";
+                            Select(dimensionName, "DIMENSION");
+
+                            DisplayDimension dim = SelectionMgr.GetSelectedObject6(1, -1);
+                            if (dim == null) continue;
+                            dim.MarkedForDrawing = (string)entry["ENABLE/DISABLE"] == "ENABLE";
+                        }
+                    } else
+                    {
+                        Model.ClearSelection2(true);
+
+                        string dimensionName = $"{entry["DIMENSION"]}@{sketchName}@{Properties.PartFileName}";
+                        Select(dimensionName, "DIMENSION");
+
+                        DisplayDimension dim = SelectionMgr.GetSelectedObject6(1, -1);
+                        if (dim == null) continue;
+                        dim.MarkedForDrawing = (string)entry["ENABLE/DISABLE"] == "ENABLE";
+                    }
                 }
             }
             Model.ShowConfiguration2("Default");

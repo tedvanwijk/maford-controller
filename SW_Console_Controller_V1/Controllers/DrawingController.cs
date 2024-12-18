@@ -81,8 +81,6 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (ToleranceData != null) SetTolerances(Views);
 
-            if (Properties.StepTool) AddStepDimensions();
-
             // auto align dimensions. TODO: make better spacing algorithm
             SwModel.Extension.SelectAll();
             SwModel.Extension.AlignDimensions(0, -0.1);
@@ -205,36 +203,6 @@ namespace SW_Console_Controller_V1.Controllers
                 DimensionTolerance tolerance = dim.Tolerance;
                 tolerance.Type = 3; // LIMIT
                 tolerance.SetValues(decimal.ToDouble(minVal), decimal.ToDouble(maxVal));
-            }
-        }
-
-        private void AddStepDimensions()
-        {
-            for (int i = 0; i < Properties.Steps.Length; i++)
-            {
-                SwModel.ClearSelection2(true);
-                if (Properties.Prp.FormingViewOnDrawing) SwModel.Extension.SelectByID2($"STEP_{i}_CUT@{Properties.PartFileName}@FORMING:FORMING_VIEW", "BODYFEATURE", 0, 0, 0, true, 0, null, 0);
-                else SwModel.Extension.SelectByID2($"STEP_{i}_CUT@{Properties.PartFileName}@NORMAL:SIDE_VIEW", "BODYFEATURE", 0, 0, 0, true, 0, null, 0);
-                Drawing.InsertModelDimensions(2);
-
-                if (i == Properties.Steps.Length - 1)
-                {
-                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", $"OuterDiameter@STEP_{i}_SKETCH");
-                    DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", $"OuterDiameter@STEP_{i}_SKETCH");
-                }
-
-                if (Properties.LOFFromPoint)
-                {
-                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", $"LengthToPointEnd@STEP_{i}_SKETCH");
-                    DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", $"LengthToPointEnd@STEP_{i}_SKETCH");
-                } else
-                {
-                    DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", $"Length@STEP_{i}_SKETCH");
-                    DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", $"Length@STEP_{i}_SKETCH");
-                }
-
-                DrawingControllerTools.HideDimension("NORMAL", "SIDE_VIEW", $"PointHeight@STEP_{i}_SKETCH");
-                DrawingControllerTools.HideDimension("FORMING", "FORMING_VIEW", $"PointHeight@STEP_{i}_SKETCH");
             }
         }
 

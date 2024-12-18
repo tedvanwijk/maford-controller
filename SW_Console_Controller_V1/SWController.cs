@@ -107,19 +107,27 @@ namespace SW_Console_Controller_V1
             DrawingDimensionTools.Properties = _properties;
             _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
 
+            int activationError = 0;
+            swApp.ActivateDoc3($"{_properties.PartFileName}.SLDPRT", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
+
             if (_properties.LeftHandSpiral)
             {
-                int activationError = 0;
-                swApp.ActivateDoc3($"{_properties.PartFileName}.SLDPRT", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
                 if (_properties.LeftHandSpiral) MirrorModel();
                 _swModel.ForceRebuild3(false);
-#if DEBUG
-                swApp.ActivateDoc3($"{_properties.DrawingFileName}.SLDDRW", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
-#endif
             }
+
+            string imageFileName = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/thumbnail.jpg");
+            _swModel.ShowNamedView2("", (int)swStandardViews_e.swFrontView);
+            _swModel.ViewZoomtofit2();
+            _swModelExtension.SaveAs3(imageFileName, 0, 1, null, null, ref _saveError, ref _saveWarning);
+
+#if DEBUG
+            swApp.ActivateDoc3($"{_properties.DrawingFileName}.SLDDRW", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
+#endif
 
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);
+
 #if !DEBUG
             //closes both files if not in debug config
             swApp.CloseAllDocuments(false);

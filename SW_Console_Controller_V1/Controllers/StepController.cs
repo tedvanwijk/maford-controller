@@ -79,6 +79,10 @@ namespace SW_Console_Controller_V1.Controllers
                     ModelControllerTools.SelectFeature($"Line46@{sketchName}", "SKETCHSEGMENT", true);
                     SwModel.SketchAddConstraints("sgCOLINEAR");
 
+                    ModelControllerTools.SelectFeature("DRILL_POINT_END_PLANE", "PLANE");
+                    ModelControllerTools.SelectFeature($"Point77@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgCOINCIDENT");
+
                     SwModel.SketchManager.InsertSketch(false);
                 }
                 else
@@ -119,6 +123,10 @@ namespace SW_Console_Controller_V1.Controllers
                     ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "EXTSKETCHSEGMENT");
                     ModelControllerTools.SelectFeature($"Line46@{sketchName}", "SKETCHSEGMENT", true);
                     SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                    ModelControllerTools.SelectFeature("DRILL_POINT_END_PLANE", "PLANE");
+                    ModelControllerTools.SelectFeature($"Point77@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgCOINCIDENT");
 
                     SwModel.SketchManager.InsertSketch(false);
                 }

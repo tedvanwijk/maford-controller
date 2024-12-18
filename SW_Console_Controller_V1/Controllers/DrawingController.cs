@@ -90,16 +90,19 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void AddCenters(bool centerInPart)
         {
+            if (!centerInPart)
+            {
+                DrawingDimensionTools.DrawingSelect("Detail View A (2 : 1)", "DRAWINGVIEW");
+                DrawingDimensionTools.DrawingSelect("Detail View B (2 : 1)", "DRAWINGVIEW", true);
+                DrawingDimensionTools.DrawingSelect("Detail View C (2 : 1)", "DRAWINGVIEW", true);
+                SwModel.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
+                return;
+            }
+
             foreach (View view in Views)
             {
                 if (view.Type == (int)swDrawingViewTypes_e.swDrawingDetailView)
                 {
-                    if (!centerInPart)
-                    {
-                        SwModel.DeleteNamedView(view.Name);
-                        continue;
-                    }
-
                     string index = view.Name.Split(' ')[2];
                     double radius;
                     // A: bottom, B: top, C: top boss
@@ -109,7 +112,6 @@ namespace SW_Console_Controller_V1.Controllers
                             if (!Properties.Center.LowerCenter || !Properties.Center.LowerCenterOnDrawing)
                             {
                                 DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
-                                DrawingDimensionTools.DrawingSelect("Detail Circle1", "DETAILCIRCLE", true);
                                 SwModel.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
                                 continue;
                             }
@@ -119,7 +121,6 @@ namespace SW_Console_Controller_V1.Controllers
                             if (!Properties.Center.UpperCenter || Properties.Center.UpperBoss || !Properties.Center.UpperCenterOnDrawing)
                             {
                                 DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
-                                DrawingDimensionTools.DrawingSelect("Detail Circle2", "DETAILCIRCLE", true);
                                 SwModel.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
                                 continue;
                             }
@@ -129,7 +130,6 @@ namespace SW_Console_Controller_V1.Controllers
                             if (!Properties.Center.UpperBoss || !Properties.Center.UpperCenter || !Properties.Center.UpperCenterOnDrawing)
                             {
                                 DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
-                                DrawingDimensionTools.DrawingSelect("Detail Circle3", "DETAILCIRCLE", true);
                                 SwModel.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
                                 continue;
                             }
@@ -142,15 +142,6 @@ namespace SW_Console_Controller_V1.Controllers
                     DetailCircle circle = view.GetDetail();
                     circle.SetParameters(0, 0, radius.ConvertToMeters());
                     SwModel.EditRebuild3();
-
-                    if (index == "A" && Properties.Coolant.CoolantHole)
-                    {
-                        // if coolant hole enabled, the top angle and diameter for the bottom center hole are no longer relevant
-                        DrawingDimensionTools.DrawingSelect("RD2", "DIMENSION");
-                        DrawingDimensionTools.DrawingSelect("RD4", "DIMENSION", true);
-                        DrawingDimensionTools.DrawingSelect("RD5", "DIMENSION", true);
-                        SwModel.Extension.DeleteSelection2(1);
-                    }
 
                     AddCenterTolerances(index);
                 }
@@ -180,12 +171,20 @@ namespace SW_Console_Controller_V1.Controllers
 
             for (int i = 0; i < dimensionNames.Length; i++)
             {
+                DrawingDimensionTools.DrawingSelect($"{dimensionNames[i]}@Detail View {type} (2 : 1)", "DIMENSION");
+                DisplayDimension displayDim = (DisplayDimension)SelectionMgr.GetSelectedObject6(1, -1);
+
+                Annotation annotation = displayDim.GetAnnotation();
+                if (annotation.IsDangling())
+                {
+                    SwModel.Extension.DeleteSelection2(1);
+                    continue;
+                }
+
                 decimal minVal = (decimal)dimensions.GetType().GetProperty($"{propertyNames[i]}Min").GetValue(dimensions);
                 decimal maxVal = (decimal)dimensions.GetType().GetProperty($"{propertyNames[i]}Max").GetValue(dimensions);
                 if (minVal == maxVal) continue;
 
-                DrawingDimensionTools.DrawingSelect($"{dimensionNames[i]}@Detail View {type} (2 : 1)", "DIMENSION");
-                DisplayDimension displayDim = (DisplayDimension)SelectionMgr.GetSelectedObject6(1, -1);
                 Dimension dim = displayDim.GetDimension2(0);
 
                 decimal dimensionValue = (decimal)dim.GetValue3(1, "")[0];

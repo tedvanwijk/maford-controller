@@ -11,12 +11,15 @@ using System.Threading.Tasks;
 using CsvHelper;
 using SolidWorks.Interop.swconst;
 using System.Xml.Linq;
+using SW_Console_Controller_V1.Models;
+using System.Security.Cryptography;
 
 namespace SW_Console_Controller_V1.Controllers
 {
     internal class DrawingController : ModelController
     {
         public DrawingDoc Drawing;
+        public SelectionMgr SelectionMgr;
         public DataTable DimensionPositions;
         public ToleranceSheetProcessor ToleranceProcessor;
         public DataTable ToleranceData;
@@ -28,16 +31,24 @@ namespace SW_Console_Controller_V1.Controllers
         {
             Drawing = drawing;
             Sheet = Drawing.Sheet["NORMAL"];
+            SelectionMgr = SwModel.SelectionManager;
+            // for some reason casting this to View[] is not possible, despite the elements being Views
+            object[] viewsTemp = Sheet.GetViews();
+            Views = Array.ConvertAll(viewsTemp, v => (View)v);
             ToleranceProcessor = new ToleranceSheetProcessor(properties);
             if (Properties.ToolSeriesFileName != "" && Properties.ToolSeriesInputRange != "" && Properties.ToolSeriesOutputRange != "") ToleranceData = ToleranceProcessor.GetToleranceData();
 
             DrawingDimensionTools.LoadDimensionData();
+
+            bool centerInPart = Properties.Center.UpperCenter || Properties.Center.LowerCenter;
+            AddCenters(centerInPart);
+
             (EnabledViews, DisabledViews) = DrawingDimensionTools.GetViews();
             HideUnusedViews();
             if (Properties.LeftHandSpiral) MirrorSideViews();
             DrawingDimensionTools.MarkDimensions();
             DrawingDimensionTools.AddDimensions();
-            
+
             UpdateDrawing();
             if (ToleranceData != null) CreateTable();
 
@@ -46,9 +57,6 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void HideUnusedViews()
         {
-            // for some reason casting this to View[] is not possible, despite the elements being Views
-            object[] viewsTemp = Sheet.GetViews();
-            Views = Array.ConvertAll(viewsTemp, v => (View)v);
             foreach (string disabledView in DisabledViews) Views.Where(v => v.GetName2() == disabledView).ToArray()[0].SetVisible(false, false);
         }
 
@@ -78,6 +86,127 @@ namespace SW_Console_Controller_V1.Controllers
             // auto align dimensions. TODO: make better spacing algorithm
             SwModel.Extension.SelectAll();
             SwModel.Extension.AlignDimensions(0, -0.1);
+        }
+
+        private void AddCenters(bool centerInPart)
+        {
+            foreach (View view in Views)
+            {
+                if (view.Type == (int)swDrawingViewTypes_e.swDrawingDetailView)
+                {
+                    if (!centerInPart)
+                    {
+                        SwModel.DeleteNamedView(view.Name);
+                        continue;
+                    }
+
+                    string index = view.Name.Split(' ')[2];
+                    double radius;
+                    // A: bottom, B: top, C: top boss
+                    switch (index)
+                    {
+                        case "A":
+                            if (!Properties.Center.LowerCenter)
+                            {
+                                DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
+                                DrawingDimensionTools.DrawingSelect("Detail Circle1", "DETAILCIRCLE", true);
+                                SwModel.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
+                                continue;
+                            }
+                            radius = Math.Max(decimal.ToDouble(Properties.Center.LowerCenterDimensions.D2Max), decimal.ToDouble(Properties.Center.LowerCenterDimensions.LMax * 2m));
+                            break;
+                        case "B":
+                            if (!Properties.Center.UpperCenter || Properties.Center.UpperBoss)
+                            {
+                                DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
+                                DrawingDimensionTools.DrawingSelect("Detail Circle2", "DETAILCIRCLE", true);
+                                SwModel.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
+                                continue;
+                            }
+                            radius = Math.Max(decimal.ToDouble(Properties.Center.UpperCenterDimensions.D2Max), decimal.ToDouble(Properties.Center.UpperCenterDimensions.LMax * 2m));
+                            break;
+                        case "C":
+                            if (!Properties.Center.UpperBoss || !Properties.Center.UpperCenter)
+                            {
+                                DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
+                                DrawingDimensionTools.DrawingSelect("Detail Circle3", "DETAILCIRCLE", true);
+                                SwModel.Extension.DeleteSelection2((int)swDeleteSelectionOptions_e.swDelete_Absorbed);
+                                continue;
+                            }
+                            radius = Math.Max(decimal.ToDouble(Properties.Center.UpperCenterDimensions.BossDiameterMax), decimal.ToDouble(Properties.Center.UpperCenterDimensions.BossLengthMax));
+                            break;
+                        default:
+                            continue;
+                    }
+                    radius = radius / 2 * 1.2;
+                    DetailCircle circle = view.GetDetail();
+                    circle.SetParameters(0, 0, radius.ConvertToMeters());
+                    SwModel.EditRebuild3();
+
+                    if (index == "A" && Properties.Coolant.CoolantHole)
+                    {
+                        // if coolant hole enabled, the top angle and diameter for the bottom center hole are no longer relevant
+                        DrawingDimensionTools.DrawingSelect("RD2", "DIMENSION");
+                        DrawingDimensionTools.DrawingSelect("RD4", "DIMENSION", true);
+                        DrawingDimensionTools.DrawingSelect("RD5", "DIMENSION", true);
+                        SwModel.Extension.DeleteSelection2(1);
+                    }
+
+                    AddCenterTolerances(index);
+                }
+            }
+        }
+
+        private void AddCenterTolerances(string type)
+        {
+            string[] dimensionNames; // names in drawing
+            string[] propertyNames; // names in CenterDimensions
+
+            if (type == "C")
+            {
+                dimensionNames = new string[] { "RD2", "RD1", "RD4", "RD3", "RD5", "RD6", "RD7" };
+                propertyNames = new string[] { "A1", "A2", "D1", "D2", "L", "BossDiameter", "BossLength" };
+            }
+            else
+            {
+                dimensionNames = new string[] { "RD2", "RD1", "RD4", "RD3", "RD5" };
+                propertyNames = new string[] { "A1", "A2", "D1", "D2", "L" };
+            }
+
+            CenterDimensions dimensions;
+
+            if (type == "A") dimensions = Properties.Center.LowerCenterDimensions;
+            else dimensions = Properties.Center.UpperCenterDimensions;
+
+            for (int i = 0; i < dimensionNames.Length; i++)
+            {
+                decimal minVal = (decimal)dimensions.GetType().GetProperty($"{propertyNames[i]}Min").GetValue(dimensions);
+                decimal maxVal = (decimal)dimensions.GetType().GetProperty($"{propertyNames[i]}Max").GetValue(dimensions);
+                if (minVal == maxVal) continue;
+
+                DrawingDimensionTools.DrawingSelect($"{dimensionNames[i]}@Detail View {type} (2 : 1)", "DIMENSION");
+                DisplayDimension displayDim = (DisplayDimension)SelectionMgr.GetSelectedObject6(1, -1);
+                Dimension dim = displayDim.GetDimension2(0);
+
+                decimal dimensionValue = (decimal)dim.GetValue3(1, "")[0];
+                minVal -= dimensionValue;
+                maxVal -= dimensionValue;
+
+                if (propertyNames[i].Substring(0, 1) == "A")
+                {
+                    // val is angle
+                    minVal = (decimal)(decimal.ToDouble(minVal) * Math.PI / 180);
+                    maxVal = (decimal)(decimal.ToDouble(maxVal) * Math.PI / 180);
+                } else
+                {
+                    minVal = minVal.ConvertToMeters();
+                    maxVal = maxVal.ConvertToMeters();
+                }
+
+                DimensionTolerance tolerance = dim.Tolerance;
+                tolerance.Type = 3; // LIMIT
+                tolerance.SetValues(decimal.ToDouble(minVal), decimal.ToDouble(maxVal));
+            }
         }
 
         private void AddStepDimensions()

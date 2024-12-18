@@ -30,6 +30,7 @@ namespace SW_Console_Controller_V1.Controllers
                     EquationController.SetEquation("CenterHoleBossLength", Properties.Center.UpperCenterDimensions.BossLengthMin);
                     EquationController.SetEquation("CenterHoleBossDiameter", Properties.Center.UpperCenterDimensions.BossDiameterMin);
                     ModelControllerTools.UnsuppressFeature("CENTER_HOLE_TOP_BOSS");
+                    ModelControllerTools.Unsuppress("CENTER_TOP_BOSS_REF_PLANE", "PLANE");
                 } else
                 {
                     ModelControllerTools.UnsuppressFeature("CENTER_HOLE_TOP_CUT");

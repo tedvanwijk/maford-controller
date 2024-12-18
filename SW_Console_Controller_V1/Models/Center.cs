@@ -10,6 +10,8 @@ namespace SW_Console_Controller_V1.Models
     {
         public bool UpperCenter { get; set; }
         public bool LowerCenter { get; set; }
+        public bool LowerCenterOnDrawing { get; set; }
+        public bool UpperCenterOnDrawing { get; set; }
         public string UpperType { get; set; }
         public string LowerType { get; set; }
         public CenterDimensions UpperCenterDimensions { get; set; }

@@ -106,7 +106,7 @@ namespace SW_Console_Controller_V1.Controllers
                     switch (index)
                     {
                         case "A":
-                            if (!Properties.Center.LowerCenter)
+                            if (!Properties.Center.LowerCenter || !Properties.Center.LowerCenterOnDrawing)
                             {
                                 DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
                                 DrawingDimensionTools.DrawingSelect("Detail Circle1", "DETAILCIRCLE", true);
@@ -116,7 +116,7 @@ namespace SW_Console_Controller_V1.Controllers
                             radius = Math.Max(decimal.ToDouble(Properties.Center.LowerCenterDimensions.D2Max), decimal.ToDouble(Properties.Center.LowerCenterDimensions.LMax * 2m));
                             break;
                         case "B":
-                            if (!Properties.Center.UpperCenter || Properties.Center.UpperBoss)
+                            if (!Properties.Center.UpperCenter || Properties.Center.UpperBoss || !Properties.Center.UpperCenterOnDrawing)
                             {
                                 DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
                                 DrawingDimensionTools.DrawingSelect("Detail Circle2", "DETAILCIRCLE", true);
@@ -126,7 +126,7 @@ namespace SW_Console_Controller_V1.Controllers
                             radius = Math.Max(decimal.ToDouble(Properties.Center.UpperCenterDimensions.D2Max), decimal.ToDouble(Properties.Center.UpperCenterDimensions.LMax * 2m));
                             break;
                         case "C":
-                            if (!Properties.Center.UpperBoss || !Properties.Center.UpperCenter)
+                            if (!Properties.Center.UpperBoss || !Properties.Center.UpperCenter || !Properties.Center.UpperCenterOnDrawing)
                             {
                                 DrawingDimensionTools.DrawingSelect(view.Name, "DRAWINGVIEW");
                                 DrawingDimensionTools.DrawingSelect("Detail Circle3", "DETAILCIRCLE", true);

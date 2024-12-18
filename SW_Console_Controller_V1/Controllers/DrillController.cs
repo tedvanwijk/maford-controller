@@ -18,7 +18,7 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void UpdateModel()
         {
-            decimal pointHeight = (decimal)((Properties.ToolDiameter / 2m) / (decimal)Math.Tan((decimal.ToDouble(Properties.PointAngle) / 2f) / 180f * Math.PI));
+            decimal pointHeight = (decimal)((GeneratedProperties.TopStepDiameter/ 2m) / (decimal)Math.Tan((decimal.ToDouble(Properties.PointAngle) / 2f) / 180f * Math.PI));
             GeneratedProperties.PointHeight = pointHeight;
             if (!Properties.LOFFromPoint)
             {

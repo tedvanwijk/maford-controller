@@ -116,12 +116,33 @@ namespace SW_Console_Controller_V1
                 _swModel.ForceRebuild3(false);
             }
 
-            string imageFileName = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/thumbnail.jpg");
-            _swModel.ShowNamedView2("", (int)swStandardViews_e.swFrontView);
-            _swModel.ViewZoomtofit2();
+            // resize window to match tool ratio
+            double LOA = decimal.ToDouble(_properties.LOA);
+            double maxD = decimal.ToDouble(_generatedProperties.MaxDiameter);
+
+            int width = 1500;
+            int height = (int)Math.Ceiling(width * maxD / LOA);
+
+            ModelView view = _swModel.ActiveView;
+
+            // For width, add twice the frame width. For height, add toolbar height (32), bottom frame height (8) and motion study bar (16)
+            view.FrameState = 0;
+            view.FrameWidth = width + 8 + 8;
+            view.FrameHeight = height + 32 + 8 + 16;
+
+            // After resizing, zoom to model (uses meters)
+            maxD = maxD.ConvertToMeters();
+            LOA = LOA.ConvertToMeters();
+            _swModel.ShowNamedView2("thumbnail", -1);
+            _swModel.SetFeatureManagerWidth(0);
+            // y, x, z! SW docs is lying to me
+            _swModel.ViewZoomTo2(0, maxD / 2, 0, LOA, -maxD / 2, 0);
+
+            string imageFileName = Path.Combine(_properties.ImagePath, $"{_properties.SpecificationNumber}.png");
             _swModelExtension.SaveAs3(imageFileName, 0, 1, null, null, ref _saveError, ref _saveWarning);
 
 #if DEBUG
+            view.FrameState = 1;
             swApp.ActivateDoc3($"{_properties.DrawingFileName}.SLDDRW", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
 #endif
 

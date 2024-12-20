@@ -26,6 +26,7 @@ namespace SW_Console_Controller_V1
         public string ExecutablePath { get; set; }
         public string OutputPath { get; set; }
         public string[] ToolSeriesInputs { get; set; }
+        public string ImagePath { get; set; }
 
         // PRP sheet
         public Prp Prp { get; set; }

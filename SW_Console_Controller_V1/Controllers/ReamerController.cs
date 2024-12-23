@@ -28,7 +28,7 @@ namespace SW_Console_Controller_V1.Controllers
 
             decimal fluteDepth = 0.25m * Properties.ToolDiameter;
             EquationController.SetEquation("ReamerFluteDepth", fluteDepth);
-            EquationController.SetEquation("ReamerFluteRadius", 0.25m * fluteDepth);
+            EquationController.SetEquation("ReamerFluteRadius", 0.1m * fluteDepth);
 
             if (Properties.StraightFlute) CreateStraightFluting(fluteDepth);
             else CreateFluting();

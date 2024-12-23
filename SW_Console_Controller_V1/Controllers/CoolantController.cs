@@ -21,14 +21,16 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (Properties.ToolType == "End Mill")
             {
-                coolantExitFluteRotation = 45m;
-                if (!Properties.StraightFlute) coolantExitFluteRotation += (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m;
+                decimal profileAngle = 0.844m * 360m / Properties.FluteCount;
+                coolantExitFluteRotation = 84m - profileAngle * 0.6m;
             } else if (Properties.ToolType == "Reamer")
             {
-                // TODO: change 45 offset value for reamer flute profile
-                coolantExitFluteRotation = 100m;
-                if (!Properties.StraightFlute) coolantExitFluteRotation += (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m;
+                decimal profileAngle = 360m / Properties.FluteCount - 25m;
+                coolantExitFluteRotation = 90m + profileAngle * 0.5m;
             }
+
+            if (!Properties.StraightFlute) coolantExitFluteRotation += (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m;
+
             EquationController.SetEquation("CoolantExitFluteRotation", coolantExitFluteRotation);
 
             EquationController.SetEquation("CoolantStartLength", Properties.Coolant.CoolantHoleLength);

@@ -27,6 +27,7 @@ namespace SW_Console_Controller_V1.Controllers
             GeneratedProperties.HelixPitch = Math.PI * decimal.ToDouble(Properties.ToolDiameter) / Math.Tan(Properties.HelixAngle * Math.PI / 180f);
             EquationController.SetEquation("FluteHelixPitch", GeneratedProperties.HelixPitch);
             EquationController.SetEquation("FluteCount", Properties.FluteCount);
+            EquationController.SetEquation("FluteHelixAngle", Properties.HelixAngle);
 
             // TODO: check if this should happen for all tool types
             CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);

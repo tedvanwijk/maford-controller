@@ -58,8 +58,8 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void CreateFluting()
         {
-            // TODO: test potential multiplication factor for helixpitch or larger helix diameter in part file
-            EquationController.SetEquation("ReamerFluteWashoutHelixPitch", GeneratedProperties.HelixPitch / 2);
+            decimal bottomOffset = Properties.LOA - Properties.LOC;
+            EquationController.SetEquation("ReamerFluteBottomOffset", bottomOffset);
 
             ModelControllerTools.UnsuppressFeature("REAMER_FLUTE_PATTERN");
         }

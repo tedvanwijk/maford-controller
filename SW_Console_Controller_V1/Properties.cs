@@ -21,7 +21,6 @@ namespace SW_Console_Controller_V1
         public string ToolSeriesPath { get; set; }
         public string ToolSeriesOutputRange { get; set; }
         public string ToolSeriesInputRange { get; set; }
-        public string DrawingType { get; set; }
         public string MasterPath { get; set; }
         public string ExecutablePath { get; set; }
         public string OutputPath { get; set; }

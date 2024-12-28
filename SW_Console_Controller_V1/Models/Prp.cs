@@ -29,5 +29,6 @@ namespace SW_Console_Controller_V1.Models
         public string CompanyName { get; set; }
         public string Revision { get; set; }
         public bool FormingViewOnDrawing { get; set; }
+        public string DrawingType { get; set; }
     }
 }

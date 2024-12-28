@@ -33,11 +33,6 @@ namespace SW_Console_Controller_V1.Controllers
             // Set and enable pattern
             ModelControllerTools.UnsuppressFeature("EM_FLUTE_PATTERN");
 
-            // Set corner style options
-            EquationController.SetEquation("EMCornerRadius", Properties.CornerRadius);
-            EquationController.SetEquation("EMCornerChamferAngle", Properties.CornerChamferAngle);
-            EquationController.SetEquation("EMCornerChamferWidth", Properties.CornerChamferWidth);
-
             // Set loc rotation and helix angle
             EquationController.SetEquation("EMFluteLOCRotation", (decimal.ToDouble(Properties.LOC) / GeneratedProperties.HelixPitch * 360f) % 360f);
             EquationController.SetEquation("EMHelixAngle", Properties.HelixAngle);
@@ -46,9 +41,12 @@ namespace SW_Console_Controller_V1.Controllers
             switch (Properties.CornerStyle)
             {
                 case "Corner Chamfer":
+                    EquationController.SetEquation("EMCornerChamferAngle", Properties.CornerChamferAngle);
+                    EquationController.SetEquation("EMCornerChamferWidth", Properties.CornerChamferWidth);
                     ModelControllerTools.UnsuppressFeature("EM_CORNER_CHAMFER_CUT");
                     break;
                 case "Corner Radius":
+                    EquationController.SetEquation("EMCornerRadius", Properties.CornerRadius);
                     ModelControllerTools.UnsuppressFeature("EM_CORNER_RADIUS_CUT");
                     break;
                 case "Ballnose":

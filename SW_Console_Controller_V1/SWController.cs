@@ -15,6 +15,7 @@ namespace SW_Console_Controller_V1
 {
     internal class SWController
     {
+        private SldWorks _swApp;
         private ModelDoc2 _swModel;
         private ModelDocExtension _swModelExtension;
         private SelectionMgr _selectionMgr;
@@ -40,6 +41,8 @@ namespace SW_Console_Controller_V1
 
         public SWController(Properties properties, SldWorks swApp, string input)
         {
+            _swApp = swApp;
+
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("en-US");
 
             // set properties and determine path to master files
@@ -57,7 +60,7 @@ namespace SW_Console_Controller_V1
             string newDrawingPath = Path.Combine(outputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.SLDDRW");
 
             // closes open files. Just in case a previous run left files open and unsaved
-            swApp.CloseAllDocuments(true);
+            _swApp.CloseAllDocuments(true);
 
 #if DEBUG
             // removes the old files if present. Only in debug config for easy testing
@@ -66,13 +69,13 @@ namespace SW_Console_Controller_V1
 #endif
 
             // copy the drawing along with the model
-            swApp.CopyDocument(
+            _swApp.CopyDocument(
                 oldDrawingPath,
                 newDrawingPath,
                 new string[] { oldDocumentPath },
                 new string[] { newDocumentPath },
                 1);
-            _swModel = swApp.OpenDoc6(newDocumentPath, 1, 1, "", ref _fileError, ref _fileWarning);
+            _swModel = _swApp.OpenDoc6(newDocumentPath, 1, 1, "", ref _fileError, ref _fileWarning);
             _swModelExtension = _swModel.Extension;
             _equationManager = _swModel.GetEquationMgr();
             //EquationController.Manager = _equationManager;
@@ -93,7 +96,7 @@ namespace SW_Console_Controller_V1
             _bodyController = new BodyController(properties, _generatedProperties, _swModel, _equationManager);
             _swModel.ForceRebuild3(false);
 
-            _swDrawingModel = swApp.OpenDoc6(newDrawingPath, 3, 1, "", ref _drawingError, ref _drawingWarning);
+            _swDrawingModel = _swApp.OpenDoc6(newDrawingPath, 3, 1, "", ref _drawingError, ref _drawingWarning);
             _swDrawing = (DrawingDoc)_swDrawingModel;
             DrawingControllerTools.Model = _swDrawingModel;
             DrawingControllerTools.ModelExtension = _swDrawingModel.Extension;
@@ -108,7 +111,7 @@ namespace SW_Console_Controller_V1
             _drawingController = new DrawingController(properties, _generatedProperties, _swDrawingModel, _swDrawing, _equationManager);
 
             int activationError = 0;
-            swApp.ActivateDoc3($"{_properties.PartFileName}.SLDPRT", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
+            _swApp.ActivateDoc3($"{_properties.PartFileName}.SLDPRT", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
 
             if (_properties.LeftHandSpiral)
             {
@@ -116,6 +119,17 @@ namespace SW_Console_Controller_V1
                 _swModel.ForceRebuild3(false);
             }
 
+            _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
+            _swModel.Save3(1, ref _saveError, ref _saveWarning);
+
+#if !DEBUG
+            //closes both files if not in debug config
+            _swApp.CloseAllDocuments(false);
+#endif
+        }
+
+        private void CreateThumbnail()
+        {
             // resize window to match tool ratio
             double LOA = decimal.ToDouble(_properties.LOA);
             double maxD = decimal.ToDouble(_generatedProperties.MaxDiameter);
@@ -143,15 +157,8 @@ namespace SW_Console_Controller_V1
 
 #if DEBUG
             view.FrameState = 1;
-            swApp.ActivateDoc3($"{_properties.DrawingFileName}.SLDDRW", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
-#endif
-
-            _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
-            _swModel.Save3(1, ref _saveError, ref _saveWarning);
-
-#if !DEBUG
-            //closes both files if not in debug config
-            swApp.CloseAllDocuments(false);
+            int activationError = 0;
+            _swApp.ActivateDoc3($"{_properties.DrawingFileName}.SLDDRW", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
 #endif
         }
 

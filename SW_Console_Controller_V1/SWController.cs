@@ -119,6 +119,8 @@ namespace SW_Console_Controller_V1
                 _swModel.ForceRebuild3(false);
             }
 
+            CreateThumbnail();
+
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);
 

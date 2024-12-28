@@ -26,6 +26,13 @@ namespace SW_Console_Controller_V1.Lib
         {
             string path = Path.Combine(Properties.ToolSeriesPath, Properties.ToolSeriesFileName);
             FileInfo fileInfo = new FileInfo(path);
+            if (!fileInfo.Exists)
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("SOFTWARE_NAME");
+                dt.Columns.Add("TOL_TYPE");
+                return dt;
+            }
             ExcelPackage package = new ExcelPackage(fileInfo);
             Worksheet = package.Workbook.Worksheets["TOLERANCE_DATA"];
             EnterInputs();

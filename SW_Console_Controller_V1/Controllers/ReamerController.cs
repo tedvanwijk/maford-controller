@@ -33,11 +33,20 @@ namespace SW_Console_Controller_V1.Controllers
             if (Properties.StraightFlute) CreateStraightFluting(fluteDepth);
             else CreateFluting();
 
-            if (Properties.CornerStyle == "Corner Chamfer")
+            switch (Properties.CornerStyle)
             {
-                EquationController.SetEquation("ReamerCornerChamferWidth", Properties.CornerChamferWidth);
-                EquationController.SetEquation("ReamerCornerChamferAngle", Properties.CornerChamferAngle);
-                ModelControllerTools.UnsuppressFeature("REAMER_CORNER_CHAMFER_CUT");
+                case "Corner Chamfer":
+                    EquationController.SetEquation("ReamerCornerChamferWidth", Properties.CornerChamferWidth);
+                    EquationController.SetEquation("ReamerCornerChamferAngle", Properties.CornerChamferAngle);
+                    ModelControllerTools.UnsuppressFeature("REAMER_CORNER_CHAMFER_CUT");
+                    break;
+                case "Corner Radius":
+                    EquationController.SetEquation("ReamerCornerRadius", Properties.CornerRadius);
+                    ModelControllerTools.UnsuppressFeature("REAMER_CORNER_RADIUS_CUT");
+                    break;
+                case "Ballnose":
+                    ModelControllerTools.UnsuppressFeature("REAMER_BALL_NOSE_CUT");
+                    break;
             }
 
             if (Properties.StepTool)

@@ -50,6 +50,12 @@ namespace SW_Console_Controller_V1.Controllers
             }
 
             SwModel.ShowConfiguration2("Default");
+
+            if (Properties.StepTool)
+            {
+                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
+                stepController.CreateSteps();
+            }
         }
     }
 }

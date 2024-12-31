@@ -48,12 +48,6 @@ namespace SW_Console_Controller_V1.Controllers
                     ModelControllerTools.UnsuppressFeature("REAMER_BALL_NOSE_CUT");
                     break;
             }
-
-            if (Properties.StepTool)
-            {
-                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
-                stepController.CreateSteps();
-            }
         }
 
         private void CreateStraightFluting(decimal fluteDepth)

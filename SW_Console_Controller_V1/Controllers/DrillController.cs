@@ -34,12 +34,6 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (!Properties.StraightFlute) CreateFluting(pointHeight);
             else CreateStraightFluting(pointHeight);
-
-            if (Properties.StepTool)
-            {
-                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
-                stepController.CreateSteps();
-            }
         }
 
         private void CreateFluting(decimal pointHeight)

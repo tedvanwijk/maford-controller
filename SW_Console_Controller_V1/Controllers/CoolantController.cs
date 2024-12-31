@@ -74,11 +74,15 @@ namespace SW_Console_Controller_V1.Controllers
                 EquationController.SetEquation("CoolantHelixSpacing", coolantPatternSpacing);
                 EquationController.SetEquation("CoolantHelixPitch", coolantPatternPitch);
                 EquationController.SetEquation("CoolantPatternLength", Properties.Coolant.CoolantPatternLength);
+                ModelControllerTools.UnsuppressFeature("COOLANT_HELIX_PATTERN");
             }
-            else Properties.Coolant.CoolantPattern = false;
+            else
+            {
+                Properties.Coolant.CoolantPattern = false;
+                ModelControllerTools.UnsuppressFeature("COOLANT_HOLE_PATTERN");
+            } 
             EquationController.SetEquation("CoolantHelixCount", Properties.Coolant.CoolantPatternCount);
 
-            ModelControllerTools.UnsuppressFeature("COOLANT_HOLE_PATTERN");
             ModelControllerTools.UnsuppressFeature("COOLANT_FEED_HOLE_CUT");
             ModelControllerTools.Unsuppress("COOLANT_DRAWING_SKETCH", "SKETCH");
             ModelControllerTools.Unsuppress("COOLANT_HOLE_DRAWING_SKETCH", "SKETCH");

@@ -20,7 +20,6 @@ namespace SW_Console_Controller_V1.Controllers
     {
         public DrawingDoc Drawing;
         public SelectionMgr SelectionMgr;
-        public DataTable DimensionPositions;
         public ToleranceSheetProcessor ToleranceProcessor;
         public DataTable ToleranceData;
         private string[] DisabledViews;
@@ -50,7 +49,7 @@ namespace SW_Console_Controller_V1.Controllers
             DrawingDimensionTools.AddDimensions();
 
             UpdateDrawing();
-            if (ToleranceData != null) CreateTable();
+            if (ToleranceData != null && Properties.Prp.DrawingType == "Manufacturing") CreateTable();
 
             SwModel.ClearSelection2(true);
         }

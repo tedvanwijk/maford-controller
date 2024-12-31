@@ -124,11 +124,8 @@ namespace SW_Console_Controller_V1
             _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);
 
-            _swDrawingModel.Extension.SaveAs3(Path.Combine(_properties.OutputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.pdf"), 0, 1, null, null, ref _saveError, ref _saveWarning);
-            _swDrawingModel.Extension.SaveAs3(Path.Combine(_properties.OutputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.dwg"), 0, 1, null, null, ref _saveError, ref _saveWarning);
-            _swDrawingModel.Extension.SaveAs3(Path.Combine(_properties.OutputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.dxf"), 0, 1, null, null, ref _saveError, ref _saveWarning);
-            _swDrawingModel.Extension.SaveAs3(Path.Combine(_properties.OutputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.edrw"), 0, 1, null, null, ref _saveError, ref _saveWarning);
-
+            foreach (string drawingFileType in _properties.DrawingFileTypes) _swDrawingModel.Extension.SaveAs3(Path.Combine(_properties.OutputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.{drawingFileType}"), 0, 1, null, null, ref _saveError, ref _saveWarning);
+            foreach (string partFileType in _properties.PartFileTypes) _swModel.Extension.SaveAs3(Path.Combine(_properties.OutputPath, $"{_properties.SpecificationNumber}/{_properties.PartFileName}.{partFileType}"), 0, 1, null, null, ref _saveError, ref _saveWarning);
 #if !DEBUG
             //closes both files if not in debug config
             _swApp.CloseAllDocuments(false);

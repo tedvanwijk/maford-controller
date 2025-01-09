@@ -36,10 +36,9 @@ namespace SW_Console_Controller_V1.Controllers
                 if (i == Properties.Steps.Length - 1) outerDiameter = Properties.ToolDiameter;
                 else outerDiameter = Properties.Steps[i + 1].Diameter;
 
+                decimal length = currentStep.Length;
                 // if lof from point is disabled, adjust length of step
-                decimal length;
-                if (Properties.LOFFromPoint) length = currentStep.Length;
-                else length = currentStep.Length + GeneratedProperties.PointHeight;
+                if (Properties.ToolType == "Drill" && !Properties.LOFFromPoint) length = currentStep.Length + GeneratedProperties.PointHeight;
 
                 string sketchName;
                 string sourceSketchName;

@@ -42,53 +42,53 @@ namespace SW_Console_Controller_V1.Controllers
                 else length = currentStep.Length + GeneratedProperties.PointHeight;
 
                 string sketchName;
+                string sourceSketchName;
+                string[] dimensionNames;
+                decimal[] dimensions;
 
-                if (currentStep.Type == "angle")
+                if (currentStep.RTop == 0 && currentStep.RBottom == 0)
                 {
-                    string[] dimensionNames = new string[] { "Length", "Angle", "InnerDiameter", "OuterDiameter" };
-                    decimal[] dimensions = new decimal[]
+                    sourceSketchName = "STEP_SKETCH_ANGLE";
+                    dimensionNames = new string[] { "Length", "Angle", "InnerDiameter", "OuterDiameter" };
+                    dimensions = new decimal[]
                     {
-                        length,
-                        currentStep.Angle,
-                        currentStep.Diameter,
-                        outerDiameter
+                    length,
+                    currentStep.Angle,
+                    currentStep.Diameter,
+                    outerDiameter
                     };
-                    ModelControllerTools.SetSketchDimension("STEP_SKETCH_ANGLE", dimensionNames, dimensions);
-
-                    ModelControllerTools.SelectFeature("STEP_SKETCH_ANGLE", "SKETCH");
-                    SwModel.EditCopy();
-                    ModelControllerTools.SelectFeature("Front Plane", "PLANE");
-                    SwModel.Paste();
-                    Feature sketchFeature = SwModel.Extension.GetLastFeatureAdded();
-                    sketchName = $"STEP_{i}_SKETCH_ANGLE";
-                    sketchFeature.Name = sketchName;
-                    sketchFeature.Select2(false, 0);
-
-                    // Reset sketch relations
-                    SwModel.EditSketch();
-
-                    ModelControllerTools.SelectFeature("LOA_REF_PLANE", "PLANE");
-                    ModelControllerTools.SelectFeature($"Line45@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOLINEAR");
-
-                    ModelControllerTools.SelectFeature("MAX_D_OFFSET_REF_PLANE", "PLANE");
-                    ModelControllerTools.SelectFeature($"Line44@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOLINEAR");
-
-                    ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "EXTSKETCHSEGMENT");
-                    ModelControllerTools.SelectFeature($"Line46@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOLINEAR");
-
-                    ModelControllerTools.SelectFeature("DRILL_POINT_END_PLANE", "PLANE");
-                    ModelControllerTools.SelectFeature($"Point77@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOINCIDENT");
-
-                    SwModel.SketchManager.InsertSketch(false);
+                }
+                else if (currentStep.RTop == 0)
+                {
+                    sourceSketchName = "STEP_SKETCH_RADIUS_BOTTOM";
+                    dimensionNames = new string[] { "Length", "Angle", "InnerDiameter", "OuterDiameter", "RBottom" };
+                    dimensions = new decimal[]
+                    {
+                    length,
+                    currentStep.Angle,
+                    currentStep.Diameter,
+                    outerDiameter,
+                    currentStep.RBottom
+                    };
+                }
+                else if (currentStep.RBottom == 0)
+                {
+                    sourceSketchName = "STEP_SKETCH_RADIUS_TOP";
+                    dimensionNames = new string[] { "Length", "Angle", "InnerDiameter", "OuterDiameter", "RTop" };
+                    dimensions = new decimal[]
+                    {
+                    length,
+                    currentStep.Angle,
+                    currentStep.Diameter,
+                    outerDiameter,
+                    currentStep.RTop
+                    };
                 }
                 else
                 {
-                    string[] dimensionNames = new string[] { "Length", "Angle", "InnerDiameter", "OuterDiameter", "RTop", "RBottom" };
-                    decimal[] dimensions = new decimal[]
+                    sourceSketchName = "STEP_SKETCH_RADIUS";
+                    dimensionNames = new string[] { "Length", "Angle", "InnerDiameter", "OuterDiameter", "RTop", "RBottom" };
+                    dimensions = new decimal[]
                     {
                         length,
                         currentStep.Angle,
@@ -97,39 +97,41 @@ namespace SW_Console_Controller_V1.Controllers
                         currentStep.RTop,
                         currentStep.RBottom
                     };
-
-                    ModelControllerTools.SetSketchDimension("STEP_SKETCH_RADIUS", dimensionNames, dimensions);
-
-                    ModelControllerTools.SelectFeature("STEP_SKETCH_RADIUS", "SKETCH");
-                    SwModel.EditCopy();
-                    ModelControllerTools.SelectFeature("Front Plane", "PLANE");
-                    SwModel.Paste();
-                    Feature sketchFeature = SwModel.Extension.GetLastFeatureAdded();
-                    sketchName = $"STEP_{i}_SKETCH_RADIUS";
-                    sketchFeature.Name = sketchName;
-                    sketchFeature.Select2(false, 0);
-
-                    // Reset sketch relations
-                    SwModel.EditSketch();
-
-                    ModelControllerTools.SelectFeature("LOA_REF_PLANE", "PLANE");
-                    ModelControllerTools.SelectFeature($"Line45@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOLINEAR");
-
-                    ModelControllerTools.SelectFeature("MAX_D_OFFSET_REF_PLANE", "PLANE");
-                    ModelControllerTools.SelectFeature($"Line44@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOLINEAR");
-
-                    ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "EXTSKETCHSEGMENT");
-                    ModelControllerTools.SelectFeature($"Line46@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOLINEAR");
-
-                    ModelControllerTools.SelectFeature("DRILL_POINT_END_PLANE", "PLANE");
-                    ModelControllerTools.SelectFeature($"Point77@{sketchName}", "SKETCHSEGMENT", true);
-                    SwModel.SketchAddConstraints("sgCOINCIDENT");
-
-                    SwModel.SketchManager.InsertSketch(false);
                 }
+
+                ModelControllerTools.SetSketchDimension(sourceSketchName, dimensionNames, dimensions);
+
+                ModelControllerTools.SelectFeature(sourceSketchName, "SKETCH");
+
+                SwModel.EditCopy();
+                ModelControllerTools.SelectFeature("Front Plane", "PLANE");
+                SwModel.Paste();
+
+                Feature sketchFeature = SwModel.Extension.GetLastFeatureAdded();
+                sketchName = $"STEP_{i}_SKETCH";
+                sketchFeature.Name = sketchName;
+                sketchFeature.Select2(false, 0);
+
+                // Reset sketch relations
+                SwModel.EditSketch();
+
+                ModelControllerTools.SelectFeature("LOA_REF_PLANE", "PLANE");
+                ModelControllerTools.SelectFeature($"Line45@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                ModelControllerTools.SelectFeature("MAX_D_OFFSET_REF_PLANE", "PLANE");
+                ModelControllerTools.SelectFeature($"Line44@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "EXTSKETCHSEGMENT");
+                ModelControllerTools.SelectFeature($"Line46@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOLINEAR");
+
+                ModelControllerTools.SelectFeature("DRILL_POINT_END_PLANE", "PLANE");
+                ModelControllerTools.SelectFeature($"Point77@{sketchName}", "SKETCHSEGMENT", true);
+                SwModel.SketchAddConstraints("sgCOINCIDENT");
+
+                SwModel.SketchManager.InsertSketch(false);
 
                 // Select revolving axis and sketch and add feature
                 ModelControllerTools.SelectFeature(sketchName, "SKETCH", false, 0);

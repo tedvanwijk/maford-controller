@@ -11,7 +11,6 @@ namespace SW_Console_Controller_V1.Models
         public decimal Length { get; set; }
         public decimal Diameter { get; set; }
         public decimal Angle { get; set; }
-        public string Type { get; set; }
         public decimal RTop { get; set; }
         public decimal RBottom { get; set; }
     }

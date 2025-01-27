@@ -83,7 +83,6 @@ namespace SW_Console_Controller_V1.Lib
                 for (int i = 0; i < entries.Length; i++)
                 {
                     DataRow entry = entries[i];
-                    if (!ValidateRule(entry["RULE"])) continue;
 
                     string sketchName = (string)entry["SKETCH"];
 
@@ -104,6 +103,8 @@ namespace SW_Console_Controller_V1.Lib
 
                         for (int ii = min; ii < max; ii++)
                         {
+                            if (!ValidateRule(entry["RULE"], ii)) continue;
+
                             Model.ClearSelection2(true);
 
                             string sketchNameStep = $"{sketchName.Substring(0, varStartIndex)}{ii.ToString()}{sketchName.Substring(varEndIndex + 1)}";
@@ -114,8 +115,10 @@ namespace SW_Console_Controller_V1.Lib
                             if (dim == null) continue;
                             dim.MarkedForDrawing = (string)entry["ENABLE/DISABLE"] == "ENABLE";
                         }
-                    } else
+                    }
+                    else
                     {
+                        if (!ValidateRule(entry["RULE"])) continue;
                         Model.ClearSelection2(true);
 
                         string dimensionName = $"{entry["DIMENSION"]}@{sketchName}@{Properties.PartFileName}";
@@ -227,29 +230,51 @@ namespace SW_Console_Controller_V1.Lib
             return (EnabledViews, DisabledViews);
         }
 
-        static private bool ValidateRule(object rule)
+        static private bool ValidateRule(object rule, int currentIteration = 0)
         {
-            bool rulePassed;
-            if (rule == DBNull.Value)
-            {
-                rulePassed = true;
-            }
-            else
-            {
-                string ruleString = (string)rule;
+            if (rule == DBNull.Value) return true;
 
+            bool rulePassed = true;
+
+            string[] rules = ((string)rule).Split('&');
+
+            foreach (string ruleStringLoop in rules)
+            {
+                string ruleString = ruleStringLoop;
+                bool currentRulePassed;
+
+                // check if rule should be negated
                 bool negate = ruleString.StartsWith("!");
                 if (negate) ruleString = ruleString.Substring(1);
 
-                object ruleProperty = Properties;
+                // get property value of rule. Works with nested properties
+                dynamic ruleProperty = Properties;
 
-                foreach (var prop in ruleString.Split('.').Select(s => ruleProperty.GetType().GetProperty(s)))
-                    ruleProperty = prop.GetValue(ruleProperty, null);
+                foreach (string ruleStringSegment in ruleString.Split('.'))
+                {
+                    if (ruleStringSegment.StartsWith("[") && ruleStringSegment.EndsWith("]"))
+                    {
+                        // rule segment is an iterator. Property is the element in the array with the given iterator
+                        ruleProperty = ruleProperty[currentIteration];
+                    } else
+                    {
+                        // rule segment is a nested property
+                        var prop = ruleProperty.GetType().GetProperty(ruleStringSegment);
+                        ruleProperty = prop.GetValue(ruleProperty, null);
+                    }
+                }
 
-                if (ruleProperty is bool) rulePassed = (bool)ruleProperty;
-                else rulePassed = false;
+                // check if rule is passed
+                if (ruleProperty is bool) currentRulePassed = (bool)ruleProperty;
+                else currentRulePassed = false;
 
-                if (negate) rulePassed = !rulePassed;
+                if (negate) currentRulePassed = !currentRulePassed;
+
+                if (!currentRulePassed)
+                {
+                    rulePassed = false;
+                    break;
+                }
             }
 
             return rulePassed;

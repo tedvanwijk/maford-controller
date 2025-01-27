@@ -13,5 +13,6 @@ namespace SW_Console_Controller_V1.Models
         public decimal Angle { get; set; }
         public decimal RTop { get; set; }
         public decimal RBottom { get; set; }
+        public bool Midpoint { get; set; }
     }
 }

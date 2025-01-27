@@ -30,5 +30,7 @@ namespace SW_Console_Controller_V1.Models
         public string Revision { get; set; }
         public bool FormingViewOnDrawing { get; set; }
         public string DrawingType { get; set; }
+        public string DrawingTypeFilePath { get; set; }
+        public string DrawingTypeFilename { get; set; }
     }
 }

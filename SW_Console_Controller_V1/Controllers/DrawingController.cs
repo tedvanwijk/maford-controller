@@ -75,7 +75,8 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void UpdateDrawing()
         {
-            Sheet.SetTemplateName(Path.Combine(Properties.MasterPath, "drawing formats", $"{Properties.Prp.DrawingType}.slddrt"));
+            if (Properties.Prp.DrawingType == "Custom") Sheet.SetTemplateName(Path.Combine(Properties.Prp.DrawingTypeFilePath, Properties.Prp.DrawingTypeFilename));
+            else Sheet.SetTemplateName(Path.Combine(Properties.MasterPath, "drawing formats", $"{Properties.Prp.DrawingType}.slddrt"));
             Sheet.ReloadTemplate(true);
 
             if (ToleranceData != null) SetTolerances(Views);

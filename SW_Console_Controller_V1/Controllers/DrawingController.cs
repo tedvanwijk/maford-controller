@@ -234,7 +234,7 @@ namespace SW_Console_Controller_V1.Controllers
         private void CreateTable()
         {
             int maxRows = 20;
-            DataRow[] toleranceData = ToleranceData.Select("TOL_TYPE = 'TABLE_VAL' OR TOL_TYPE = 'TABLE_TEXT'");
+            DataRow[] toleranceData = ToleranceData.Select("TABLE_TYPE = 'VALUE' OR TABLE_TYPE = 'TEXT'");
             int count = toleranceData.Length;
             if (count == 0) return;
             int cols = (int)Math.Ceiling((float)count / maxRows);
@@ -256,7 +256,7 @@ namespace SW_Console_Controller_V1.Controllers
             {
                 DataRow data = toleranceData[i];
                 string cellText;
-                if ((string)data["TOL_TYPE"] == "TABLE_TEXT")
+                if ((string)data["TABLE_TYPE"] == "TEXT")
                     cellText = (string)data["TABLE_TEXT"];
                 else
                     cellText = $"{(string)data["NAME"]}: {(string)data["MIN_VAL"]} - {(string)data["MAX_VAL"]}";

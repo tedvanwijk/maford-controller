@@ -31,6 +31,7 @@ namespace SW_Console_Controller_V1.Lib
                 DataTable dt = new DataTable();
                 dt.Columns.Add("SOFTWARE_NAME");
                 dt.Columns.Add("TOL_TYPE");
+                dt.Columns.Add("TABLE_TYPE");
                 return dt;
             }
             ExcelPackage package = new ExcelPackage(fileInfo);

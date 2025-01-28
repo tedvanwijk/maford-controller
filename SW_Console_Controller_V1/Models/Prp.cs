@@ -32,5 +32,6 @@ namespace SW_Console_Controller_V1.Models
         public string DrawingType { get; set; }
         public string DrawingTypeFilePath { get; set; }
         public string DrawingTypeFilename { get; set; }
+        public bool TableOnDrawing { get; set; }
     }
 }

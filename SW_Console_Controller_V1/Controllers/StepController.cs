@@ -39,7 +39,8 @@ namespace SW_Console_Controller_V1.Controllers
                 decimal length = currentStep.Length;
 
                 // adjust length of step
-                bool lofFromPoint = Properties.ToolType == "Drill" && Properties.LOFFromPoint;
+                if (Properties.ToolType != "Drill") Properties.Steps[i].LOFFromPoint = true;
+                bool lofFromPoint = currentStep.LOFFromPoint;
                 bool midpoint = currentStep.Midpoint && currentStep.RTop != 0;
                 decimal midpointLength = currentStep.RTop * (decimal)Math.Sin(decimal.ToDouble(currentStep.Angle / 4m) * Math.PI / 180f);
 

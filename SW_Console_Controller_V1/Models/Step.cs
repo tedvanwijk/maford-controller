@@ -14,5 +14,6 @@ namespace SW_Console_Controller_V1.Models
         public decimal RTop { get; set; }
         public decimal RBottom { get; set; }
         public bool Midpoint { get; set; }
+        public bool LOFFromPoint { get; set; }
     }
 }

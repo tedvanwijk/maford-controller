@@ -145,5 +145,10 @@ namespace SW_Console_Controller_V1.Lib
         {
             return input / Math.PI * 180;
         }
+
+        public static double ConvertToRad(this decimal input)
+        {
+            return decimal.ToDouble(input) * Math.PI / 180f;
+        }
     }
 }

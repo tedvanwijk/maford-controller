@@ -44,6 +44,8 @@ namespace SW_Console_Controller_V1
         public decimal ShankDiameter { get; set; }
         public string ShankType { get; set; }
         public decimal ShankToHeadRadius { get; set; }
+        public decimal ShankToHeadAngle { get; set; }
+        public bool ShankToHeadAngleOnDrawing { get; set; }
         public bool ShankEndAtHead { get; set; }
         public decimal ShankBlendAngle { get; set; }
         public decimal ShankNeckLength { get; set; }

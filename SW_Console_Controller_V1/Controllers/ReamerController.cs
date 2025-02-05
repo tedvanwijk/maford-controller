@@ -103,10 +103,34 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void CreateFluting()
         {
-            decimal bottomOffset = Properties.LOA - Properties.LOC;
-            EquationController.SetEquation("ReamerFluteBottomOffset", bottomOffset);
-
             ModelControllerTools.UnsuppressFeature("REAMER_FLUTE_PATTERN");
+
+            double washoutDepth = Math.Tan(Properties.HelixAngle.ConvertToRad()) * decimal.ToDouble(Properties.LOA - Properties.LOC);
+
+            // If the shank is normal or reduced the fluting will never go into the shank, so we can simply set the bottom offset to the depth
+            if (Properties.ShankType == "Normal" || Properties.ShankType == "Reduced" || (Properties.ShankType == "Neck" && Properties.ToolDiameter >= Properties.ShankDiameter))
+            {
+                EquationController.SetEquation("ReamerFluteBottomOffset", washoutDepth);
+                return;
+            }
+
+            double phi = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "phi", true);
+
+            double fluteDepth;
+            if (phi > (Math.PI / 2)) fluteDepth = ModelControllerTools.GetSketchDimension("REAMER_FLUTE_WASHOUT_PROFILE_SKETCH", "d_large");
+            else fluteDepth = ModelControllerTools.GetSketchDimension("REAMER_FLUTE_WASHOUT_PROFILE_SKETCH", "d_small");
+
+            // Calculate available length in the body for the washout
+            double washoutLengthInBody = decimal.ToDouble(GeneratedProperties.BodyLength - Properties.LOC);
+            if (Properties.ShankType == "Neck") washoutLengthInBody += decimal.ToDouble(Properties.ShankNeckLength - GeneratedProperties.BodyLength);
+
+            // Calculate the necessary length for the flute depth
+            double fluteDepthLength = fluteDepth / Math.Tan(Properties.HelixAngle.ConvertToRad());
+
+            // If the available length is less than the required length, we add an additional offset
+            if (fluteDepthLength <= washoutLengthInBody) washoutDepth = fluteDepth;
+
+            EquationController.SetEquation("ReamerFluteBottomOffset", washoutDepth);
         }
 
         private void UpdateBlankConfiguration()

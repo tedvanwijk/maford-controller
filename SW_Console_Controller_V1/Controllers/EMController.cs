@@ -62,7 +62,7 @@ namespace SW_Console_Controller_V1.Controllers
         {
             double washoutDepth = Math.Tan(Properties.HelixAngle.ConvertToRad()) * decimal.ToDouble(Properties.LOA - Properties.LOC);
             // For normal or reduced shanks, the washout cannot go into the shank, so checking is not required
-            if (Properties.ShankType == "Normal" || Properties.ShankType == "Reduced")
+            if (Properties.ShankType == "Normal" || Properties.ShankType == "Reduced" || (Properties.ShankType == "Neck" && Properties.ToolDiameter >= Properties.ShankDiameter))
             {
                 EquationController.SetEquation("EMFluteWashoutWidth", washoutDepth);
                 return;

@@ -74,6 +74,7 @@ namespace SW_Console_Controller_V1.Controllers
             double fluteDepthLength = fluteDepth / Math.Tan(Properties.HelixAngle.ConvertToRad());
             // Length remaining in body for washout
             double washoutLengthInBody = decimal.ToDouble(GeneratedProperties.BodyLength - Properties.LOC);
+            if (Properties.ShankType == "Neck") washoutLengthInBody += decimal.ToDouble(Properties.ShankNeckLength - GeneratedProperties.BodyLength);
 
             if (fluteDepthLength <= washoutLengthInBody) washoutDepth = fluteDepth;
 

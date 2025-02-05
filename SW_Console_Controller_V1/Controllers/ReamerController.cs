@@ -52,11 +52,49 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void CreateStraightFluting(decimal fluteDepth)
         {
-            decimal bottomOffset = Properties.ToolDiameter + fluteDepth;
-            EquationController.SetEquation("ReamerStraightFluteBottomOffset", bottomOffset);
-            EquationController.SetEquation("ReamerStraightFluteBottomLength", bottomOffset);
-
             ModelControllerTools.UnsuppressFeature("REAMER_STRAIGHT_FLUTE_PATTERN");
+
+            //decimal bottomOffset = Properties.ToolDiameter + fluteDepth;
+            //EquationController.SetEquation("ReamerStraightFluteBottomOffset", bottomOffset);
+            //EquationController.SetEquation("ReamerStraightFluteBottomLength", bottomOffset);
+
+            // Read the opening angle of the fluting
+            double phi = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "phi", true);
+
+            double deepestFluteDepth;
+            if (phi > (Math.PI / 2))
+            {
+                // If the opening angle is more than 90 degrees, we need to calculcate the depth of the deepest point in the fluting
+                double h_0 = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "h_0");
+                double x_0 = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "x_0");
+                double alpha = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "alpha", true);
+                double R = decimal.ToDouble(Properties.ToolDiameter / 2);
+
+                deepestFluteDepth = h_0 * (1 / Math.Tan(phi)) + R * (-Math.Cos(alpha) + Math.Sin(phi) + Math.Cos(phi) * Math.Cos(phi) / Math.Sin(phi)) + x_0;
+            }
+            else deepestFluteDepth = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "x_0");
+
+            // If the shank is normal or reduced the fluting will never go into the shank, so we can simply set the bottom offset to the depth
+            if (Properties.ShankType == "Normal" || Properties.ShankType == "Reduced" || (Properties.ShankType == "Neck" && Properties.ToolDiameter >= Properties.ShankDiameter))
+            {
+                EquationController.SetEquation("ReamerStraightFluteBottomOffset", deepestFluteDepth);
+                return;
+            }
+
+            // Calculate available length in the body for the washout
+            double washoutLengthInBody = decimal.ToDouble(GeneratedProperties.BodyLength - Properties.LOC);
+            if (Properties.ShankType == "Neck") washoutLengthInBody += decimal.ToDouble(Properties.ShankNeckLength - GeneratedProperties.BodyLength);
+
+            // Calculate the necessary length for the flute depth
+            double washoutCurveAngle = 45;
+            EquationController.SetEquation("ReamerWashoutCurveAngle", washoutCurveAngle);
+            washoutCurveAngle = washoutCurveAngle.ConvertToRad();
+            double deepestFluteDepthLength = deepestFluteDepth * Math.Sin(washoutCurveAngle) / (1 - Math.Cos(washoutCurveAngle));
+
+            // If the available length is less than the required length, we add an additional offset
+            if (deepestFluteDepthLength > washoutLengthInBody) deepestFluteDepth += decimal.ToDouble((Properties.ShankDiameter - Properties.ToolDiameter) / 2m);
+
+            EquationController.SetEquation("ReamerStraightFluteBottomOffset", deepestFluteDepth);
         }
 
         private void CreateFluting()

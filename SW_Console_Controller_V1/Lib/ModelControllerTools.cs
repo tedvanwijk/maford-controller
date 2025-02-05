@@ -95,7 +95,7 @@ namespace SW_Console_Controller_V1.Lib
             SelectFeature($"{dimensionName}@{sketchName}", "DIMENSION");
             DisplayDimension displayDim = SelectionManager.GetSelectedObject6(1, -1);
             Dimension dim = displayDim.GetDimension2(0);
-            double dimValue = dim.GetSystemValue3(2, null);
+            double dimValue = dim.GetSystemValue3(2, null)[0];
             return dimValue.ConvertToInches();
         }
 

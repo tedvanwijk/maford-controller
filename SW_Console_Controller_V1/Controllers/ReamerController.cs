@@ -71,8 +71,12 @@ namespace SW_Console_Controller_V1.Controllers
                 double R = decimal.ToDouble(Properties.ToolDiameter / 2);
 
                 deepestFluteDepth = h_0 * (1 / Math.Tan(phi)) + R * (-Math.Cos(alpha) + Math.Sin(phi) + Math.Cos(phi) * Math.Cos(phi) / Math.Sin(phi)) + x_0;
+            } else
+            {
+                double x_0 = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "x_0");
+
+                deepestFluteDepth = x_0 + decimal.ToDouble(0.1m * fluteDepth) * (1 - Math.Sin(phi));
             }
-            else deepestFluteDepth = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "x_0");
 
             // If the shank is normal or reduced the fluting will never go into the shank, so we can simply set the bottom offset to the depth
             if (Properties.ShankType == "Normal" || Properties.ShankType == "Reduced" || (Properties.ShankType == "Neck" && Properties.ToolDiameter >= Properties.ShankDiameter))

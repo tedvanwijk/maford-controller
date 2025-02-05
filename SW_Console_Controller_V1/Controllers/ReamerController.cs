@@ -28,9 +28,10 @@ namespace SW_Console_Controller_V1.Controllers
 
             decimal fluteDepth = 0.25m * Properties.ToolDiameter;
             EquationController.SetEquation("ReamerFluteDepth", fluteDepth);
-            EquationController.SetEquation("ReamerFluteRadius", 0.1m * fluteDepth);
+            decimal fluteRadius = 0.1m * fluteDepth;
+            EquationController.SetEquation("ReamerFluteRadius", fluteRadius);
 
-            if (Properties.StraightFlute) CreateStraightFluting(fluteDepth);
+            if (Properties.StraightFlute) CreateStraightFluting(fluteRadius);
             else CreateFluting();
 
             switch (Properties.CornerStyle)
@@ -50,7 +51,7 @@ namespace SW_Console_Controller_V1.Controllers
             }
         }
 
-        private void CreateStraightFluting(decimal fluteDepth)
+        private void CreateStraightFluting(decimal fluteRadius)
         {
             ModelControllerTools.UnsuppressFeature("REAMER_STRAIGHT_FLUTE_PATTERN");
 
@@ -75,7 +76,7 @@ namespace SW_Console_Controller_V1.Controllers
             {
                 double x_0 = ModelControllerTools.GetSketchDimension("REAMER_STRAIGHT_FLUTE_PROFILE_SKETCH", "x_0");
 
-                deepestFluteDepth = x_0 + decimal.ToDouble(0.1m * fluteDepth) * (1 - Math.Sin(phi));
+                deepestFluteDepth = x_0 + decimal.ToDouble(fluteRadius) * (1 - Math.Sin(phi));
             }
 
             // If the shank is normal or reduced the fluting will never go into the shank, so we can simply set the bottom offset to the depth

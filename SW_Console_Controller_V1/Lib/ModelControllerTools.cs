@@ -96,6 +96,7 @@ namespace SW_Console_Controller_V1.Lib
             DisplayDimension displayDim = SelectionManager.GetSelectedObject6(1, -1);
             Dimension dim = displayDim.GetDimension2(0);
             double dimValue = dim.GetSystemValue3(2, null)[0];
+            Model.ClearSelection2(true);
             return dimValue.ConvertToInches();
         }
 

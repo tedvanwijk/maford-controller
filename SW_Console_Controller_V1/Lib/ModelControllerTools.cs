@@ -90,13 +90,14 @@ namespace SW_Console_Controller_V1.Lib
             Model.ClearSelection2(true);
         }
 
-        static public double GetSketchDimension(string sketchName, string dimensionName)
+        static public double GetSketchDimension(string sketchName, string dimensionName, bool angle = false)
         {
             SelectFeature($"{dimensionName}@{sketchName}", "DIMENSION");
             DisplayDimension displayDim = SelectionManager.GetSelectedObject6(1, -1);
             Dimension dim = displayDim.GetDimension2(0);
             double dimValue = dim.GetSystemValue3(2, null)[0];
             Model.ClearSelection2(true);
+            if (angle) return dimValue;
             return dimValue.ConvertToInches();
         }
 

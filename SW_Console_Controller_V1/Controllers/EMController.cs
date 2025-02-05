@@ -54,7 +54,30 @@ namespace SW_Console_Controller_V1.Controllers
                     break;
             }
             SetFlutingProfileDimensions();
+            SetWashoutDimensions();
             if (Properties.Chipbreaker) SetChipbreakerDimensions();
+        }
+
+        private void SetWashoutDimensions()
+        {
+            double washoutDepth = Math.Tan(Properties.HelixAngle.ConvertToRad()) * decimal.ToDouble(Properties.LOA - Properties.LOC);
+            // For normal or reduced shanks, the washout cannot go into the shank, so checking is not required
+            if (Properties.ShankType == "Normal" || Properties.ShankType == "Reduced")
+            {
+                EquationController.SetEquation("EMFluteWashoutWidth", washoutDepth);
+                return;
+            }
+
+            // Get the flute depth in sketch. Depth is horizontal distance that flute goes through until profile exits tool diameter
+            double fluteDepth = ModelControllerTools.GetSketchDimension("EM_FLUTE_WASHOUT_PROFILE_SKETCH_NEW", "FluteProfileDepth");
+            // Length that flute needs
+            double fluteDepthLength = fluteDepth / Math.Tan(Properties.HelixAngle.ConvertToRad());
+            // Length remaining in body for washout
+            double washoutLengthInBody = decimal.ToDouble(GeneratedProperties.BodyLength - Properties.LOC);
+
+            if (fluteDepthLength <= washoutLengthInBody) washoutDepth = fluteDepth;
+
+            EquationController.SetEquation("EMFluteWashoutWidth", washoutDepth);
         }
 
         private void SetFlutingProfileDimensions()

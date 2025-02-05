@@ -90,6 +90,15 @@ namespace SW_Console_Controller_V1.Lib
             Model.ClearSelection2(true);
         }
 
+        static public double GetSketchDimension(string sketchName, string dimensionName)
+        {
+            SelectFeature($"{dimensionName}@{sketchName}", "DIMENSION");
+            DisplayDimension displayDim = SelectionManager.GetSelectedObject6(1, -1);
+            Dimension dim = displayDim.GetDimension2(0);
+            double dimValue = dim.GetSystemValue3(2, null);
+            return dimValue.ConvertToInches();
+        }
+
         static public void UnsuppressFeature(string featureName)
         {
             Model.Extension.SelectByID2(featureName, "BODYFEATURE", 0, 0, 0, false, 0, null, 0);

@@ -157,8 +157,13 @@ namespace SW_Console_Controller_V1
             // y, x, z! SW docs is lying to me
             _swModel.ViewZoomTo2(0, maxD / 2, 0, LOA, -maxD / 2, 0);
 
+            // Hide everything (sketches, curves, etc.)
+            _swModel.SetUserPreferenceToggle((int)swUserPreferenceToggle_e.swViewDisplayHideAllTypes, true);
+
             string imageFileName = Path.Combine(_properties.ImagePath, $"{_properties.SpecificationNumber}.png");
             _swModelExtension.SaveAs3(imageFileName, 0, 1, null, null, ref _saveError, ref _saveWarning);
+
+            _swModel.SetUserPreferenceToggle((int)swUserPreferenceToggle_e.swViewDisplayHideAllTypes, false);
 
 #if DEBUG
             view.FrameState = 1;

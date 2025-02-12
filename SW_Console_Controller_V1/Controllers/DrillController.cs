@@ -38,63 +38,42 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void CreateFluting(decimal pointHeight)
         {
-            double fluteAngle;
-            if (Properties.FluteCount == 2) fluteAngle = 85f;
-            //else if (Properties.FluteCount == 3) fluteAngle = 55f;
+            double fluteAngle = 85f;
+
+            // Adjust flute based on flute count, throw exception if fc not supported
+            double fluteOffsetAngle;
+            if (Properties.FluteCount == 2) fluteOffsetAngle = 160;
+            else if (Properties.FluteCount == 3) fluteOffsetAngle = 130;
             else throw new Exception($"Flute count = {Properties.FluteCount} for drill tool type not supported");
-            double fluteAngleRad = fluteAngle / 180f * Math.PI;
-            double d = decimal.ToDouble(Properties.ToolDiameter / 2m);
-            double R0 = d;
-            // TODO: implement the profile cut depth as a function of TD instead of a constant 0.01"
-            //double R1 = d - 0.01;
-            double R1 = d;
-
-            double maxFluteDepthAngle = 45f;
-            maxFluteDepthAngle = maxFluteDepthAngle / 180f * Math.PI;
-            double fluteDepth = R0 * (1f - 1f / Math.Tan(fluteAngleRad)); // x
-            double maxFluteDepthDifference = fluteDepth / 2f * (1f - Math.Cos(maxFluteDepthAngle)); // Delta
-            double maxFluteDepthAngleY = fluteDepth / 2 * Math.Sin(maxFluteDepthAngle);
-            double maxFluteDepthAngleX = 2f * R0 - fluteDepth + maxFluteDepthDifference;
-            double maxFluteDepthAngleR2 = Math.Atan2(maxFluteDepthAngleY, maxFluteDepthAngleX); // alpha
-            double maxFluteDepthAngleR2Degrees = maxFluteDepthAngleR2 * 180f / Math.PI + 270f;
-            //double R2 = Math.Sqrt(Math.Pow(fluteDepth / 2 * (1 - Math.Cos(maxFluteDepthAngle)) + (1 + 1 / Math.Tan(fluteAngleRad)) * R0, 2) + Math.Pow(fluteDepth / 2 * Math.Sin(maxFluteDepthAngle), 2));
-            double R2 = Math.Sqrt(Math.Pow(maxFluteDepthAngleY, 2f) + Math.Pow(maxFluteDepthAngleX, 2f));
-
-            double washoutHeightFactor = (Math.Pow(d, 2f) + Math.Pow(R1, 2f) - Math.Pow(R2, 2f)) / (2f * d);
-            double washoutHeightNumerator = Math.Sqrt(Math.Pow(R1, 2f) - Math.Pow(washoutHeightFactor, 2f));
-            double washoutAngle = Math.Atan(washoutHeightNumerator / washoutHeightFactor);
-            washoutAngle = Math.Asin(R1 * Math.Sin(washoutAngle) / R2) + maxFluteDepthAngleR2;
-            decimal washoutHeight = (decimal)(GeneratedProperties.HelixPitch * washoutAngle / (2f * Math.PI));
-            // redefine LOC. Drills are defined with LOF and the LOC is calculated based on the flute depth and washout angle
-            Properties.LOC = Properties.LOF - washoutHeight;
-            EquationController.SetEquation("LOC", Properties.LOC);
-
-            EquationController.SetEquation("DrillPointAngle", Properties.PointAngle);
 
             EquationController.SetEquation("DrillFluteAngle", fluteAngle);
-            EquationController.SetEquation("DrillFluteCenterOffsetAngle", 0);
-            EquationController.SetEquation("DrillFluteCenterOffset", Properties.ToolDiameter * 0.043578m);
+            EquationController.SetEquation("DrillFluteCenterOffsetAngle", fluteOffsetAngle);
+            EquationController.SetEquation("DrillPointAngle", Properties.PointAngle);
 
-            EquationController.SetEquation("DrillWashoutHelixGuideDiameter", R2 * 2f);
-            EquationController.SetEquation("DrillWashoutHelixGuideStartingAngle", (int)Math.Round(maxFluteDepthAngleR2Degrees));
+            // Unsupress so driven dimensions can be read
+            ModelControllerTools.UnsuppressFeature("DRILL_POINT_CUT");
+            ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_PATTERN");
+            ModelControllerTools.UnsuppressFeature("DRILL_FLUTE_PATTERN");
+
+            // Get flute depth from sketch and calculate heigth
+            double fluteDepth = ModelControllerTools.GetSketchDimension("DRILL_FLUTE_PROFILE_SKETCH", "FluteProfileDepth");
+            double washoutHeight = fluteDepth / Math.Tan(Properties.HelixAngle.ConvertToRad());
+
+            // redefine LOC. Drills are defined with LOF and the LOC is calculated based on the flute depth and washout angle
+            Properties.LOC = Properties.LOF - (decimal)washoutHeight;
+            EquationController.SetEquation("LOC", Properties.LOC);
 
             double pointToLOCRotation = ((decimal.ToDouble(Properties.LOC) - decimal.ToDouble(pointHeight)) / GeneratedProperties.HelixPitch * 360f) % 360f;
             EquationController.SetEquation("DrillLOCToPointRotation", pointToLOCRotation);
             EquationController.SetEquation("DrillPointHeight", pointHeight);
 
-            ModelControllerTools.UnsuppressFeature("DRILL_POINT_ANGLE_CUT");
-            ModelControllerTools.UnsuppressFeature("DRILL_WASHOUT_PATTERN");
-            ModelControllerTools.UnsuppressFeature("DRILL_FLUTE_PATTERN");
-
-            double drillProfileAngle = 84f;
+            double drillProfileOpenAngle = 11f;
+            double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
             EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
-            EquationController.SetEquation("DrillProfileOpenAngle", 90f - drillProfileAngle);
             EquationController.SetEquation("DrillProfileDepth", 0.00625m * Properties.ToolDiameter);
-            decimal drillProfileHelixHeight = Properties.LOF - 0.1m * (Properties.LOF - Properties.LOC);
+            decimal drillProfileHelixHeight = Properties.LOF - 0.05m * (Properties.LOF - Properties.LOC);
             EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
             EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
-            EquationController.SetEquation("DrillWashoutHelixPitch", GeneratedProperties.HelixPitch);
-            EquationController.SetEquation("DrillWashoutHelixHeight", Properties.LOF - Properties.LOC);
 
             if (Properties.CoolantThrough)
             {

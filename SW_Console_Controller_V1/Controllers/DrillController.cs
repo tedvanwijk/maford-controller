@@ -75,7 +75,7 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
             EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
 
-            if (Properties.CoolantThrough)
+            if (Properties.Coolant.CoolantHole)
             {
                 decimal drillCoolantDiameter = 0.08m * GeneratedProperties.TopStepDiameter;
                 decimal drillCoolantSlotWidth = 1.05m * drillCoolantDiameter;

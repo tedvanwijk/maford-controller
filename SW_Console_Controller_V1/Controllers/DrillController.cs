@@ -95,35 +95,29 @@ namespace SW_Console_Controller_V1.Controllers
 
         private void CreateStraightFluting(decimal pointHeight)
         {
-            decimal washoutHeight = 0.4m * Properties.LOF;
-            Properties.LOC = Properties.LOF - washoutHeight;
+            decimal washoutLength = 0.4m * Properties.LOF;
+            Properties.LOC = Properties.LOF - washoutLength;
             EquationController.SetEquation("LOC", Properties.LOC);
             EquationController.SetEquation("DrillPointAngle", Properties.PointAngle);
             EquationController.SetEquation("DrillPointHeight", pointHeight);
 
-            // Profile depth calculation
-            double smallestStepDiameter;
-            if (Properties.StepTool) smallestStepDiameter = decimal.ToDouble(Properties.Steps[0].Diameter);
-            else smallestStepDiameter = decimal.ToDouble(Properties.ToolDiameter);
-
-            double offset = 0.07f * smallestStepDiameter;
-            double insideRadius = 0.1742160f * smallestStepDiameter;
+            // Flute profile dimensioning
             double insideAngle = 100f;
-            insideAngle = insideAngle.ConvertToRad();
-            double radius = decimal.ToDouble(Properties.ToolDiameter / 2m);
 
-            double delta = offset + insideRadius * (1f - Math.Cos(Math.PI - insideAngle));
-            double depth = radius * Math.Sin(Math.Acos(-1f / radius * delta)) - offset / Math.Cos(Math.Abs(Math.PI / 2f - insideAngle)) + Math.Tan(Math.Abs(90f - insideAngle)) * delta;
-
-            EquationController.SetEquation("DrillStraightFluteProfileDepth", depth);
+            EquationController.SetEquation("DrillStraightFluteInsideAngle", insideAngle);
             EquationController.SetEquation("DrillStraightFluteOffset", 0.07m * GeneratedProperties.TopStepDiameter);
             EquationController.SetEquation("DrillStraightFluteInsideRadius", 0.174216m * GeneratedProperties.TopStepDiameter);
-            decimal washoutLength = 0.4m * Properties.LOF;
-            EquationController.SetEquation("DrillStraightFluteWashoutLength", washoutLength);
-            EquationController.SetEquation("DrillStraightFluteWashoutAngle", Math.Atan(depth / decimal.ToDouble(washoutLength)).ConvertToDeg() * 2f);
 
             ModelControllerTools.UnsuppressFeature("DRILL_POINT_CUT");
             ModelControllerTools.UnsuppressFeature("DRILL_STRAIGHT_FLUTE_PATTERN");
+
+            // Drills will never have a body length < LOF, so checking if the fluting washout will run into the shank is not necessary
+            // Instead, we just get the flute depth and calculate the washout angle and set it
+            double fluteDepth = ModelControllerTools.GetSketchDimension("DRILL_STRAIGHT_FLUTE_LOC_PROFILE_SKETCH", "FluteProfileDepth");
+
+            EquationController.SetEquation("DrillStraightFluteWashoutLength", washoutLength);
+            EquationController.SetEquation("DrillStraightFluteWashoutAngle", Math.Atan(fluteDepth / decimal.ToDouble(washoutLength)).ConvertToDeg() * 2f);
+
         }
 
         private void UpdateBlankConfiguration()

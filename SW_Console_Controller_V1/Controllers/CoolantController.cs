@@ -66,6 +66,9 @@ namespace SW_Console_Controller_V1.Controllers
                 // and the value Properties.Coolant.CoolantPatternAngle represents the amount of flutes to move
 
                 rotationAngle = 360m * Properties.Coolant.CoolantPatternLength / (decimal)GeneratedProperties.HelixPitch + Properties.Coolant.CoolantPatternAngle * (360 / Properties.FluteCount);
+            } else if (Properties.Coolant.CoolantPatternAlongFluting)
+            {
+                rotationAngle = Properties.Coolant.CoolantPatternAngle * (360 / Properties.FluteCount);
             } else
             {
                 // if false, the supplied rotation angle is the full angle.

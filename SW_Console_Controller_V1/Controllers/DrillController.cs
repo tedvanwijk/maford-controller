@@ -122,7 +122,7 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillStraightFluteWashoutLength", washoutLength);
             EquationController.SetEquation("DrillStraightFluteWashoutAngle", Math.Atan(depth / decimal.ToDouble(washoutLength)).ConvertToDeg() * 2f);
 
-            ModelControllerTools.UnsuppressFeature("DRILL_POINT_ANGLE_CUT");
+            ModelControllerTools.UnsuppressFeature("DRILL_POINT_CUT");
             ModelControllerTools.UnsuppressFeature("DRILL_STRAIGHT_FLUTE_PATTERN");
         }
 

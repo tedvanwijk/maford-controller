@@ -89,7 +89,6 @@ namespace SW_Console_Controller_V1.Controllers
                 EquationController.SetEquation("DrillCoolantStartOffset", drillCoolantSlotWidth);
                 EquationController.SetEquation("DrillCoolantHelixHeight", Properties.LOA - drillCoolantSlotWidth);
                 EquationController.SetEquation("DrillCoolantSlotWidth", drillCoolantSlotWidth);
-                ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_SLOT_CUT");
             }
         }
 

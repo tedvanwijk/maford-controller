@@ -77,10 +77,21 @@ namespace SW_Console_Controller_V1.Controllers
 
             if (Properties.Coolant.CoolantHole)
             {
-                decimal drillCoolantDiameter = 0.08m * GeneratedProperties.TopStepDiameter;
+                decimal drillCoolantDiameter;
+                double coolantAngle;
+
+                if (Properties.FluteCount == 2)
+                {
+                    drillCoolantDiameter = 0.08m * GeneratedProperties.TopStepDiameter;
+                    coolantAngle = 22.5f;
+                } else
+                {
+                    drillCoolantDiameter = 0.05m * GeneratedProperties.TopStepDiameter;
+                    coolantAngle = 10f;
+                }
+
                 decimal drillCoolantSlotWidth = 1.05m * drillCoolantDiameter;
                 ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_PATTERN");
-                double coolantAngle = 22.5f;
                 EquationController.SetEquation("DrillCoolantAngle", coolantAngle);
                 double coolantRotation = (decimal.ToDouble(Properties.LOA - Properties.LOC - drillCoolantSlotWidth) / GeneratedProperties.HelixPitch * 360f + coolantAngle) % 360f;
                 EquationController.SetEquation("DrillCoolantExitAngle", coolantRotation);

@@ -27,6 +27,14 @@ namespace SW_Console_Controller_V1.Controllers
             {
                 decimal profileAngle = 360m / Properties.FluteCount - 25m;
                 coolantExitFluteRotation = 90m + profileAngle * 0.5m;
+            } else if (Properties.ToolType == "Drill")
+            {
+                decimal profileAngle;
+                if (Properties.FluteCount == 2) profileAngle = 100m;
+                else if (Properties.FluteCount == 3) profileAngle = 90m;
+                else profileAngle = 90m;
+                coolantExitFluteRotation = 90m - (profileAngle / 2m);
+                if (coolantExitFluteRotation < 0m) coolantExitFluteRotation += 360m;
             }
 
             if (!Properties.StraightFlute) coolantExitFluteRotation += (Properties.LOC - Properties.LOA + Properties.Coolant.CoolantHoleLength) / (decimal)GeneratedProperties.HelixPitch * 360m;

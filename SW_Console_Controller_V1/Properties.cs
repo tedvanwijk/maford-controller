@@ -70,6 +70,9 @@ namespace SW_Console_Controller_V1
         // Drill
         public decimal PointAngle { get; set; }
         public bool LOFFromPoint { get; set; }
+        public bool FrontMargin { get; set; }
+        public bool MiddleMargin { get; set; }
+        public bool RearMargin { get; set; }
 
         // Steps
         public bool StepTool { get; set; }

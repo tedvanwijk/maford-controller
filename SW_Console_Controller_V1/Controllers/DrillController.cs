@@ -52,7 +52,6 @@ namespace SW_Console_Controller_V1.Controllers
 
             // Unsupress so driven dimensions can be read
             ModelControllerTools.UnsuppressFeature("DRILL_POINT_CUT");
-            ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_PATTERN");
             ModelControllerTools.UnsuppressFeature("DRILL_FLUTE_PATTERN");
 
             // Get flute depth from sketch and calculate heigth
@@ -67,13 +66,29 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillLOCToPointRotation", pointToLOCRotation);
             EquationController.SetEquation("DrillPointHeight", pointHeight);
 
-            double drillProfileOpenAngle = 11f;
-            double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
-            EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
-            EquationController.SetEquation("DrillProfileDepth", 0.00625m * Properties.ToolDiameter);
-            decimal drillProfileHelixHeight = Properties.LOF - 0.05m * (Properties.LOF - Properties.LOC);
-            EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
-            EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
+            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin)
+            {
+                double drillProfileOpenAngle = 8f;
+                double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
+                EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
+                EquationController.SetEquation("DrillMarginAngle", drillProfileOpenAngle);
+
+                double profileDepthFactor = 0.00625f;
+                double profileDiameter = decimal.ToDouble(Properties.ToolDiameter) * (1f - 2f * profileDepthFactor);
+
+                EquationController.SetEquation("DrillProfileDiameter", profileDiameter);
+
+                decimal drillProfileHelixHeight = Properties.LOF - 0.05m * (Properties.LOF - Properties.LOC);
+                EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
+                EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
+
+                if (Properties.FrontMargin) EquationController.SetEquation("DrillFrontMarginAngle", 0);
+
+                if (Properties.MiddleMargin) ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_MIDDLE_PATTERN");
+                else ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_PATTERN");
+
+                if (Properties.RearMargin) EquationController.SetEquation("DrillRearMarginAngle", 0);
+            }
 
             if (Properties.Coolant.CoolantHole)
             {

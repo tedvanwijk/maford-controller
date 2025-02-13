@@ -102,7 +102,10 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillPointHeight", pointHeight);
 
             // Flute profile dimensioning
-            double insideAngle = 100f;
+            double insideAngle;
+            if (Properties.FluteCount == 2) insideAngle = 100f;
+            else if (Properties.FluteCount == 3) insideAngle = 90f;
+            else throw new Exception($"Flute count = {Properties.FluteCount} for drill tool type not supported");
 
             EquationController.SetEquation("DrillStraightFluteInsideAngle", insideAngle);
             EquationController.SetEquation("DrillStraightFluteOffset", 0.07m * GeneratedProperties.TopStepDiameter);

@@ -66,33 +66,9 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillLOCToPointRotation", pointToLOCRotation);
             EquationController.SetEquation("DrillPointHeight", pointHeight);
 
-            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin) CreateHelicalMargins(fluteAngle);
+            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin) CreateMargins(fluteAngle, true);
 
             if (Properties.Coolant.CoolantHole) CreateHelicalCoolant();
-        }
-
-        private void CreateHelicalMargins(double fluteAngle)
-        {
-            double drillProfileOpenAngle = 8f;
-            double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
-            EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
-            EquationController.SetEquation("DrillMarginAngle", drillProfileOpenAngle);
-
-            double profileDepthFactor = 0.00625f;
-            double profileDiameter = decimal.ToDouble(Properties.ToolDiameter) * (1f - 2f * profileDepthFactor);
-
-            EquationController.SetEquation("DrillProfileDiameter", profileDiameter);
-
-            decimal drillProfileHelixHeight = Properties.LOF - 0.05m * (Properties.LOF - Properties.LOC);
-            EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
-            EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
-
-            if (Properties.FrontMargin) EquationController.SetEquation("DrillFrontMarginAngle", 0);
-
-            if (Properties.MiddleMargin) ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_MIDDLE_PATTERN");
-            else ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_PATTERN");
-
-            if (Properties.RearMargin) EquationController.SetEquation("DrillRearMarginAngle", 0);
         }
 
         private void CreateHelicalCoolant()
@@ -138,7 +114,8 @@ namespace SW_Console_Controller_V1.Controllers
             else throw new Exception($"Flute count = {Properties.FluteCount} for drill tool type not supported");
 
             EquationController.SetEquation("DrillStraightFluteInsideAngle", insideAngle);
-            EquationController.SetEquation("DrillStraightFluteOffset", 0.07m * GeneratedProperties.TopStepDiameter);
+            double straightFluteOffset = 0.07f * decimal.ToDouble(GeneratedProperties.TopStepDiameter);
+            EquationController.SetEquation("DrillStraightFluteOffset", straightFluteOffset);
             EquationController.SetEquation("DrillStraightFluteInsideRadius", 0.174216m * GeneratedProperties.TopStepDiameter);
 
             ModelControllerTools.UnsuppressFeature("DRILL_POINT_CUT");
@@ -151,11 +128,52 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillStraightFluteWashoutLength", washoutLength);
             EquationController.SetEquation("DrillStraightFluteWashoutAngle", Math.Atan(fluteDepth / decimal.ToDouble(washoutLength)).ConvertToDeg() * 2f);
 
+            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin)
+            {
+                // insideAngle for straight flutes is the internal angle of the fluting, and not the angle the flute exit makes with the center.
+                // So we have to calculate and add a factor to compensate for this
+                insideAngle -= (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(Properties.ToolDiameter))).ConvertToDeg();
+                CreateMargins(insideAngle, false);
+            }
+                
             if (Properties.Coolant.CoolantHole)
             {
                 CoolantController coolantController = new CoolantController(Properties, GeneratedProperties, SwModel, EquationManager);
                 coolantController.CreateCoolantHoles();
             }
+        }
+
+        private void CreateMargins(double fluteAngle, bool helical)
+        {
+            double drillProfileOpenAngle = 8f;
+            double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
+            EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
+            EquationController.SetEquation("DrillMarginAngle", drillProfileOpenAngle);
+
+            double profileDepthFactor = 0.00625f;
+            double profileDiameter = decimal.ToDouble(Properties.ToolDiameter) * (1f - 2f * profileDepthFactor);
+
+            EquationController.SetEquation("DrillProfileDiameter", profileDiameter);
+
+            if (Properties.FrontMargin) EquationController.SetEquation("DrillFrontMarginAngle", 0);
+
+            if (Properties.RearMargin) EquationController.SetEquation("DrillRearMarginAngle", 0);
+
+            decimal drillProfileHelixHeight = Properties.LOF - 0.05m * (Properties.LOF - Properties.LOC);
+            EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
+
+            if (helical)
+            {
+                EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
+
+                if (Properties.MiddleMargin) ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_MIDDLE_PATTERN");
+                else ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_PATTERN");
+            } else
+            {
+                if (Properties.MiddleMargin) ModelControllerTools.UnsuppressFeature("DRILL_STRAIGHT_PROFILE_MIDDLE_PATTERN");
+                else ModelControllerTools.UnsuppressFeature("DRILL_STRAIGHT_PROFILE_PATTERN");
+            }
+
         }
 
         private void UpdateBlankConfiguration()

@@ -17,16 +17,6 @@ namespace SW_Console_Controller_V1.Controllers
         }
         public void CreateSteps()
         {
-            ModelControllerTools.Unsuppress("STEP_SKETCH_ANGLE", "SKETCH");
-            ModelControllerTools.Unsuppress("STEP_SKETCH_RADIUS", "SKETCH");
-
-            // rebuild before copying step sketch. When copying the sketch, it loses its external relations, but it is positioned the same as the copied sketch.
-            // So, we have to make sure that the model does not change after creating the sketch cuts, which is why we rebuild in advance.
-            // If later on there is some stuff after this happens that modifies/rebuilds the model maybe look into a different approach. Prefer not to 
-            // set the relations in the new sketch again, because I suspect that that will be significantly slower. Maybe something with sketch blocks?
-            // E.g. make 1 sketch block containing all steps with external relations in a higher sketch and make 1 step cut feature.
-            //SwModel.ForceRebuild3(false);
-
             for (int i = 0; i < Properties.Steps.Length; i++)
             {
                 Step currentStep = Properties.Steps[i];

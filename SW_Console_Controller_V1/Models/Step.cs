@@ -15,5 +15,8 @@ namespace SW_Console_Controller_V1.Models
         public decimal RBottom { get; set; }
         public bool Midpoint { get; set; }
         public bool LOFFromPoint { get; set; }
+        public bool FrontMargin { get; set; }
+        public bool MiddleMargin { get; set; }
+        public bool RearMargin { get; set; }
     }
 }

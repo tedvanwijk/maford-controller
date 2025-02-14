@@ -66,56 +66,61 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillLOCToPointRotation", pointToLOCRotation);
             EquationController.SetEquation("DrillPointHeight", pointHeight);
 
-            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin)
+            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin) CreateHelicalMargins(fluteAngle);
+
+            if (Properties.Coolant.CoolantHole) CreateHelicalCoolant();
+        }
+
+        private void CreateHelicalMargins(double fluteAngle)
+        {
+            double drillProfileOpenAngle = 8f;
+            double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
+            EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
+            EquationController.SetEquation("DrillMarginAngle", drillProfileOpenAngle);
+
+            double profileDepthFactor = 0.00625f;
+            double profileDiameter = decimal.ToDouble(Properties.ToolDiameter) * (1f - 2f * profileDepthFactor);
+
+            EquationController.SetEquation("DrillProfileDiameter", profileDiameter);
+
+            decimal drillProfileHelixHeight = Properties.LOF - 0.05m * (Properties.LOF - Properties.LOC);
+            EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
+            EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
+
+            if (Properties.FrontMargin) EquationController.SetEquation("DrillFrontMarginAngle", 0);
+
+            if (Properties.MiddleMargin) ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_MIDDLE_PATTERN");
+            else ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_PATTERN");
+
+            if (Properties.RearMargin) EquationController.SetEquation("DrillRearMarginAngle", 0);
+        }
+
+        private void CreateHelicalCoolant()
+        {
+            decimal drillCoolantDiameter;
+            double coolantAngle;
+
+            if (Properties.FluteCount == 2)
             {
-                double drillProfileOpenAngle = 8f;
-                double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
-                EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
-                EquationController.SetEquation("DrillMarginAngle", drillProfileOpenAngle);
-
-                double profileDepthFactor = 0.00625f;
-                double profileDiameter = decimal.ToDouble(Properties.ToolDiameter) * (1f - 2f * profileDepthFactor);
-
-                EquationController.SetEquation("DrillProfileDiameter", profileDiameter);
-
-                decimal drillProfileHelixHeight = Properties.LOF - 0.05m * (Properties.LOF - Properties.LOC);
-                EquationController.SetEquation("DrillProfileHelixHeight", drillProfileHelixHeight);
-                EquationController.SetEquation("DrillProfileHelixStartingAngle", 270f - decimal.ToDouble(drillProfileHelixHeight - Properties.LOC) / GeneratedProperties.HelixPitch * 360f);
-
-                if (Properties.FrontMargin) EquationController.SetEquation("DrillFrontMarginAngle", 0);
-
-                if (Properties.MiddleMargin) ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_MIDDLE_PATTERN");
-                else ModelControllerTools.UnsuppressFeature("DRILL_PROFILE_PATTERN");
-
-                if (Properties.RearMargin) EquationController.SetEquation("DrillRearMarginAngle", 0);
+                drillCoolantDiameter = 0.08m * GeneratedProperties.TopStepDiameter;
+                coolantAngle = 22.5f;
+            }
+            else
+            {
+                drillCoolantDiameter = 0.05m * GeneratedProperties.TopStepDiameter;
+                coolantAngle = 10f;
             }
 
-            if (Properties.Coolant.CoolantHole)
-            {
-                decimal drillCoolantDiameter;
-                double coolantAngle;
-
-                if (Properties.FluteCount == 2)
-                {
-                    drillCoolantDiameter = 0.08m * GeneratedProperties.TopStepDiameter;
-                    coolantAngle = 22.5f;
-                } else
-                {
-                    drillCoolantDiameter = 0.05m * GeneratedProperties.TopStepDiameter;
-                    coolantAngle = 10f;
-                }
-
-                decimal drillCoolantSlotWidth = 1.05m * drillCoolantDiameter;
-                ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_PATTERN");
-                EquationController.SetEquation("DrillCoolantAngle", coolantAngle);
-                double coolantRotation = (decimal.ToDouble(Properties.LOA - Properties.LOC - drillCoolantSlotWidth) / GeneratedProperties.HelixPitch * 360f + coolantAngle) % 360f;
-                EquationController.SetEquation("DrillCoolantExitAngle", coolantRotation);
-                EquationController.SetEquation("DrillCoolantDiameter", drillCoolantDiameter);
-                EquationController.SetEquation("DrillCoolantOffset", 0.3125m * GeneratedProperties.TopStepDiameter);
-                EquationController.SetEquation("DrillCoolantStartOffset", drillCoolantSlotWidth);
-                EquationController.SetEquation("DrillCoolantHelixHeight", Properties.LOA - drillCoolantSlotWidth);
-                EquationController.SetEquation("DrillCoolantSlotWidth", drillCoolantSlotWidth);
-            }
+            decimal drillCoolantSlotWidth = 1.05m * drillCoolantDiameter;
+            ModelControllerTools.UnsuppressFeature("DRILL_COOLANT_PATTERN");
+            EquationController.SetEquation("DrillCoolantAngle", coolantAngle);
+            double coolantRotation = (decimal.ToDouble(Properties.LOA - Properties.LOC - drillCoolantSlotWidth) / GeneratedProperties.HelixPitch * 360f + coolantAngle) % 360f;
+            EquationController.SetEquation("DrillCoolantExitAngle", coolantRotation);
+            EquationController.SetEquation("DrillCoolantDiameter", drillCoolantDiameter);
+            EquationController.SetEquation("DrillCoolantOffset", 0.3125m * GeneratedProperties.TopStepDiameter);
+            EquationController.SetEquation("DrillCoolantStartOffset", drillCoolantSlotWidth);
+            EquationController.SetEquation("DrillCoolantHelixHeight", Properties.LOA - drillCoolantSlotWidth);
+            EquationController.SetEquation("DrillCoolantSlotWidth", drillCoolantSlotWidth);
         }
 
         private void CreateStraightFluting(decimal pointHeight)

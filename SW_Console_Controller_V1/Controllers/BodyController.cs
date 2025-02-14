@@ -33,6 +33,12 @@ namespace SW_Console_Controller_V1.Controllers
             CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);
             centerController.CreateCenterHoles();
 
+            if (Properties.StepTool)
+            {
+                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
+                stepController.CreateSteps();
+            }
+
             switch (Properties.ToolType)
             {
                 case "End Mill":
@@ -50,12 +56,6 @@ namespace SW_Console_Controller_V1.Controllers
             }
 
             SwModel.ShowConfiguration2("Default");
-
-            if (Properties.StepTool)
-            {
-                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
-                stepController.CreateSteps();
-            }
         }
     }
 }

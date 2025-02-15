@@ -1,4 +1,5 @@
-﻿using SolidWorks.Interop.sldworks;
+﻿using Newtonsoft.Json.Bson;
+using SolidWorks.Interop.sldworks;
 using SolidWorks.Interop.swconst;
 using SW_Console_Controller_V1.Lib;
 using SW_Console_Controller_V1.Models;
@@ -147,6 +148,166 @@ namespace SW_Console_Controller_V1.Controllers
                 cut.Name = $"STEP_{i}_CUT";
                 SwModel.Extension.ReorderFeature(cut.Name, "STEP", (int)swMoveLocation_e.swMoveToFolder);
             }
+        }
+    
+        public void CreateStraightMargins(double insideAngle, double straightFluteOffset, double marginAngle)
+        {
+            List<string> stepFeatureNames = new List<string>();
+
+            ModelControllerTools.UnsuppressFeature("STEP_SKETCH_MARGIN_STRAIGHT_FLUTE");
+            ModelControllerTools.UnsuppressFeature("STEP_SKETCH_MARGIN_MIDDLE_STRAIGHT_FLUTE");
+
+            for (int i = 0; i < Properties.Steps.Length; i++)
+            {
+                Step currentStep = Properties.Steps[i];
+
+                if (!currentStep.FrontMargin && !currentStep.MiddleMargin && !currentStep.RearMargin) continue;
+
+                decimal length = currentStep.Length;
+
+                // adjust length of step
+                bool lofFromPoint = currentStep.LOFFromPoint;
+                bool midpoint = currentStep.Midpoint && currentStep.RTop != 0;
+                decimal midpointLength = currentStep.RTop * (decimal)Math.Sin(decimal.ToDouble(currentStep.Angle / 4m) * Math.PI / 180f);
+
+                if (!lofFromPoint) length += GeneratedProperties.PointHeight;
+                if (midpoint) length -= midpointLength;
+
+                decimal marginDepthFactor = 0.00625m;
+                decimal marginDiameter = currentStep.Diameter * (1m - 2m * marginDepthFactor);
+
+                string sourceSketchName;
+                if (currentStep.MiddleMargin) sourceSketchName = "STEP_SKETCH_MARGIN_MIDDLE_STRAIGHT_FLUTE";
+                else  sourceSketchName = "STEP_SKETCH_MARGIN_STRAIGHT_FLUTE";
+
+                ModelControllerTools.SelectFeature(sourceSketchName, "SKETCH");
+
+                SwModel.EditCopy();
+                ModelControllerTools.SelectFeature("LOA_REF_PLANE", "PLANE");
+                SwModel.Paste();
+
+                Feature sketchFeature = SwModel.Extension.GetLastFeatureAdded();
+                string sketchName = $"{sourceSketchName}_{i}";
+                sketchFeature.Name = sketchName;
+
+                string[] dimensionNames;
+                decimal[] dimensions;
+
+                insideAngle -= (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(currentStep.Diameter))).ConvertToDeg();
+
+                insideAngle = 360f / Properties.FluteCount - insideAngle - marginAngle;
+
+                if (currentStep.FrontMargin && currentStep.RearMargin)
+                {
+                    dimensionNames = new string[] { "FrontMarginAngle", "RearMarginAngle", "MarginDiameter", "StepDiameter", "InsideAngle" };
+                    dimensions = new decimal[] { 0, 0, marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                } else if (currentStep.FrontMargin && !currentStep.RearMargin)
+                {
+                    dimensionNames = new string[] { "FrontMarginAngle", "MarginDiameter", "StepDiameter", "InsideAngle" };
+                    dimensions = new decimal[] { 0, marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                } else if (!currentStep.FrontMargin && currentStep.RearMargin)
+                {
+                    dimensionNames = new string[] { "RearMarginAngle", "MarginDiameter", "StepDiameter", "InsideAngle" };
+                    dimensions = new decimal[] { 0, marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                }
+                else
+                {
+                    dimensionNames = new string[] { "MarginDiameter", "StepDiameter", "InsideAngle" };
+                    dimensions = new decimal[] { marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                }
+
+                ModelControllerTools.SetSketchDimension(sketchName, dimensionNames, dimensions);
+
+                sketchFeature.Select2(false, 0);
+
+                // Reset sketch relations
+                SwModel.EditSketch();
+
+                if (Properties.StraightFlute && currentStep.MiddleMargin)
+                {
+                    ModelControllerTools.SelectFeature("Point1@Origin", "EXTSKETCHPOINT");
+                    ModelControllerTools.SelectFeature($"Point141@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgCOINCIDENT");
+
+                    ModelControllerTools.SelectFeature("MAX_D_OFFSET_REF_PLANE", "PLANE");
+                    ModelControllerTools.SelectFeature($"Arc6@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgTANGENT");
+
+                    ModelControllerTools.SelectFeature("Line4@DRILL_STRAIGHT_FLUTE_ANGLE_REF_SKETCH", "EXTSKETCHSEGMENT");
+                    ModelControllerTools.SelectFeature($"Point152@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgCOINCIDENT");
+                }
+                else
+                {
+                    ModelControllerTools.SelectFeature("Point1@Origin", "EXTSKETCHPOINT");
+                    ModelControllerTools.SelectFeature($"Point131@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgCOINCIDENT");
+
+                    ModelControllerTools.SelectFeature("MAX_D_OFFSET_REF_PLANE", "PLANE");
+                    ModelControllerTools.SelectFeature($"Arc6@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgTANGENT");
+
+                    ModelControllerTools.SelectFeature("Line4@DRILL_STRAIGHT_FLUTE_ANGLE_REF_SKETCH", "EXTSKETCHSEGMENT");
+                    ModelControllerTools.SelectFeature($"Point145@{sketchName}", "SKETCHSEGMENT", true);
+                    SwModel.SketchAddConstraints("sgCOINCIDENT");
+                }
+
+                SwModel.SketchManager.InsertSketch(false);
+
+                ModelControllerTools.SelectFeature(sketchName, "SKETCH", false, 0);
+                Feature cut = SwModel.FeatureManager.FeatureCut4(
+                    true,                                       // single ended
+                    false,                                      // don't flip side
+                    false,                                      // don't flip direction
+                    (int)swEndConditions_e.swEndCondBlind,      // blind cut
+                    0,                                          // type for 2nd side
+                    decimal.ToDouble(length.ConvertToMeters()), // length for 1st dir
+                    0,                                          // length for 2nd dir
+                    false,                                      // no draft
+                    false,                                      // draft for 2nd side
+                    false,                                      // draft direction 1
+                    false,                                      // draft direction 2
+                    0,                                          // draft angle 1
+                    0,                                          // draft angle 2
+                    false,                                      // OffsetReverse1
+                    false,                                      // OffsetReverse2
+                    false,                                      // TranslateSurface1
+                    false,                                      // TranslateSurface2
+                    false,                                      // NormalCut
+                    false,                                      // affects all bodies
+                    true,                                       // UseAutoSelect
+                    false,                                      // AssemblyFeatureScope
+                    true,                                       // AutoSelectComponents
+                    true,                                       // PropagateFeatureToParts
+                    (int)swStartConditions_e.swStartSketchPlane,// start condition
+                    0,                                          // StartOffset
+                    false,                                      // FlipStartOffset
+                    false                                       // OptimizeGeometry
+                    );
+                cut.Name = $"STEP_{i}_MARGIN_CUT";
+                stepFeatureNames.Add(cut.Name);
+                SwModel.Extension.ReorderFeature(cut.Name, "STEP", (int)swMoveLocation_e.swMoveToFolder);
+            }
+
+            SwModel.ClearSelection2(true);
+
+            // Select revolving axis
+            ModelControllerTools.SelectFeature("Line1@LENGTH_REF", "EXTSKETCHSEGMENT", false, 1);
+
+            // Select all margin cuts
+            foreach (string featureName in stepFeatureNames) ModelControllerTools.SelectFeature(featureName, "BODYFEATURE", true, 4);
+            
+            Feature pattern = SwModel.FeatureManager.FeatureCircularPattern4(
+                Properties.FluteCount,          // count
+                2 * Math.PI,                    // total angle
+                false,                          // FlipDirection
+                "NULL",                         // DName
+                false,                          // GeometryPattern
+                true,                           // EqualSpacing
+                false                           // VaryInstance
+                );
+            pattern.Name = "STEP_MARGIN_PATTERN";
+            SwModel.Extension.ReorderFeature(pattern.Name, "STEP", (int)swMoveLocation_e.swMoveToFolder);
         }
     }
 }

@@ -33,11 +33,7 @@ namespace SW_Console_Controller_V1.Controllers
             CenterController centerController = new CenterController(Properties, GeneratedProperties, SwModel, EquationManager);
             centerController.CreateCenterHoles();
 
-            if (Properties.StepTool)
-            {
-                StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
-                stepController.CreateSteps();
-            }
+            StepController stepController = new StepController(Properties, GeneratedProperties, SwModel, EquationManager);
 
             switch (Properties.ToolType)
             {
@@ -45,7 +41,7 @@ namespace SW_Console_Controller_V1.Controllers
                     _toolController = new EMController(Properties, GeneratedProperties, SwModel, EquationManager);
                     break;
                 case "Drill":
-                    _toolController = new DrillController(Properties, GeneratedProperties, SwModel, EquationManager);
+                    _toolController = new DrillController(Properties, GeneratedProperties, SwModel, EquationManager, stepController);
                     break;
                 case "Reamer":
                     _toolController = new ReamerController(Properties, GeneratedProperties, SwModel, EquationManager);
@@ -56,6 +52,11 @@ namespace SW_Console_Controller_V1.Controllers
             }
 
             SwModel.ShowConfiguration2("Default");
+
+            if (Properties.StepTool)
+            {
+                stepController.CreateSteps();
+            }
         }
     }
 }

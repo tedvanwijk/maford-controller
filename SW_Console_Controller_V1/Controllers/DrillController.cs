@@ -10,8 +10,10 @@ namespace SW_Console_Controller_V1.Controllers
 {
     internal class DrillController : ModelController
     {
-        public DrillController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, EquationMgr equationManager) : base(properties, generatedProperties, model, equationManager)
+        public StepController StepController;
+        public DrillController(Properties properties, GeneratedProperties generatedProperties, ModelDoc2 model, EquationMgr equationManager, StepController stepController) : base(properties, generatedProperties, model, equationManager)
         {
+            StepController = stepController;
             UpdateModel();
             UpdateBlankConfiguration();
         }
@@ -66,8 +68,8 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillLOCToPointRotation", pointToLOCRotation);
             EquationController.SetEquation("DrillPointHeight", pointHeight);
 
-            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin) CreateMargins(fluteAngle, true);
-
+            double drillProfileOpenAngle = 8f;
+            CreateMargins(fluteAngle, true, drillProfileOpenAngle);
             if (Properties.Coolant.CoolantHole) CreateHelicalCoolant();
         }
 
@@ -128,14 +130,13 @@ namespace SW_Console_Controller_V1.Controllers
             EquationController.SetEquation("DrillStraightFluteWashoutLength", washoutLength);
             EquationController.SetEquation("DrillStraightFluteWashoutAngle", Math.Atan(fluteDepth / decimal.ToDouble(washoutLength)).ConvertToDeg() * 2f);
 
-            if (Properties.FrontMargin || Properties.MiddleMargin || Properties.RearMargin)
-            {
-                // insideAngle for straight flutes is the internal angle of the fluting, and not the angle the flute exit makes with the center.
-                // So we have to calculate and add a factor to compensate for this
-                insideAngle -= (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(Properties.ToolDiameter))).ConvertToDeg();
-                CreateMargins(insideAngle, false);
-            }
-                
+            // insideAngle for straight flutes is the internal angle of the fluting, and not the angle the flute exit makes with the center.
+            // So we have to calculate and add a factor to compensate for this
+            double drillProfileOpenAngle = 8f;
+            StepController.CreateStraightMargins(insideAngle, straightFluteOffset, drillProfileOpenAngle);
+            insideAngle -= (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(Properties.ToolDiameter))).ConvertToDeg();
+            CreateMargins(insideAngle, false, drillProfileOpenAngle);
+
             if (Properties.Coolant.CoolantHole)
             {
                 CoolantController coolantController = new CoolantController(Properties, GeneratedProperties, SwModel, EquationManager);
@@ -143,12 +144,14 @@ namespace SW_Console_Controller_V1.Controllers
             }
         }
 
-        private void CreateMargins(double fluteAngle, bool helical)
+        private void CreateMargins(double fluteAngle, bool helical, double drillProfileOpenAngle)
         {
-            double drillProfileOpenAngle = 8f;
+            // This top part needs to happen for step margins, so we run it before checking if there are overall margins
             double drillProfileAngle = 360 / Properties.FluteCount - fluteAngle - drillProfileOpenAngle;
             EquationController.SetEquation("DrillProfileAngle", drillProfileAngle);
             EquationController.SetEquation("DrillMarginAngle", drillProfileOpenAngle);
+
+            if (!Properties.FrontMargin && !Properties.MiddleMargin && !Properties.RearMargin) return;
 
             double profileDepthFactor = 0.00625f;
             double profileDiameter = decimal.ToDouble(Properties.ToolDiameter) * (1f - 2f * profileDepthFactor);

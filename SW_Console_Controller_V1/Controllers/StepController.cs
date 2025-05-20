@@ -193,27 +193,27 @@ namespace SW_Console_Controller_V1.Controllers
                 string[] dimensionNames;
                 decimal[] dimensions;
 
-                insideAngle -= (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(currentStep.Diameter))).ConvertToDeg();
+                double localInsideAngle = insideAngle - (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(currentStep.Diameter))).ConvertToDeg();
 
-                insideAngle = 360f / Properties.FluteCount - insideAngle - marginAngle;
+                localInsideAngle = 360f / Properties.FluteCount - localInsideAngle - marginAngle;
 
                 if (currentStep.FrontMargin && currentStep.RearMargin)
                 {
                     dimensionNames = new string[] { "FrontMarginAngle", "RearMarginAngle", "MarginDiameter", "StepDiameter", "InsideAngle" };
-                    dimensions = new decimal[] { 0, 0, marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                    dimensions = new decimal[] { 0, 0, marginDiameter, currentStep.Diameter, (decimal)localInsideAngle };
                 } else if (currentStep.FrontMargin && !currentStep.RearMargin)
                 {
                     dimensionNames = new string[] { "FrontMarginAngle", "MarginDiameter", "StepDiameter", "InsideAngle" };
-                    dimensions = new decimal[] { 0, marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                    dimensions = new decimal[] { 0, marginDiameter, currentStep.Diameter, (decimal)localInsideAngle };
                 } else if (!currentStep.FrontMargin && currentStep.RearMargin)
                 {
                     dimensionNames = new string[] { "RearMarginAngle", "MarginDiameter", "StepDiameter", "InsideAngle" };
-                    dimensions = new decimal[] { 0, marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                    dimensions = new decimal[] { 0, marginDiameter, currentStep.Diameter, (decimal)localInsideAngle };
                 }
                 else
                 {
                     dimensionNames = new string[] { "MarginDiameter", "StepDiameter", "InsideAngle" };
-                    dimensions = new decimal[] { marginDiameter, currentStep.Diameter, (decimal)insideAngle };
+                    dimensions = new decimal[] { marginDiameter, currentStep.Diameter, (decimal)localInsideAngle };
                 }
 
                 ModelControllerTools.SetSketchDimension(sketchName, dimensionNames, dimensions);

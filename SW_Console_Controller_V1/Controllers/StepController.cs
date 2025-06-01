@@ -144,7 +144,7 @@ namespace SW_Console_Controller_V1.Controllers
                     false,
                     false,
                     true
-                    );
+                    ) ?? throw new Exception($"Failed to create step {i + 1}. Most likely the step is larger than the step before or the tool diameter, which is not supported.");
                 cut.Name = $"STEP_{i}_CUT";
                 SwModel.Extension.ReorderFeature(cut.Name, "STEP", (int)swMoveLocation_e.swMoveToFolder);
             }

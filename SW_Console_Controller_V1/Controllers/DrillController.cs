@@ -133,9 +133,9 @@ namespace SW_Console_Controller_V1.Controllers
             // insideAngle for straight flutes is the internal angle of the fluting, and not the angle the flute exit makes with the center.
             // So we have to calculate and add a factor to compensate for this
             double drillProfileOpenAngle = 8f;
-            StepController.CreateStraightMargins(insideAngle, straightFluteOffset, drillProfileOpenAngle);
-            insideAngle -= (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(Properties.ToolDiameter))).ConvertToDeg();
-            CreateMargins(insideAngle, false, drillProfileOpenAngle);
+            if (Properties.StepTool) StepController.CreateStraightMargins(insideAngle, straightFluteOffset, drillProfileOpenAngle);
+            double fluteAngle = insideAngle - (2 * Math.Asin(2 * straightFluteOffset / decimal.ToDouble(Properties.ToolDiameter))).ConvertToDeg();
+            CreateMargins(fluteAngle, false, drillProfileOpenAngle);
 
             if (Properties.Coolant.CoolantHole)
             {

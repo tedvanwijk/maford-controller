@@ -49,7 +49,7 @@ namespace SW_Console_Controller_V1.Controllers
             DrawingDimensionTools.AddDimensions();
 
             UpdateDrawing();
-            if (ToleranceData != null && (Properties.Prp.DrawingType == "Manufacturing" || (Properties.Prp.DrawingType == "Custom" && Properties.Prp.TableOnDrawing))) CreateTable();
+            if (ToleranceData != null && (Properties.Prp.DrawingType == "Manufacturing" || Properties.Prp.DrawingType == "Manufacturing - Moeller" || (Properties.Prp.DrawingType == "Custom" && Properties.Prp.TableOnDrawing))) CreateTable();
 
             SwModel.ClearSelection2(true);
         }

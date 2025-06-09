@@ -123,8 +123,11 @@ namespace SW_Console_Controller_V1
 
             CreateThumbnail();
 
-            _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
             _swModel.Save3(1, ref _saveError, ref _saveWarning);
+
+            _swApp.ActivateDoc3($"{_properties.DrawingFileName}.SLDDRW", false, (int)swRebuildOnActivation_e.swDontRebuildActiveDoc, ref activationError);
+
+            _swDrawingModel.Save3(1, ref _drawingSaveError, ref _drawingSaveWarning);
 
             foreach (string drawingFileType in _properties.DrawingFileTypes) _swDrawingModel.Extension.SaveAs3(Path.Combine(_properties.OutputPath, $"{_properties.SpecificationNumber}/{_properties.DrawingFileName}.{drawingFileType}"), 0, 1, null, null, ref _saveError, ref _saveWarning);
 #if !DEBUG

@@ -58,11 +58,13 @@ namespace SW_Console_Controller_V1.Controllers
 
             // Get flute depth from sketch and calculate heigth
             double fluteDepth = ModelControllerTools.GetSketchDimension("DRILL_FLUTE_PROFILE_SKETCH", "FluteProfileDepth");
-            double washoutHeight = fluteDepth / Math.Tan(Properties.HelixAngle.ConvertToRad());
+            double washoutLength = fluteDepth / Math.Tan(Properties.HelixAngle.ConvertToRad());
 
             // redefine LOC. Drills are defined with LOF and the LOC is calculated based on the flute depth and washout angle
-            Properties.LOC = Properties.LOF - (decimal)washoutHeight;
+            Properties.LOC = Properties.LOF - (decimal)washoutLength;
             EquationController.SetEquation("LOC", Properties.LOC);
+
+            EquationController.SetEquation("DrillWashoutLength", washoutLength);
 
             double pointToLOCRotation = ((decimal.ToDouble(Properties.LOC) - decimal.ToDouble(pointHeight)) / GeneratedProperties.HelixPitch * 360f) % 360f;
             EquationController.SetEquation("DrillLOCToPointRotation", pointToLOCRotation);

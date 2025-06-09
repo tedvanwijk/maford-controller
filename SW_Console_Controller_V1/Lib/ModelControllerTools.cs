@@ -92,6 +92,7 @@ namespace SW_Console_Controller_V1.Lib
 
         static public double GetSketchDimension(string sketchName, string dimensionName, bool angle = false)
         {
+            Model.EditRebuild3();
             SelectFeature($"{dimensionName}@{sketchName}", "DIMENSION");
             DisplayDimension displayDim = SelectionManager.GetSelectedObject6(1, -1);
             Dimension dim = displayDim.GetDimension2(0);
